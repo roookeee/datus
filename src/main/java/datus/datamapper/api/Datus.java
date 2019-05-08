@@ -34,13 +34,13 @@ public class Datus<In, Out> {
     /**
      * Constructs a typed context for a mapping process definition for the given input and output types.
      *
-     * @param inType  the input type (used to help java infer the arguments for the coming function calls)
-     * @param outType the output type (used to help java infer the arguments for the coming function calls)
+     * @param inputType  the input type (used to help java infer the arguments for the coming function calls)
+     * @param outputType the output type (used to help java infer the arguments for the coming function calls)
      * @param <In>    the input type parameter
      * @param <Out>   the output type parameter
-     * @return
+     * @return the typed context
      */
-    public static <In, Out> Datus<In, Out> start(Class<In> inType, Class<Out> outType) {
+    public static <In, Out> Datus<In, Out> forTypes(Class<In> inputType, Class<Out> outputType) {
         return new Datus<>();
     }
 
