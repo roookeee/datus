@@ -39,7 +39,7 @@ class PersonDTO {
 }
 
 //define a building process for each constructor parameter, step by step
-Mapper<Person, PersonDTO> mapper = Datus.start(Person.class, PersonDTO.class).immutable(PersonDTO::new)
+Mapper<Person, PersonDTO> mapper = Datus.forTypes(Person.class, PersonDTO.class).immutable(PersonDTO::new)
     .take(Person::getFirstName) //direct use without any more processing
     .from(Person::getLastName)
         .when(Objects::nonNull).fallback("fallback")
@@ -73,7 +73,7 @@ class PersonDTO {
     private String lastName;
 }
 
-Mapper<Person, PersonDTO> mapper = Datus.start(Person.class, PersonDTO.class).mutable(PersonDTO::new)
+Mapper<Person, PersonDTO> mapper = Datus.forTypes(Person.class, PersonDTO.class).mutable(PersonDTO::new)
     .from(Person::getFirstName).into(PersonDTO.setFirstName)
     .from(Person::getLastName)
         .when(Objects::nonNull).fallback("fallback")
@@ -117,7 +117,7 @@ Please refer to the USAGE.md for a complete user guide as the readme only serves
 There may be reasons why a given input cannot be converted to an output object or why a converted output object is invalid
 which can be handled in the following way:
 ```java
-Mapper<Person, PersonDTO> mapper = Datus.start(Person.class, PersonDTO.class).mutable(PersonDTO::new)
+Mapper<Person, PersonDTO> mapper = Datus.forTypes(Person.class, PersonDTO.class).mutable(PersonDTO::new)
          .from(Person::getFirstName).into(PersonDTO.setFirstName)
          .build();
 
@@ -136,7 +136,7 @@ while also separating this (not directly to conversion related) concern out of *
 public class MapperConfiguration {
     @Bean
     public Mapper<Person, PersonDTO> generatePersonMapper() {
-        return Datus.start(Person.class, PersonDTO.class).mutable(PersonDTO::new)
+        return Datus.forTypes(Person.class, PersonDTO.class).mutable(PersonDTO::new)
             .from(Person::getFirstName).into(PersonDTO.setFirstName)
             .build();
     } 
