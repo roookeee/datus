@@ -69,8 +69,7 @@ Mapper<Person, PersonDTO> mapper = Datus.forTypes(Person.class, PersonDTO.class)
     .take(Person::getFirstName) //direct use without any more processing
     .from(Person::getLastName)
         .when(Objects::nonNull).fallback("fallback")
-        .map(String::toUpperCase)
-        .to(Function.identity())
+        .mapTo(String::toUpperCase)
     .build();
     
 Person person = new Person();
