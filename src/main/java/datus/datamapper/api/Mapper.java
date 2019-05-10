@@ -16,7 +16,7 @@ public interface Mapper<In, Out> {
      * Converts a given input instance to an output instance
      *
      * @param input the input instance to convert
-     * @return
+     * @return the converted output object
      */
     Out convert(In input);
 

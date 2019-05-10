@@ -39,6 +39,7 @@ class PersonDTO {
 }
 
 //define a building process for each constructor parameter, step by step
+//the immutable API defines constructor parameters in their declaration order
 Mapper<Person, PersonDTO> mapper = Datus.forTypes(Person.class, PersonDTO.class).immutable(PersonDTO::new)
     .take(Person::getFirstName) //direct use without any more processing
     .from(Person::getLastName)
@@ -73,6 +74,7 @@ class PersonDTO {
     private String lastName;
 }
 
+//the mutable API defines a mapping process by multiple getter-setter steps
 Mapper<Person, PersonDTO> mapper = Datus.forTypes(Person.class, PersonDTO.class).mutable(PersonDTO::new)
     .from(Person::getFirstName).into(PersonDTO.setFirstName)
     .from(Person::getLastName)
