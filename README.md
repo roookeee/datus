@@ -15,7 +15,32 @@
 
 *datus* is a library that enables you to define a mapping-process between two data-structures in a few lines of code while allowing for fluent processing / skipping along the way.
 
-(An in depth explanation follows after two short examples)
+#### Overview
+1. [Why use datus?](#why-use-datus)
+2. [Examples](#immutable-object-api-example)
+3. [Conditional mapping](#conditional-mapping)
+4. [Drawbacks and when not to use datus](#drawbacks-and-when-not-to-use-datus)
+5. [When datus construction builders just won't fit](#when-datus-construction-builders-just-wont-fit)
+6. [datus and dependency injection](#dependency-injection-eg-spring)
+7. [User guide](#user-guide)
+8. [Dependency information (Maven etc.)](#dependency-information)
+9. [Development principles](#development-principles)
+
+## Why use *datus*?
+Using *datus* has the following benefits:
+- no more 'dumb'/businesslogic-less `*Factory`-classes that you have to unit-test
+- separating mapping-logic from business-logic of certain mapping steps (**single-responsibility**)*
+- enabling your business-logic to only operate on parts of a data-structure (e.g. in a `.map`-step) instead of depending on the whole object (e.g. upper-casing a persons name) (**reducing dependencies**)
+- programming against an `interface` instead of concrete classes (**cleaner dependencies**)
+- defining `what` to map, not `how` to do it (**functional-programming approach**)
+- easily add logging or other cross-cutting-concerns via `spy` or `process`(see below for more information about the full API)
+
+Other minor benefits include:
+- define the mapping process from `A -> B` and get `Collection<A> -> Collection<B>` for free
+- no need to unit-test logic that has no real business-case / is not worth a unit test once you have fixed it (e.g. `null`-checking, will not be a problem again after including it)
+- (subjectively) more self-documenting code
+
+\* = business logic (e.g. businessful `.map`-steps) should be extracted to a class responsible for said business logic instead of an inline lamda
 
 #### Immutable object API example
 ```java
@@ -96,25 +121,6 @@ PersonDTO personDto = mapper.convert(person);
 */
 ```
 
-## Why use *datus*?
-Using *datus* has the following benefits:
-- no more 'dumb'/businesslogic-less `*Factory`-classes that you have to unit-test
-- separating mapping-logic from business-logic of certain mapping steps (**single-responsibility**)*
-- enabling your business-logic to only operate on parts of a data-structure (e.g. in a `.map`-step) instead of depending on the whole object (e.g. upper-casing a persons name) (**reducing dependencies**)
-- programming against an `interface` instead of concrete classes (**cleaner dependencies**)
-- defining `what` to map, not `how` to do it (**functional-programming approach**)
-- easily add logging or other cross-cutting-concerns via `spy` or `process`(see below for more information about the full API)
-
-Other minor benefits include:
-- define the mapping process from `A -> B` and get `Collection<A> -> Collection<B>` for free
-- no need to unit-test logic that has no real business-case / is not worth a unit test once you have fixed it (e.g. `null`-checking, will not be a problem again after including it)
-- (subjectively) more self-documenting code
-
-\* = business logic (e.g. businessful `.map`-steps) should be extracted to a class responsible for said business logic instead of an inline lamda
-
-## Usage
-Please refer to the USAGE.md for a complete user guide as the readme only serves as a broad overview.
-
 ## Conditional mapping
 There may be reasons why a given input cannot be converted to an output object or why a converted output object is invalid
 which can be handled in the following way:
@@ -130,6 +136,27 @@ Mapper<Person, Optional<PersonDTO>> predicatedMapper = mapper.predicateInput(Obj
 *datus* opts for an approach that uses pre- and post-conversion validation instead of allowing
 to interrupt the conversion process at any point in time. This simplifies *datus* API and implementation
 while also separating this (not directly to conversion related) concern out of *datus* core workflow.
+
+## Drawbacks and when not to use *datus*
+*datus* is an abstraction-layer which like all of its kind (e.g. guava, Spring etc.) comes at a certain performance cost that in some scenarios will not justify the outlined benefits of it.
+*datus* is rigorously profiled while developing its features which results in the following advice:
+
+If you map a massive amount of objects (**> 40000 objects / ms (millisecond) per thread on an i7 6700k**) whilst not having any computationally significant `.map`-steps you will suffer a performance loss of up to 70% compared to a traditional factory with imperative style mapping code.
+
+Refer to the next section for a possible workaround for this situation or others where *datus* just won't fit.
+
+## When *datus* construction builders just won't fit
+Maybe you are using *datus* in your project but there is this one mapping definition that feels awkward or just
+isn't possible to express with *datus* builder APIs. Surely you can just build a factory for this case, but the inconsistency 
+isn't feeling too well...
+
+This is were the simplistic approach of the `Mapper`-interface comes in handy: just define your mapping process
+via a simple lambda and you are already getting the extended functionality like `.predicate` and the automatic availability
+of converting collections:
+```java
+Mapper<List<String>, List<String>> copyMapper = list -> new ArrayList<>(list);
+Mapper<List<String>,Optional<List<String>>> optionalCopyMapper = copyMapper.predicateInput(Object::nonNull);
+```
 
 ## Dependency injection (e.g. Spring)
 *datus* has no explicit code to support dependency injection and its accompanying concepts but is **easily integrated into any dependency injection framework** (e.g Spring):
@@ -156,25 +183,17 @@ public class SomeClass {
 }
 ```
 
-## Drawbacks and when not to use *datus*
-*datus* is an abstraction-layer which like all of its kind (e.g. guava, Spring etc.) comes at a certain performance cost that in some scenarios will not justify the outlined benefits of it.
-*datus* is rigorously profiled while developing its features which results in the following advice:
+## User guide
+Please refer to the USAGE.md for a complete user guide as the readme only serves as a broad overview.
 
-If you map a massive amount of objects (**> 40000 objects / ms (millisecond) per thread on an i7 6700k**) whilst not having any computationally significant `.map`-steps you will suffer a performance loss of up to 70% compared to a traditional factory with imperative style mapping code.
-
-Refer to the next section for a possible workaround for this situation or others where *datus* just won't fit.
-
-## When *datus* construction builders just won't fit
-Maybe you are using *datus* in your project but there is this one mapping definition that feels awkward or just
-isn't possible to express with *datus* builder APIs. Surely you can just build a factory for this case, but the inconsistency 
-isn't feeling too well...
-
-This is were the simplistic approach of the `Mapper`-interface comes in handy: just define your mapping process
-via a simple lambda and you are already getting the extended functionality like `.predicate` and the automatic availability
-of converting collections:
-```java
-Mapper<List<String>, List<String>> copyMapper = list -> new ArrayList<>(list);
-Mapper<List<String>,Optional<List<String>>> optionalCopyMapper = copyMapper.predicateInput(Object::nonNull);
+## Dependency information
+Maven:
+```xml
+<dependency>
+  <groupId>com.github.roookeee</groupId>
+  <artifactId>datus</artifactId>
+  <version>0.9.0</version>
+</dependency>
 ```
 
 ## Development principles 
