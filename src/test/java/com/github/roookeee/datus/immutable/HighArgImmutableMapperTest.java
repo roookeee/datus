@@ -103,18 +103,18 @@ public class HighArgImmutableMapperTest {
         );
         DetailedPerson result = mapper.convert(source);
 
-        assertThat("Field should have correct value", result.getUniqueId(), is("uniqueId1"));
-        assertThat("Field should have correct value", result.getSalutation(), is("salutation1"));
-        assertThat("Field should have correct value", result.getFirstName(), is("firstName1"));
-        assertThat("Field should have correct value", result.getLastName(), is("lastName1"));
-        assertThat("Field should have correct value", result.getAddress(), is("address1"));
-        assertThat("Field should have correct value", result.getAddressExtra(), is("addressExtra1"));
-        assertThat("Field should have correct value", result.getCity(), is("city1"));
-        assertThat("Field should have correct value", result.getOccupation(), is("occupation1"));
+        assertThat("Field should have correct value", result.getUniqueId(), is("uniqueId!"));
+        assertThat("Field should have correct value", result.getSalutation(), is("salutation!"));
+        assertThat("Field should have correct value", result.getFirstName(), is("firstName!"));
+        assertThat("Field should have correct value", result.getLastName(), is("lastName!"));
+        assertThat("Field should have correct value", result.getAddress(), is("address!"));
+        assertThat("Field should have correct value", result.getAddressExtra(), is("addressExtra!"));
+        assertThat("Field should have correct value", result.getCity(), is("city!"));
+        assertThat("Field should have correct value", result.getOccupation(), is("occupation!"));
     }
 
     private String appendExclamationMark(String input) {
-        return input + 1;
+        return input + "!";
     }
 
 }
