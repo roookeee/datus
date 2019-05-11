@@ -12,7 +12,7 @@ public class ConstructorBuilder6<In, A, B, C, D, E, F, Out> {
     /**
      * ***NOTE***: It is encouraged to use the {@link Datus} class instead of directly
      * instantiating any constructor builder objects by yourself as javas type inference cannot infer the generic types
-     * of these objects. The {@link Datus} alleviates this problem!
+     * of these objects. The {@link Datus} class alleviates this problem.
      *
      * @param constructor the constructor to generate a builder for
      */
