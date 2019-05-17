@@ -18,14 +18,14 @@ public class HighArgImmutableMapperTest {
         Mapper<DetailedPerson, DetailedPerson> mapper = new ConstructorBuilder8
                 <DetailedPerson, String, String, String, String, String, String, String, String, DetailedPerson>
                 (DetailedPerson::new)
-                .take(DetailedPerson::getUniqueId)
-                .take(DetailedPerson::getSalutation)
-                .take(DetailedPerson::getFirstName)
-                .take(DetailedPerson::getLastName)
-                .take(DetailedPerson::getAddress)
-                .take(DetailedPerson::getAddressExtra)
-                .take(DetailedPerson::getCity)
-                .take(DetailedPerson::getOccupation)
+                .from(DetailedPerson::getUniqueId).mapTo(Function.identity())
+                .from(DetailedPerson::getSalutation).mapTo(Function.identity())
+                .from(DetailedPerson::getFirstName).mapTo(Function.identity())
+                .from(DetailedPerson::getLastName).mapTo(Function.identity())
+                .from(DetailedPerson::getAddress).mapTo(Function.identity())
+                .from(DetailedPerson::getAddressExtra).mapTo(Function.identity())
+                .from(DetailedPerson::getCity).mapTo(Function.identity())
+                .from(DetailedPerson::getOccupation).mapTo(Function.identity())
                 .build();
 
         DetailedPerson source = new DetailedPerson(

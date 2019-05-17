@@ -39,17 +39,6 @@ public class ConstructorBuilder5<In, A, B, C, D, E, Out> {
         );
     }
 
-    /**
-     * Directly binds the contained constructors first parameter to the provided getter of the input type.
-     * (Utility function that works like {@link #from}.to(Function.identity()))
-     *
-     * @param getter the getter to use
-     * @return the next constructor builder to further define the building process of the output type
-     */
-    public ConstructorBuilder4<In, B, C, D, E, Out> take(Function<In, A> getter) {
-        return new ConstructorBuilder4<>(applyGetter(getter));
-    }
-
     private Fn5<In, B, C, D, E, Out> applyGetter(Function<In, A> getter) {
         return (in, b, c, d, e) -> constructor.apply(in, getter.apply(in), b, c, d, e);
     }
