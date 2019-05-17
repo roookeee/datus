@@ -19,7 +19,7 @@ public class MutableMappingPipingTest {
         personValid.setAddress("address");
 
         Mapper<Person, Person> mapper = new MutableMappingBuilder<Person, Person>(Person::new)
-                .from(Person::getAddress).when(Objects::isNull).fallback("").map(String::toUpperCase).into(Person::setAddress)
+                .from(Person::getAddress).given(Objects::isNull).fallback("").map(String::toUpperCase).into(Person::setAddress)
                 .build();
 
         //when
@@ -57,7 +57,7 @@ public class MutableMappingPipingTest {
         personValid.setAddress("address");
 
         Mapper<Person, Person> mapper = new MutableMappingBuilder<Person, Person>(Person::new)
-                .from(Person::getAddress).map(String::toUpperCase).when(String::isEmpty).fallback("fallback").into(Person::setAddress)
+                .from(Person::getAddress).map(String::toUpperCase).given(String::isEmpty).fallback("fallback").into(Person::setAddress)
                 .build();
 
         //when

@@ -12,7 +12,7 @@ import java.util.function.Predicate;
  * <p>
  * In contrast to the mutable API ({@link MutableConstructionStep )} an immutable construction step
  * specializes the mapping process of exactly one constructor parameter starting with a getter of the input type
- * which's type may or may not already match the constructor parameters type. {@link #map} and {@link #when} are the
+ * which's type may or may not already match the constructor parameters type. {@link #map} and {@link #given} are the
  * main tools of an immutable construction step to reach the desired constructor parameters type and handling edge
  * cases.
  *
@@ -64,7 +64,7 @@ public class ImmutableConstructionStep<In, CurrentType, TargetType, NextConstruc
      * @param predicate the predicate to use
      * @return a builer to configure the handling mechanism when the given predicate matches
      */
-    public ConditionalHandlerBuilder<In, CurrentType, ImmutableConstructionStep<In, CurrentType, TargetType, NextConstructor>> when(
+    public ConditionalHandlerBuilder<In, CurrentType, ImmutableConstructionStep<In, CurrentType, TargetType, NextConstructor>> given(
             Predicate<CurrentType> predicate
     ) {
         return new ConditionalHandlerBuilder<>(

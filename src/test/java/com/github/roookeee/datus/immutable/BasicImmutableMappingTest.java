@@ -27,7 +27,7 @@ public class BasicImmutableMappingTest {
     @Test
     public void conditionalMappingWithValueFallbackShouldWorkCorrectly() {
         Mapper<Item, Item> mapper = new ConstructorBuilder1<Item, String, Item>(Item::new)
-                .from(Item::getId).when(Objects::isNull).fallback("-1").mapTo(Function.identity())
+                .from(Item::getId).given(Objects::isNull).fallback("-1").mapTo(Function.identity())
                 .build();
 
         Item aSource = new Item("1");
@@ -43,7 +43,7 @@ public class BasicImmutableMappingTest {
     @Test
     public void conditionalMappingWithSupplierFallbackShouldWorkCorrectly() {
         Mapper<Item, Item> mapper = new ConstructorBuilder1<Item, String, Item>(Item::new)
-                .from(Item::getId).when(Objects::isNull).fallback(() -> "-1").mapTo(Function.identity())
+                .from(Item::getId).given(Objects::isNull).fallback(() -> "-1").mapTo(Function.identity())
                 .build();
 
         Item aSource = new Item("1");
@@ -59,7 +59,7 @@ public class BasicImmutableMappingTest {
     @Test
     public void conditionalMappingWithFnFallbackShouldWorkCorrectly() {
         Mapper<Item, Item> mapper = new ConstructorBuilder1<Item, String, Item>(Item::new)
-                .from(Item::getId).when("2"::equals).fallback(in -> in.getId() + "0").mapTo(Function.identity())
+                .from(Item::getId).given("2"::equals).fallback(in -> in.getId() + "0").mapTo(Function.identity())
                 .build();
 
         Item aSource = new Item("1");
@@ -88,9 +88,9 @@ public class BasicImmutableMappingTest {
     public void whenBeforeAndAfterPipingShouldWorkCorrectly() {
         Mapper<Item, Item> mapper = new ConstructorBuilder1<Item, String, Item>(Item::new)
                 .from(Item::getId)
-                .when(Objects::isNull).fallback("-1")
+                .given(Objects::isNull).fallback("-1")
                 .map(i -> i + "1")
-                .when("-11"::equals).fallback("error")
+                .given("-11"::equals).fallback("error")
                 .mapTo(Function.identity())
                 .build();
 

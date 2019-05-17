@@ -68,7 +68,7 @@ class PersonDTO {
 Mapper<Person, PersonDTO> mapper = Datus.forTypes(Person.class, PersonDTO.class).immutable(PersonDTO::new)
     .take(Person::getFirstName) //direct use without any more processing
     .from(Person::getLastName)
-        .when(Objects::nonNull).fallback("fallback")
+        .given(Objects::isNull).fallback("fallback")
         .mapTo(String::toUpperCase)
     .build();
     
@@ -102,7 +102,7 @@ class PersonDTO {
 Mapper<Person, PersonDTO> mapper = Datus.forTypes(Person.class, PersonDTO.class).mutable(PersonDTO::new)
     .from(Person::getFirstName).into(PersonDTO.setFirstName)
     .from(Person::getLastName)
-        .when(Objects::nonNull).fallback("fallback")
+        .given(Objects::isNull).fallback("fallback")
         .map(String::toUpperCase)
         .into(PersonDTO::setLastName)
     .from(/*...*/).into(/*...*/)
@@ -200,7 +200,7 @@ This section is about the core principles *datus* is developed with.
 
 #### Performance
 Every additional step between a `.from` and `.into`-call naturally comes at a performance cost because of the additional indirection.
-Depending on the context in which *datus* is used this cost may be significant which is why one of the core principles of *datus* is `pay for what you use`: the additional logic of e.g. `.when` and `.map`-calls is **only** checked/used when these features are actively used. This additional cost is only affecting `.from -> .into`-chains that use said features, other `.from -> to`-chains in the same builder that don't use said features are not affected.
+Depending on the context in which *datus* is used this cost may be significant which is why one of the core principles of *datus* is `pay for what you use`: the additional logic of e.g. `.given` and `.map`-calls is **only** checked/used when these features are actively used. This additional cost is only affecting `.from -> .into`-chains that use said features, other `.from -> to`-chains in the same builder that don't use said features are not affected.
 
 #### Semver
 *datus* follows semantic versioning (see https://semver.org/)
