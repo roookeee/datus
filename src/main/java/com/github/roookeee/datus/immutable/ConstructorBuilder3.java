@@ -35,7 +35,11 @@ public class ConstructorBuilder3<In, A, B, C, Out> {
     public <GT> ImmutableConstructionStep<In, GT, A, ConstructorBuilder2<In, B, C, Out>> from(Function<In, GT> getter) {
         return new ImmutableConstructionStep<>(
                 getter,
-                (aGetter) -> new ConstructorBuilder2<>(constructor.dependentApply(aGetter))
+                (aGetter) -> new ConstructorBuilder2<>(applyGetter(aGetter))
         );
+    }
+
+    private Fn3<In, B, C, Out> applyGetter(Function<In, A> getter) {
+        return (in, b, c) -> constructor.apply(in, getter.apply(in), b, c);
     }
 }

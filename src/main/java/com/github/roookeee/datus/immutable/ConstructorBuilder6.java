@@ -28,14 +28,18 @@ public class ConstructorBuilder6<In, A, B, C, D, E, F, Out> {
      * Starts a construction step for the first parameter of the contained constructor starting from the provided getter
      * of the input type.
      *
-     * @param <GT>   the getters return type
+     * @param <GT> the getters return type
      * @param getter the getter to start the construction process from
      * @return a construction step to define the building process of the constructors first parameter
      */
     public <GT> ImmutableConstructionStep<In, GT, A, ConstructorBuilder5<In, B, C, D, E, F, Out>> from(Function<In, GT> getter) {
         return new ImmutableConstructionStep<>(
                 getter,
-                (aGetter) -> new ConstructorBuilder5<>(constructor.dependentApply(aGetter))
+                (aGetter) -> new ConstructorBuilder5<>(applyGetter(aGetter))
         );
+    }
+
+    private Fn6<In, B, C, D, E, F, Out> applyGetter(Function<In, A> getter) {
+        return (in, b, c, d, e, f) -> constructor.apply(in, getter.apply(in), b, c, d, e, f);
     }
 }
