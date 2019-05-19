@@ -13,6 +13,7 @@ public class HighArgImmutableMapperTest {
 
     @Test
     public void basicCopyingShouldWorkCorrectly() {
+        //given
         //why o why java-type inference, why do you hate me so much
         Mapper<DetailedPerson, DetailedPerson> mapper = new ConstructorBuilder8
                 <DetailedPerson, String, String, String, String, String, String, String, String, DetailedPerson>
@@ -37,8 +38,11 @@ public class HighArgImmutableMapperTest {
                 "city",
                 "occupation"
         );
+
+        //when
         DetailedPerson result = mapper.convert(source);
 
+        //then
         assertThat(result.getUniqueId()).isEqualTo("uniqueId");
         assertThat(result.getSalutation()).isEqualTo("salutation");
         assertThat(result.getFirstName()).isEqualTo("firstName");
@@ -51,6 +55,7 @@ public class HighArgImmutableMapperTest {
 
     @Test
     public void simpleUsageShouldWorkCorrectly() {
+        //given
         Mapper<Object, DetailedPerson> mapper = new ConstructorBuilder8<>(DetailedPerson::new)
                 .from(Function.identity()).mapTo(o -> "0")
                 .from(Function.identity()).mapTo(o -> "1")
@@ -62,8 +67,10 @@ public class HighArgImmutableMapperTest {
                 .from(Function.identity()).mapTo(o -> "7")
                 .build();
 
+        //when
         DetailedPerson result = mapper.convert(new Object());
 
+        //then
         assertThat(result.getUniqueId()).isEqualTo("0");
         assertThat(result.getSalutation()).isEqualTo("1");
         assertThat(result.getFirstName()).isEqualTo("2");
@@ -76,6 +83,7 @@ public class HighArgImmutableMapperTest {
 
     @Test
     public void logicfulUsageShouldWorkCorrectly() {
+        //given
         //why o why java-type inference, why do you hate me so much
         Mapper<DetailedPerson, DetailedPerson> mapper = new ConstructorBuilder8
                 <DetailedPerson, String, String, String, String, String, String, String, String, DetailedPerson>
@@ -100,8 +108,11 @@ public class HighArgImmutableMapperTest {
                 "city",
                 "occupation"
         );
+
+        //when
         DetailedPerson result = mapper.convert(source);
 
+        //then
         assertThat(result.getUniqueId()).isEqualTo("uniqueId!");
         assertThat(result.getSalutation()).isEqualTo("salutation!");
         assertThat(result.getFirstName()).isEqualTo("firstName!");

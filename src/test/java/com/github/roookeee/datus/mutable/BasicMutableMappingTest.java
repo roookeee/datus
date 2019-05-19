@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class BasicMutableMappingTest {
-    private static Mapper<Person, Person> mapper;
     private Person testPerson;
 
     @BeforeEach
@@ -18,19 +17,22 @@ public class BasicMutableMappingTest {
         testPerson.setName("name");
         testPerson.setLastName("lastname");
         testPerson.setBirthDate("birthday");
+    }
 
-        mapper = new MutableMappingBuilder<Person, Person>(Person::new)
+    @Test
+    public void shouldWorkAsExpected() {
+        //given
+        Mapper<Person, Person> mapper = new MutableMappingBuilder<Person, Person>(Person::new)
                 .from(Person::getAddress).into(Person::setAddress)
                 .from(Person::getName).into(Person::setName)
                 .from(Person::getLastName).into(Person::setLastName)
                 .from(Person::getBirthDate).into(Person::setBirthDate)
                 .build();
-    }
 
-    @Test
-    public void shouldWorkAsExpected() {
+        //when
         Person result = mapper.convert(testPerson);
 
+        //then
         assertThat(result).isNotNull();
         assertThat(result.getAddress()).isEqualTo(testPerson.getAddress());
         assertThat(result.getName()).isEqualTo(testPerson.getName());

@@ -13,6 +13,7 @@ public class MutableMappingBuilderTest {
 
     @Test
     public void shouldAddSpyCorrectly() {
+        //given
         List<String> spyList = new ArrayList<>();
         Mapper<String, String> mapper = new MutableMappingBuilder<String, String>(String::new)
                 .spy((in, out) -> spyList.add(in))
@@ -20,8 +21,10 @@ public class MutableMappingBuilderTest {
                 .spy((in, out) -> spyList.add(out))
                 .build();
 
+        //when
         mapper.convert("input");
 
+        //then
         assertThat(spyList).hasSize(2);
         assertThat(spyList.get(0))
                 .withFailMessage("Spy should have been called with the initial value")
