@@ -6,8 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.function.Function;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class HighArgImmutableMapperTest {
 
@@ -40,14 +39,14 @@ public class HighArgImmutableMapperTest {
         );
         DetailedPerson result = mapper.convert(source);
 
-        assertThat("Field should have correct value", result.getUniqueId(), is("uniqueId"));
-        assertThat("Field should have correct value", result.getSalutation(), is("salutation"));
-        assertThat("Field should have correct value", result.getFirstName(), is("firstName"));
-        assertThat("Field should have correct value", result.getLastName(), is("lastName"));
-        assertThat("Field should have correct value", result.getAddress(), is("address"));
-        assertThat("Field should have correct value", result.getAddressExtra(), is("addressExtra"));
-        assertThat("Field should have correct value", result.getCity(), is("city"));
-        assertThat("Field should have correct value", result.getOccupation(), is("occupation"));
+        assertThat(result.getUniqueId()).isEqualTo("uniqueId");
+        assertThat(result.getSalutation()).isEqualTo("salutation");
+        assertThat(result.getFirstName()).isEqualTo("firstName");
+        assertThat(result.getLastName()).isEqualTo("lastName");
+        assertThat(result.getAddress()).isEqualTo("address");
+        assertThat(result.getAddressExtra()).isEqualTo("addressExtra");
+        assertThat(result.getCity()).isEqualTo("city");
+        assertThat(result.getOccupation()).isEqualTo("occupation");
     }
 
     @Test
@@ -65,14 +64,14 @@ public class HighArgImmutableMapperTest {
 
         DetailedPerson result = mapper.convert(new Object());
 
-        assertThat("Field should have correct value", result.getUniqueId(), is("0"));
-        assertThat("Field should have correct value", result.getSalutation(), is("1"));
-        assertThat("Field should have correct value", result.getFirstName(), is("2"));
-        assertThat("Field should have correct value", result.getLastName(), is("3"));
-        assertThat("Field should have correct value", result.getAddress(), is("4"));
-        assertThat("Field should have correct value", result.getAddressExtra(), is("5"));
-        assertThat("Field should have correct value", result.getCity(), is("6"));
-        assertThat("Field should have correct value", result.getOccupation(), is("7"));
+        assertThat(result.getUniqueId()).isEqualTo("0");
+        assertThat(result.getSalutation()).isEqualTo("1");
+        assertThat(result.getFirstName()).isEqualTo("2");
+        assertThat(result.getLastName()).isEqualTo("3");
+        assertThat(result.getAddress()).isEqualTo("4");
+        assertThat(result.getAddressExtra()).isEqualTo("5");
+        assertThat(result.getCity()).isEqualTo("6");
+        assertThat(result.getOccupation()).isEqualTo("7");
     }
 
     @Test
@@ -103,14 +102,14 @@ public class HighArgImmutableMapperTest {
         );
         DetailedPerson result = mapper.convert(source);
 
-        assertThat("Field should have correct value", result.getUniqueId(), is("uniqueId!"));
-        assertThat("Field should have correct value", result.getSalutation(), is("salutation!"));
-        assertThat("Field should have correct value", result.getFirstName(), is("firstName!"));
-        assertThat("Field should have correct value", result.getLastName(), is("lastName!"));
-        assertThat("Field should have correct value", result.getAddress(), is("address!"));
-        assertThat("Field should have correct value", result.getAddressExtra(), is("addressExtra!"));
-        assertThat("Field should have correct value", result.getCity(), is("city!"));
-        assertThat("Field should have correct value", result.getOccupation(), is("occupation!"));
+        assertThat(result.getUniqueId()).isEqualTo("uniqueId!");
+        assertThat(result.getSalutation()).isEqualTo("salutation!");
+        assertThat(result.getFirstName()).isEqualTo("firstName!");
+        assertThat(result.getLastName()).isEqualTo("lastName!");
+        assertThat(result.getAddress()).isEqualTo("address!");
+        assertThat(result.getAddressExtra()).isEqualTo("addressExtra!");
+        assertThat(result.getCity()).isEqualTo("city!");
+        assertThat(result.getOccupation()).isEqualTo("occupation!");
     }
 
     private String appendExclamationMark(String input) {

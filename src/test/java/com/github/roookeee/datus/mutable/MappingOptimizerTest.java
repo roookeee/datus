@@ -8,8 +8,7 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class MappingOptimizerTest {
 
@@ -22,9 +21,9 @@ public class MappingOptimizerTest {
 
             BiFunction<String, String, String> function = MappingOptimizer.flattenAndOptimizeMappings(functions);
             String result = function.apply("", "");
-            String expected = String.join("", parts);
+            String expectedInOrder = String.join("", parts);
 
-            assertThat("Should compute the right value (retained order)", result, is(expected));
+            assertThat(result).isEqualTo(expectedInOrder);
         }
 
     }

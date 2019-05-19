@@ -6,8 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Objects;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class MutableMappingPipingTest {
     @Test
@@ -30,8 +29,8 @@ public class MutableMappingPipingTest {
         Person resultValidInput = mapper.convert(personValid);
 
         //then
-        assertThat("address should not have been set, pre-map predicate was false", resultInvalidInput.getAddress(), is(""));
-        assertThat("address should have been set, pre-map predicate was true", resultValidInput.getAddress(), is("ADDRESS"));
+        assertThat(resultInvalidInput.getAddress()).isEqualTo("");
+        assertThat(resultValidInput.getAddress()).isEqualTo("ADDRESS");
     }
 
     @Test
@@ -48,7 +47,7 @@ public class MutableMappingPipingTest {
         Person result = mapper.convert(personInvalid);
 
         //then
-        assertThat("should have used the map", result.getAddress(), is("ADDRESS"));
+        assertThat(result.getAddress()).isEqualTo("ADDRESS");
     }
 
     @Test
@@ -70,7 +69,7 @@ public class MutableMappingPipingTest {
         Person resultValidInput = mapper.convert(personValid);
 
         //then
-        assertThat("Should have considered post-map when and stopped", resultInvalidInput.getAddress(), is("fallback"));
-        assertThat("Should have considered post-map when and proceeded", resultValidInput.getAddress(), is("ADDRESS"));
+        assertThat(resultInvalidInput.getAddress()).isEqualTo("fallback");
+        assertThat(resultValidInput.getAddress()).isEqualTo("ADDRESS");
     }
 }

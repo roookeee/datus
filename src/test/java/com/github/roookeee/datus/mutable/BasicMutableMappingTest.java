@@ -5,10 +5,7 @@ import com.github.roookeee.datus.testutil.Person;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsNot.not;
-import static org.hamcrest.core.IsSame.sameInstance;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class BasicMutableMappingTest {
     private static Mapper<Person, Person> mapper;
@@ -34,26 +31,10 @@ public class BasicMutableMappingTest {
     public void shouldWorkAsExpected() {
         Person result = mapper.convert(testPerson);
 
-        assertThat("A new instance should have been created", result, not(sameInstance(testPerson)));
-        assertThat(
-                "The address of the mapped instance should be equal to its origin",
-                result.getAddress(),
-                is(testPerson.getAddress())
-        );
-        assertThat(
-                "The name of the mapped instance should be equal to its origin",
-                result.getName(),
-                is(testPerson.getName())
-        );
-        assertThat(
-                "The lastname of the mapped instance should be equal to its origin",
-                result.getLastName(),
-                is(testPerson.getLastName())
-        );
-        assertThat(
-                "The birthdate of the mapped instance should be equal to its origin",
-                result.getBirthDate(),
-                is(testPerson.getBirthDate())
-        );
+        assertThat(result).isNotNull();
+        assertThat(result.getAddress()).isEqualTo(testPerson.getAddress());
+        assertThat(result.getName()).isEqualTo(testPerson.getName());
+        assertThat(result.getLastName()).isEqualTo(testPerson.getLastName());
+        assertThat(result.getBirthDate()).isEqualTo(testPerson.getBirthDate());
     }
 }

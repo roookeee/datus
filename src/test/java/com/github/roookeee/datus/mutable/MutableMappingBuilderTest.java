@@ -7,9 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class MutableMappingBuilderTest {
 
@@ -24,9 +22,13 @@ public class MutableMappingBuilderTest {
 
         mapper.convert("input");
 
-        assertThat("Spy should have added two elements", spyList, hasSize(2));
-        assertThat("Spy should have been called on initial value", spyList.get(0), is("input"));
-        assertThat("Spy should have been called on transformed value", spyList.get(1), is("INPUT"));
+        assertThat(spyList).hasSize(2);
+        assertThat(spyList.get(0))
+                .withFailMessage("Spy should have been called with the initial value")
+                .isEqualTo("input");
+        assertThat(spyList.get(1))
+                .withFailMessage("Spy should have been called with the transformed  value")
+                .isEqualTo("INPUT");
     }
 
 }

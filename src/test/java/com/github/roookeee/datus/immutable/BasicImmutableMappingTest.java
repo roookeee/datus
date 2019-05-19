@@ -7,8 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Objects;
 import java.util.function.Function;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class BasicImmutableMappingTest {
 
@@ -21,7 +20,7 @@ public class BasicImmutableMappingTest {
         Item source = new Item("1");
         Item result = mapper.convert(source);
 
-        assertThat("Should have mapped correctly", result.getId(), is("1"));
+        assertThat(result.getId()).isEqualTo("1");
     }
 
     @Test
@@ -36,8 +35,8 @@ public class BasicImmutableMappingTest {
         Item aResult = mapper.convert(aSource);
         Item bResult = mapper.convert(bSource);
 
-        assertThat("Should have mapped correctly", aResult.getId(), is("1"));
-        assertThat("Should have mapped correctly", bResult.getId(), is("-1"));
+        assertThat(aResult.getId()).isEqualTo("1");
+        assertThat(bResult.getId()).isEqualTo("-1");
     }
 
     @Test
@@ -52,8 +51,8 @@ public class BasicImmutableMappingTest {
         Item aResult = mapper.convert(aSource);
         Item bResult = mapper.convert(bSource);
 
-        assertThat("Should have mapped correctly", aResult.getId(), is("1"));
-        assertThat("Should have mapped correctly", bResult.getId(), is("-1"));
+        assertThat(aResult.getId()).isEqualTo("1");
+        assertThat(bResult.getId()).isEqualTo("-1");
     }
 
     @Test
@@ -68,8 +67,8 @@ public class BasicImmutableMappingTest {
         Item aResult = mapper.convert(aSource);
         Item bResult = mapper.convert(bSource);
 
-        assertThat("Should have mapped correctly", aResult.getId(), is("1"));
-        assertThat("Should have mapped correctly", bResult.getId(), is("20"));
+        assertThat(aResult.getId()).isEqualTo("1");
+        assertThat(bResult.getId()).isEqualTo("20");
     }
 
     @Test
@@ -81,7 +80,7 @@ public class BasicImmutableMappingTest {
         Item source = new Item("0");
         Item result = mapper.convert(source);
 
-        assertThat("Should have mapped correctly", result.getId(), is("01"));
+        assertThat(result.getId()).isEqualTo("01");
     }
 
     @Test
@@ -97,6 +96,6 @@ public class BasicImmutableMappingTest {
         Item source = new Item(null);
         Item result = mapper.convert(source);
 
-        assertThat("Should have mapped correctly", result.getId(), is("error"));
+        assertThat(result.getId()).isEqualTo("error");
     }
 }

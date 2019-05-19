@@ -6,8 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ConstructorBuilderTest {
 
@@ -21,7 +20,7 @@ public class ConstructorBuilderTest {
 
         String result = mapper.convert("Hello world!");
 
-        assertThat("Spy should have capture value", target.get(0), is("Hello world!"));
+        assertThat(target.get(0)).isEqualTo("Hello world!");
     }
 
     @Test
@@ -32,7 +31,7 @@ public class ConstructorBuilderTest {
 
         String result = mapper.convert("Hello world!");
 
-        assertThat("Spy should have capture value", result, is("process result"));
+        assertThat(result).isEqualTo("process result");
     }
 
 }
