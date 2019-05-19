@@ -30,7 +30,7 @@ public class ConditionalStart<In, AffectedType, ConstructionStep> {
 
     /**
      * Handle the matching predicate by using given value.
-     * <p>
+     *
      * Note: The object is taken as is, consider using {@link #then(Supplier)} if the given object is stateful /
      * not thread-safe or in any other way mutably shared between output instances.
      *
@@ -38,7 +38,7 @@ public class ConditionalStart<In, AffectedType, ConstructionStep> {
      * @return the construction step this instance has originated from
      */
     public ConditionalEnd<In, AffectedType, ConstructionStep> then(AffectedType value) {
-        return then((in,v) -> value);
+        return then((in, v) -> value);
     }
 
     /**
@@ -48,28 +48,28 @@ public class ConditionalStart<In, AffectedType, ConstructionStep> {
      * @return an object to complete the conditional handling process
      */
     public ConditionalEnd<In, AffectedType, ConstructionStep> then(Supplier<AffectedType> supplier) {
-        return then((in,v) -> supplier.get());
+        return then((in, v) -> supplier.get());
     }
 
 
     /**
-     * Handle the matching predicate by using the given function on the input type to generate a value.
-     * <p>
-     * Note: Only use this method if you know what you are doing, there is no guarantee about the state of the input
-     * object other than that it is (depending on your usage) probably not null.
+     * Handle the matching predicate by using the given function on the the value matched by the predicate.
+     *
+     * Note: Only use this method if you know what you are doing as there is no guarantee about the state of the input
+     * object.
      *
      * @param function the function to use
      * @return an object to complete the conditional handling process
      */
-    public ConditionalEnd<In, AffectedType, ConstructionStep> then(Function<In, AffectedType> function) {
-        return then((in,v) -> function.apply(in));
+    public ConditionalEnd<In, AffectedType, ConstructionStep> then(Function<AffectedType, AffectedType> function) {
+        return then((in, v) -> function.apply(v));
     }
 
     /**
-     * Handle the matching predicate by using the given function on the input type to generate a value.
-     * <p>
-     * Note: Only use this method if you know what you are doing, there is no guarantee about the state of the input
-     * object / the value this handling is based on other than that they are (depending on your usage) probably not null.
+     * Handle the matching predicate by using the given function to generate a value.
+     *
+     * Note: Only use this method if you know what you are doing as there is no guarantee about the state of the input
+     * objects.
      *
      * @param function the function to use
      * @return an object to complete the conditional handling process

@@ -26,7 +26,9 @@ public class BasicImmutableMappingTest {
     @Test
     public void conditionalMappingWithValueFallbackShouldWorkCorrectly() {
         Mapper<Item, Item> mapper = new ConstructorBuilder1<Item, String, Item>(Item::new)
-                .from(Item::getId).given(Objects::isNull).then("-1").proceed().mapTo(Function.identity())
+                .from(Item::getId)
+                    .given(Objects::isNull).then("-1").proceed()
+                .mapTo(Function.identity())
                 .build();
 
         Item aSource = new Item("1");
@@ -42,7 +44,9 @@ public class BasicImmutableMappingTest {
     @Test
     public void conditionalMappingWithSupplierFallbackShouldWorkCorrectly() {
         Mapper<Item, Item> mapper = new ConstructorBuilder1<Item, String, Item>(Item::new)
-                .from(Item::getId).given(Objects::isNull).then(() -> "-1").proceed().mapTo(Function.identity())
+                .from(Item::getId)
+                    .given(Objects::isNull).then(() -> "-1").proceed()
+                    .mapTo(Function.identity())
                 .build();
 
         Item aSource = new Item("1");
@@ -58,7 +62,7 @@ public class BasicImmutableMappingTest {
     @Test
     public void conditionalMappingWithFnFallbackShouldWorkCorrectly() {
         Mapper<Item, Item> mapper = new ConstructorBuilder1<Item, String, Item>(Item::new)
-                .from(Item::getId).given("2"::equals).then(in -> in.getId() + "0").proceed().mapTo(Function.identity())
+                .from(Item::getId).given("2"::equals).then((in,v) -> in.getId() + "0").proceed().mapTo(Function.identity())
                 .build();
 
         Item aSource = new Item("1");
@@ -69,6 +73,78 @@ public class BasicImmutableMappingTest {
 
         assertThat(aResult.getId()).isEqualTo("1");
         assertThat(bResult.getId()).isEqualTo("20");
+    }
+
+    @Test
+    public void conditionalMappingWithValueOrElseShouldWorkCorrectly() {
+        Mapper<Item, Item> mapper = new ConstructorBuilder1<Item, String, Item>(Item::new)
+                .from(Item::getId)
+                    .given(Objects::isNull).then("fallback").orElse("none-fallback")
+                .mapTo(Function.identity())
+                .build();
+
+        Item aSource = new Item(null);
+        Item bSource = new Item("");
+
+        Item aResult = mapper.convert(aSource);
+        Item bResult = mapper.convert(bSource);
+
+        assertThat(aResult.getId()).isEqualTo("fallback");
+        assertThat(bResult.getId()).isEqualTo("none-fallback");
+    }
+
+    @Test
+    public void conditionalMappingWithSupplierOrElseShouldWorkCorrectly() {
+        Mapper<Item, Item> mapper = new ConstructorBuilder1<Item, String, Item>(Item::new)
+                .from(Item::getId)
+                    .given(Objects::isNull).then("fallback").orElse(() -> "none-fallback")
+                .mapTo(Function.identity())
+                .build();
+
+        Item aSource = new Item(null);
+        Item bSource = new Item("");
+
+        Item aResult = mapper.convert(aSource);
+        Item bResult = mapper.convert(bSource);
+
+        assertThat(aResult.getId()).isEqualTo("fallback");
+        assertThat(bResult.getId()).isEqualTo("none-fallback");
+    }
+
+    @Test
+    public void conditionalMappingWithFnOrElseShouldWorkCorrectly() {
+        Mapper<Item, Item> mapper = new ConstructorBuilder1<Item, String, Item>(Item::new)
+                .from(Item::getId)
+                    .given(Objects::isNull).then("fallback").orElse(v -> v+"-data")
+                .mapTo(Function.identity())
+                .build();
+
+        Item aSource = new Item(null);
+        Item bSource = new Item("value");
+
+        Item aResult = mapper.convert(aSource);
+        Item bResult = mapper.convert(bSource);
+
+        assertThat(aResult.getId()).isEqualTo("fallback");
+        assertThat(bResult.getId()).isEqualTo("value-data");
+    }
+
+    @Test
+    public void conditionalMappingWithBiFnOrElseShouldWorkCorrectly() {
+        Mapper<Item, Item> mapper = new ConstructorBuilder1<Item, String, Item>(Item::new)
+                .from(Item::getId)
+                    .given(Objects::isNull).then("fallback").orElse((in,v) -> in.getClass().getSimpleName())
+                .mapTo(Function.identity())
+                .build();
+
+        Item aSource = new Item(null);
+        Item bSource = new Item("value");
+
+        Item aResult = mapper.convert(aSource);
+        Item bResult = mapper.convert(bSource);
+
+        assertThat(aResult.getId()).isEqualTo("fallback");
+        assertThat(bResult.getId()).isEqualTo("Item");
     }
 
     @Test
@@ -87,9 +163,9 @@ public class BasicImmutableMappingTest {
     public void whenBeforeAndAfterPipingShouldWorkCorrectly() {
         Mapper<Item, Item> mapper = new ConstructorBuilder1<Item, String, Item>(Item::new)
                 .from(Item::getId)
-                .given(Objects::isNull).then("-1").proceed()
-                .map(i -> i + "1")
-                .given("-11"::equals).then("error").proceed()
+                    .given(Objects::isNull).then("-1").proceed()
+                    .map(i -> i + "1")
+                    .given("-11"::equals).then("error").proceed()
                 .mapTo(Function.identity())
                 .build();
 
