@@ -1,8 +1,8 @@
 package com.github.roookeee.datus.immutable;
 
-import com.github.roookeee.datus.mutable.MutableMappingBuilder;
 import com.github.roookeee.datus.api.Mapper;
 import com.github.roookeee.datus.functions.Fn1;
+import com.github.roookeee.datus.mutable.MutableMappingBuilder;
 
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;

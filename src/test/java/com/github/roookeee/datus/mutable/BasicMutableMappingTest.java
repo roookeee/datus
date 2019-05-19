@@ -1,7 +1,7 @@
 package com.github.roookeee.datus.mutable;
 
-import com.github.roookeee.datus.testutil.Person;
 import com.github.roookeee.datus.api.Mapper;
+import com.github.roookeee.datus.testutil.Person;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

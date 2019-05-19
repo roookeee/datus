@@ -96,7 +96,7 @@ public interface Mapper<In, Out> {
     /**
      * Creates a new mapper that considers the given predicates before and after applying the conversion process of this mapper.
      *
-     * @param inputPredicate the predicate to consider before converting input instances
+     * @param inputPredicate  the predicate to consider before converting input instances
      * @param outputPredicate the predicate to consider after converting input instances
      * @return a new mapper that expresses the optionality of an output instance because of the given predicates
      */

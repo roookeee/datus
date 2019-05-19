@@ -1,8 +1,9 @@
 package com.github.roookeee.datus.immutable;
 
+import com.github.roookeee.datus.conditional.ConditionalStart;
 import com.github.roookeee.datus.mutable.MutableConstructionStep;
-import com.github.roookeee.datus.general.ConditionalHandlerBuilder;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -64,21 +65,39 @@ public class ImmutableConstructionStep<In, CurrentType, TargetType, NextConstruc
      * @param predicate the predicate to use
      * @return a builer to configure the handling mechanism when the given predicate matches
      */
-    public ConditionalHandlerBuilder<In, CurrentType, ImmutableConstructionStep<In, CurrentType, TargetType, NextConstructor>> given(
+    public ConditionalStart<In, CurrentType, ImmutableConstructionStep<In, CurrentType, TargetType, NextConstructor>> given(
             Predicate<CurrentType> predicate
     ) {
-        return new ConditionalHandlerBuilder<>(
-                fallback -> new ImmutableConstructionStep<>(getterWithFallback(predicate, fallback), nextConstructorGetter)
+        return new ConditionalStart<>(
+                this,
+                predicate,
+                this::weaveConditional
         );
     }
 
-    private Function<In, CurrentType> getterWithFallback(Predicate<CurrentType> predicate, Function<In, CurrentType> fallback) {
+    private ImmutableConstructionStep<In, CurrentType, TargetType, NextConstructor> weaveConditional(
+            ImmutableConstructionStep<In, CurrentType, TargetType, NextConstructor> base,
+            Predicate<CurrentType> predicate,
+            BiFunction<In, CurrentType, CurrentType> matching,
+            BiFunction<In, CurrentType, CurrentType> orElse
+    ) {
+        return new ImmutableConstructionStep<>(
+                base.getterWithPredicateHandler(predicate, matching, orElse),
+                nextConstructorGetter
+        );
+    }
+
+    private Function<In, CurrentType> getterWithPredicateHandler(
+            Predicate<CurrentType> predicate,
+            BiFunction<In, CurrentType, CurrentType> matching,
+            BiFunction<In, CurrentType, CurrentType> orElse
+    ) {
         return in -> {
             CurrentType value = getter.apply(in);
             if (predicate.test(value)) {
-                return fallback.apply(in);
+                return matching.apply(in, value);
             }
-            return value;
+            return orElse.apply(in, value);
         };
     }
 }

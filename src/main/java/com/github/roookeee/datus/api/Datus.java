@@ -1,21 +1,7 @@
 package com.github.roookeee.datus.api;
 
-import com.github.roookeee.datus.functions.Fn1;
-import com.github.roookeee.datus.functions.Fn2;
-import com.github.roookeee.datus.functions.Fn3;
-import com.github.roookeee.datus.functions.Fn4;
-import com.github.roookeee.datus.functions.Fn5;
-import com.github.roookeee.datus.functions.Fn6;
-import com.github.roookeee.datus.functions.Fn7;
-import com.github.roookeee.datus.functions.Fn8;
-import com.github.roookeee.datus.immutable.ConstructorBuilder1;
-import com.github.roookeee.datus.immutable.ConstructorBuilder2;
-import com.github.roookeee.datus.immutable.ConstructorBuilder3;
-import com.github.roookeee.datus.immutable.ConstructorBuilder4;
-import com.github.roookeee.datus.immutable.ConstructorBuilder5;
-import com.github.roookeee.datus.immutable.ConstructorBuilder6;
-import com.github.roookeee.datus.immutable.ConstructorBuilder7;
-import com.github.roookeee.datus.immutable.ConstructorBuilder8;
+import com.github.roookeee.datus.functions.*;
+import com.github.roookeee.datus.immutable.*;
 import com.github.roookeee.datus.mutable.MutableMappingBuilder;
 
 import java.util.function.Supplier;
@@ -36,8 +22,8 @@ public class Datus<In, Out> {
      *
      * @param inputType  the input type (used to help java infer the arguments for the coming function calls)
      * @param outputType the output type (used to help java infer the arguments for the coming function calls)
-     * @param <In>    the input type parameter
-     * @param <Out>   the output type parameter
+     * @param <In>       the input type parameter
+     * @param <Out>      the output type parameter
      * @return the typed context
      */
     public static <In, Out> Datus<In, Out> forTypes(Class<In> inputType, Class<Out> outputType) {

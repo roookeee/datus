@@ -28,7 +28,7 @@ public class ConstructorBuilder4<In, A, B, C, D, Out> {
      * Directly binds the contained constructors first parameter to the provided getter of the input type.
      * (Utility function that works like {@link #from}.to(Function.identity()))
      *
-     * @param <GT> the getters return type
+     * @param <GT>   the getters return type
      * @param getter the getter to use
      * @return the next constructor builder to further define the building process of the output type
      */

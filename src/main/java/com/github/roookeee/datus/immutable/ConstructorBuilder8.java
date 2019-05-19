@@ -28,7 +28,7 @@ public class ConstructorBuilder8<In, A, B, C, D, E, F, G, H, Out> {
      * Starts a construction step for the first parameter of the contained constructor starting from the provided getter
      * of the input type.
      *
-     * @param <GT> the getters return type
+     * @param <GT>   the getters return type
      * @param getter the getter to start the construction process from
      * @return a construction step to define the building process of the constructors first parameter
      */

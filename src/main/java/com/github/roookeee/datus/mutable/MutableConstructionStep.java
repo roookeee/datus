@@ -1,6 +1,6 @@
 package com.github.roookeee.datus.mutable;
 
-import com.github.roookeee.datus.general.ConditionalHandlerBuilder;
+import com.github.roookeee.datus.conditional.ConditionalStart;
 
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -78,19 +78,37 @@ public class MutableConstructionStep<In, CurrentType, Out> {
      * @param predicate the predicate to use
      * @return a builder to configure the handling mechanism when the given predicate matches
      */
-    public ConditionalHandlerBuilder<In, CurrentType, MutableConstructionStep<In, CurrentType, Out>> given(Predicate<CurrentType> predicate) {
-        return new ConditionalHandlerBuilder<>(
-                fallback -> new MutableConstructionStep<>(builder, getterWithFallback(predicate, fallback))
+    public ConditionalStart<In, CurrentType, MutableConstructionStep<In, CurrentType, Out>> given(Predicate<CurrentType> predicate) {
+        return new ConditionalStart<>(
+                this,
+                predicate,
+                this::weaveConditional
         );
     }
 
-    private Function<In, CurrentType> getterWithFallback(Predicate<CurrentType> predicate, Function<In, CurrentType> fallback) {
+    private MutableConstructionStep<In, CurrentType, Out> weaveConditional(
+            MutableConstructionStep<In, CurrentType, Out> base,
+            Predicate<CurrentType> predicate,
+            BiFunction<In, CurrentType, CurrentType> matching,
+            BiFunction<In, CurrentType, CurrentType> orElse
+    ) {
+        return new MutableConstructionStep<>(
+                builder,
+                base.getterWithPredicateHandler(predicate, matching, orElse)
+        );
+    }
+
+    private Function<In, CurrentType> getterWithPredicateHandler(
+            Predicate<CurrentType> predicate,
+            BiFunction<In, CurrentType, CurrentType> matching,
+            BiFunction<In, CurrentType, CurrentType> orElse
+    ) {
         return in -> {
             CurrentType value = getter.apply(in);
             if (predicate.test(value)) {
-                return fallback.apply(in);
+                return matching.apply(in, value);
             }
-            return value;
+            return orElse.apply(in, value);
         };
     }
 }

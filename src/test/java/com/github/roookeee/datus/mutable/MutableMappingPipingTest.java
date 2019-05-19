@@ -1,7 +1,7 @@
 package com.github.roookeee.datus.mutable;
 
-import com.github.roookeee.datus.testutil.Person;
 import com.github.roookeee.datus.api.Mapper;
+import com.github.roookeee.datus.testutil.Person;
 import org.junit.jupiter.api.Test;
 
 import java.util.Objects;
@@ -19,7 +19,10 @@ public class MutableMappingPipingTest {
         personValid.setAddress("address");
 
         Mapper<Person, Person> mapper = new MutableMappingBuilder<Person, Person>(Person::new)
-                .from(Person::getAddress).given(Objects::isNull).fallback("").map(String::toUpperCase).into(Person::setAddress)
+                .from(Person::getAddress)
+                .given(Objects::isNull).then("").proceed()
+                .map(String::toUpperCase)
+                .into(Person::setAddress)
                 .build();
 
         //when
@@ -57,7 +60,9 @@ public class MutableMappingPipingTest {
         personValid.setAddress("address");
 
         Mapper<Person, Person> mapper = new MutableMappingBuilder<Person, Person>(Person::new)
-                .from(Person::getAddress).map(String::toUpperCase).given(String::isEmpty).fallback("fallback").into(Person::setAddress)
+                .from(Person::getAddress).map(String::toUpperCase)
+                .given(String::isEmpty).then("fallback").proceed()
+                .into(Person::setAddress)
                 .build();
 
         //when
