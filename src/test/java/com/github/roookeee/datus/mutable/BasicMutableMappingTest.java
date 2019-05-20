@@ -5,6 +5,8 @@ import com.github.roookeee.datus.testutil.Person;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Objects;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class BasicMutableMappingTest {
@@ -20,7 +22,7 @@ public class BasicMutableMappingTest {
     }
 
     @Test
-    public void shouldWorkAsExpected() {
+    public void basicUsageShouldWorkAsExpected() {
         //given
         Mapper<Person, Person> mapper = new MutableMappingBuilder<Person, Person>(Person::new)
                 .from(Person::getAddress).into(Person::setAddress)
@@ -38,5 +40,43 @@ public class BasicMutableMappingTest {
         assertThat(result.getName()).isEqualTo(testPerson.getName());
         assertThat(result.getLastName()).isEqualTo(testPerson.getLastName());
         assertThat(result.getBirthDate()).isEqualTo(testPerson.getBirthDate());
+    }
+
+    @Test
+    public void basicConditionalUsageShouldWorkAsExpected() {
+        //given
+        Mapper<Person, Person> mapper = new MutableMappingBuilder<Person, Person>(Person::new)
+                .from(Person::getAddress)
+                    .given(Objects::isNull).then("fallback-address").proceed()
+                    .into(Person::setAddress)
+                .build();
+        Person person = new Person();
+        person.setAddress(null);
+
+        //when
+        Person result = mapper.convert(person);
+
+        //then
+        assertThat(result).isNotNull();
+        assertThat(result.getAddress()).isEqualTo("fallback-address");
+    }
+
+    @Test
+    public void basicTwoCasedConditionalUsageShouldWorkAsExpected() {
+        //given
+        Mapper<Person, Person> mapper = new MutableMappingBuilder<Person, Person>(Person::new)
+                .from(Person::getAddress)
+                    .given(Objects::isNull).then("fallback-address").orElse(addr -> addr.toUpperCase())
+                .into(Person::setAddress)
+                .build();
+        Person person = new Person();
+        person.setAddress("address");
+
+        //when
+        Person result = mapper.convert(person);
+
+        //then
+        assertThat(result).isNotNull();
+        assertThat(result.getAddress()).isEqualTo("ADDRESS");
     }
 }
