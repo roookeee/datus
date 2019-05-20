@@ -1,5 +1,6 @@
 package com.github.roookeee.datus.immutable;
 
+import com.github.roookeee.datus.api.Datus;
 import com.github.roookeee.datus.api.Mapper;
 import com.github.roookeee.datus.testutil.DetailedPerson;
 import org.junit.jupiter.api.Test;
@@ -15,9 +16,8 @@ public class HighArgImmutableMapperTest {
     public void basicCopyingShouldWorkCorrectly() {
         //given
         //why o why java-type inference, why do you hate me so much
-        Mapper<DetailedPerson, DetailedPerson> mapper = new ConstructorBuilder8
-                <DetailedPerson, String, String, String, String, String, String, String, String, DetailedPerson>
-                (DetailedPerson::new)
+        Mapper<DetailedPerson, DetailedPerson> mapper = Datus.forTypes(DetailedPerson.class, DetailedPerson.class)
+                .immutable(DetailedPerson::new)
                 .take(DetailedPerson::getUniqueId)
                 .take(DetailedPerson::getSalutation)
                 .take(DetailedPerson::getFirstName)
@@ -56,7 +56,8 @@ public class HighArgImmutableMapperTest {
     @Test
     public void simpleUsageShouldWorkCorrectly() {
         //given
-        Mapper<Object, DetailedPerson> mapper = new ConstructorBuilder8<>(DetailedPerson::new)
+        Mapper<Object, DetailedPerson> mapper = Datus.forTypes(Object.class, DetailedPerson.class)
+                .immutable(DetailedPerson::new)
                 .from(Function.identity()).mapTo(o -> "0")
                 .from(Function.identity()).mapTo(o -> "1")
                 .from(Function.identity()).mapTo(o -> "2")
@@ -85,9 +86,8 @@ public class HighArgImmutableMapperTest {
     public void logicfulUsageShouldWorkCorrectly() {
         //given
         //why o why java-type inference, why do you hate me so much
-        Mapper<DetailedPerson, DetailedPerson> mapper = new ConstructorBuilder8
-                <DetailedPerson, String, String, String, String, String, String, String, String, DetailedPerson>
-                (DetailedPerson::new)
+        Mapper<DetailedPerson, DetailedPerson> mapper = Datus.forTypes(DetailedPerson.class, DetailedPerson.class)
+                .immutable(DetailedPerson::new)
                 .from(DetailedPerson::getUniqueId).mapTo(this::appendExclamationMark)
                 .from(DetailedPerson::getSalutation).mapTo(this::appendExclamationMark)
                 .from(DetailedPerson::getFirstName).mapTo(this::appendExclamationMark)

@@ -112,11 +112,39 @@ public class BasicImmutableMappingTest {
         Mapper<Item, ItemDTO> mapper = Datus.forTypes(Item.class, ItemDTO.class)
                 .immutable(ItemDTO::new)
                 .from(Item::getId)
-                    .given(Objects::isNull).then((in,v) -> in.getClass().getSimpleName()).proceed()
+                    .given(id -> id.startsWith(" ")).then(String::trim).proceed()
                     .mapTo(Function.identity())
                 .from(Item::getId)
-                    .given(Objects::isNull).then((in,v) -> in.getClass().getSimpleName()).proceed()
+                .given(id -> id.startsWith(" ")).then(String::trim).proceed()
                     .mapTo(id -> id+"-extra")
+                .build();
+
+        Item aSource = new Item("1 ");
+        Item bSource = new Item(" 1");
+
+        //when
+        ItemDTO aResult = mapper.convert(aSource);
+        ItemDTO bResult = mapper.convert(bSource);
+
+        //then
+        assertThat(aResult.getId()).isEqualTo("1 ");
+        assertThat(aResult.getExtendedId()).isEqualTo("1 -extra");
+
+        assertThat(bResult.getId()).isEqualTo("1");
+        assertThat(bResult.getExtendedId()).isEqualTo("1-extra");
+    }
+
+    @Test
+    public void conditionalMappingWithBiFnFallbackShouldWorkCorrectly() {
+        //given
+        Mapper<Item, ItemDTO> mapper = Datus.forTypes(Item.class, ItemDTO.class)
+                .immutable(ItemDTO::new)
+                .from(Item::getId)
+                .given(Objects::isNull).then((in,v) -> in.getClass().getSimpleName()).proceed()
+                .mapTo(Function.identity())
+                .from(Item::getId)
+                .given(Objects::isNull).then((in,v) -> in.getClass().getSimpleName()).proceed()
+                .mapTo(id -> id+"-extra")
                 .build();
 
         Item aSource = new Item("1");
