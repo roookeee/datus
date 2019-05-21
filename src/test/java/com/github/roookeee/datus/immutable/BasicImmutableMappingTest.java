@@ -1,102 +1,307 @@
 package com.github.roookeee.datus.immutable;
 
+import com.github.roookeee.datus.api.Datus;
 import com.github.roookeee.datus.api.Mapper;
 import com.github.roookeee.datus.testutil.Item;
+import com.github.roookeee.datus.testutil.ItemDTO;
 import org.junit.jupiter.api.Test;
 
 import java.util.Objects;
 import java.util.function.Function;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class BasicImmutableMappingTest {
 
     @Test
     public void basicMappingShouldWorkCorrectly() {
-        Mapper<Item, Item> mapper = new ConstructorBuilder1<Item, String, Item>(Item::new)
-                .from(Item::getId).mapTo(Function.identity())
+        //given
+        Mapper<Item, ItemDTO> mapper = Datus.forTypes(Item.class, ItemDTO.class)
+                .immutable(ItemDTO::new)
+                .from(Item::getId).map(Function.identity()).to(ConstructorParameter::bind)
+                .from(Item::getId).map(id -> id+"-extra").to(ConstructorParameter::bind)
                 .build();
 
+        //when
         Item source = new Item("1");
-        Item result = mapper.convert(source);
+        ItemDTO result = mapper.convert(source);
 
-        assertThat("Should have mapped correctly", result.getId(), is("1"));
-    }
-
-    @Test
-    public void conditionalMappingWithValueFallbackShouldWorkCorrectly() {
-        Mapper<Item, Item> mapper = new ConstructorBuilder1<Item, String, Item>(Item::new)
-                .from(Item::getId).when(Objects::isNull).fallback("-1").mapTo(Function.identity())
-                .build();
-
-        Item aSource = new Item("1");
-        Item bSource = new Item(null);
-
-        Item aResult = mapper.convert(aSource);
-        Item bResult = mapper.convert(bSource);
-
-        assertThat("Should have mapped correctly", aResult.getId(), is("1"));
-        assertThat("Should have mapped correctly", bResult.getId(), is("-1"));
-    }
-
-    @Test
-    public void conditionalMappingWithSupplierFallbackShouldWorkCorrectly() {
-        Mapper<Item, Item> mapper = new ConstructorBuilder1<Item, String, Item>(Item::new)
-                .from(Item::getId).when(Objects::isNull).fallback(() -> "-1").mapTo(Function.identity())
-                .build();
-
-        Item aSource = new Item("1");
-        Item bSource = new Item(null);
-
-        Item aResult = mapper.convert(aSource);
-        Item bResult = mapper.convert(bSource);
-
-        assertThat("Should have mapped correctly", aResult.getId(), is("1"));
-        assertThat("Should have mapped correctly", bResult.getId(), is("-1"));
-    }
-
-    @Test
-    public void conditionalMappingWithFnFallbackShouldWorkCorrectly() {
-        Mapper<Item, Item> mapper = new ConstructorBuilder1<Item, String, Item>(Item::new)
-                .from(Item::getId).when("2"::equals).fallback(in -> in.getId() + "0").mapTo(Function.identity())
-                .build();
-
-        Item aSource = new Item("1");
-        Item bSource = new Item("2");
-
-        Item aResult = mapper.convert(aSource);
-        Item bResult = mapper.convert(bSource);
-
-        assertThat("Should have mapped correctly", aResult.getId(), is("1"));
-        assertThat("Should have mapped correctly", bResult.getId(), is("20"));
+        //then
+        assertThat(result.getId()).isEqualTo("1");
+        assertThat(result.getExtendedId()).isEqualTo("1-extra");
     }
 
     @Test
     public void basicPipingShouldWorkCorrectly() {
-        Mapper<Item, Item> mapper = new ConstructorBuilder1<Item, String, Item>(Item::new)
-                .from(Item::getId).map(i -> i + "1").mapTo(Function.identity())
+        //given
+        Mapper<Item, ItemDTO> mapper = Datus.forTypes(Item.class, ItemDTO.class)
+                .immutable(ItemDTO::new)
+                    .from(Item::getId).map(i -> i + "1").to(ConstructorParameter::bind)
+                    .from(Item::getId).map(i -> i + "1").map(id -> id+"-extra").to(ConstructorParameter::bind)
                 .build();
 
         Item source = new Item("0");
-        Item result = mapper.convert(source);
 
-        assertThat("Should have mapped correctly", result.getId(), is("01"));
+        //when
+        ItemDTO result = mapper.convert(source);
+
+        //then
+        assertThat(result.getId()).isEqualTo("01");
+        assertThat(result.getExtendedId()).isEqualTo("01-extra");
+    }
+
+    @Test
+    public void conditionalMappingWithValueFallbackShouldWorkCorrectly() {
+        //given
+        Mapper<Item, ItemDTO> mapper = Datus.forTypes(Item.class, ItemDTO.class)
+                .immutable(ItemDTO::new)
+                .from(Item::getId)
+                    .given(Objects::isNull).then("-1").proceed()
+                    .to(ConstructorParameter::bind)
+                .from(Item::getId)
+                    .given(Objects::isNull).then("-1").proceed()
+                    .map(id -> id+"-extra")
+                    .to(ConstructorParameter::bind)
+                .build();
+
+        Item aSource = new Item("1");
+        Item bSource = new Item(null);
+
+        //when
+        ItemDTO aResult = mapper.convert(aSource);
+        ItemDTO bResult = mapper.convert(bSource);
+
+        //then
+        assertThat(aResult.getId()).isEqualTo("1");
+        assertThat(aResult.getExtendedId()).isEqualTo("1-extra");
+
+        assertThat(bResult.getId()).isEqualTo("-1");
+        assertThat(bResult.getExtendedId()).isEqualTo("-1-extra");
+    }
+
+    @Test
+    public void conditionalMappingWithSupplierFallbackShouldWorkCorrectly() {
+        //given
+        Mapper<Item, ItemDTO> mapper = Datus.forTypes(Item.class, ItemDTO.class)
+                .immutable(ItemDTO::new)
+                .from(Item::getId)
+                    .given(Objects::isNull).then(() -> "-1").proceed()
+                    .to(ConstructorParameter::bind)
+                .from(Item::getId)
+                    .given(Objects::isNull).then(() -> "-1").proceed()
+                    .map(id -> id+"-extra")
+                    .to(ConstructorParameter::bind)
+                .build();
+
+        Item aSource = new Item("1");
+        Item bSource = new Item(null);
+
+        //when
+        ItemDTO aResult = mapper.convert(aSource);
+        ItemDTO bResult = mapper.convert(bSource);
+
+        //then
+        assertThat(aResult.getId()).isEqualTo("1");
+        assertThat(aResult.getExtendedId()).isEqualTo("1-extra");
+
+        assertThat(bResult.getId()).isEqualTo("-1");
+        assertThat(bResult.getExtendedId()).isEqualTo("-1-extra");
+    }
+
+    @Test
+    public void conditionalMappingWithFnFallbackShouldWorkCorrectly() {
+        //given
+        Mapper<Item, ItemDTO> mapper = Datus.forTypes(Item.class, ItemDTO.class)
+                .immutable(ItemDTO::new)
+                .from(Item::getId)
+                    .given(id -> id.startsWith(" ")).then(String::trim).proceed()
+                    .to(ConstructorParameter::bind)
+                .from(Item::getId)
+                .given(id -> id.startsWith(" ")).then(String::trim).proceed()
+                    .map(id -> id+"-extra")
+                    .to(ConstructorParameter::bind)
+                .build();
+
+        Item aSource = new Item("1 ");
+        Item bSource = new Item(" 1");
+
+        //when
+        ItemDTO aResult = mapper.convert(aSource);
+        ItemDTO bResult = mapper.convert(bSource);
+
+        //then
+        assertThat(aResult.getId()).isEqualTo("1 ");
+        assertThat(aResult.getExtendedId()).isEqualTo("1 -extra");
+
+        assertThat(bResult.getId()).isEqualTo("1");
+        assertThat(bResult.getExtendedId()).isEqualTo("1-extra");
+    }
+
+    @Test
+    public void conditionalMappingWithBiFnFallbackShouldWorkCorrectly() {
+        //given
+        Mapper<Item, ItemDTO> mapper = Datus.forTypes(Item.class, ItemDTO.class)
+                .immutable(ItemDTO::new)
+                .from(Item::getId)
+                    .given(Objects::isNull).then((in,v) -> in.getClass().getSimpleName()).proceed()
+                    .to(ConstructorParameter::bind)
+                .from(Item::getId)
+                    .given(Objects::isNull).then((in,v) -> in.getClass().getSimpleName()).proceed()
+                    .map(id -> id+"-extra")
+                    .to(ConstructorParameter::bind)
+                .build();
+
+        Item aSource = new Item("1");
+        Item bSource = new Item(null);
+
+        //when
+        ItemDTO aResult = mapper.convert(aSource);
+        ItemDTO bResult = mapper.convert(bSource);
+
+        //then
+        assertThat(aResult.getId()).isEqualTo("1");
+        assertThat(aResult.getExtendedId()).isEqualTo("1-extra");
+
+        assertThat(bResult.getId()).isEqualTo("Item");
+        assertThat(bResult.getExtendedId()).isEqualTo("Item-extra");
+    }
+
+    @Test
+    public void conditionalMappingWithValueOrElseShouldWorkCorrectly() {
+        //given
+        Mapper<Item, ItemDTO> mapper = Datus.forTypes(Item.class, ItemDTO.class)
+                .immutable(ItemDTO::new)
+                .from(Item::getId)
+                    .given(Objects::isNull).then("fallback").orElse("none-fallback")
+                    .to(ConstructorParameter::bind)
+                .from(Item::getId)
+                    .given(Objects::isNull).then("fallback").orElse("none-fallback")
+                    .map(id -> id+"-extra")
+                    .to(ConstructorParameter::bind)
+                .build();
+
+        Item aSource = new Item(null);
+        Item bSource = new Item("");
+
+        //when
+        ItemDTO aResult = mapper.convert(aSource);
+        ItemDTO bResult = mapper.convert(bSource);
+
+        //then
+        assertThat(aResult.getId()).isEqualTo("fallback");
+        assertThat(aResult.getExtendedId()).isEqualTo("fallback-extra");
+
+        assertThat(bResult.getId()).isEqualTo("none-fallback");
+        assertThat(bResult.getExtendedId()).isEqualTo("none-fallback-extra");
+    }
+
+    @Test
+    public void conditionalMappingWithSupplierOrElseShouldWorkCorrectly() {
+        //given
+        Mapper<Item, ItemDTO> mapper = Datus.forTypes(Item.class, ItemDTO.class)
+                .immutable(ItemDTO::new)
+                .from(Item::getId)
+                    .given(Objects::isNull).then("fallback").orElse(() -> "none-fallback")
+                    .to(ConstructorParameter::bind)
+                .from(Item::getId)
+                    .given(Objects::isNull).then("fallback").orElse(() -> "none-fallback")
+                    .map(id -> id+"-extra")
+                    .to(ConstructorParameter::bind)
+                .build();
+
+        Item aSource = new Item(null);
+        Item bSource = new Item("");
+
+        //when
+        ItemDTO aResult = mapper.convert(aSource);
+        ItemDTO bResult = mapper.convert(bSource);
+
+        //then
+        assertThat(aResult.getId()).isEqualTo("fallback");
+        assertThat(aResult.getExtendedId()).isEqualTo("fallback-extra");
+
+        assertThat(bResult.getId()).isEqualTo("none-fallback");
+        assertThat(bResult.getExtendedId()).isEqualTo("none-fallback-extra");
+    }
+
+    @Test
+    public void conditionalMappingWithFnOrElseShouldWorkCorrectly() {
+        //given
+        Mapper<Item, ItemDTO> mapper = Datus.forTypes(Item.class, ItemDTO.class)
+                .immutable(ItemDTO::new)
+                .from(Item::getId)
+                    .given(Objects::isNull).then("fallback").orElse(v -> v+"-data")
+                    .to(ConstructorParameter::bind)
+                .from(Item::getId)
+                    .given(Objects::isNull).then("fallback").orElse(v -> v+"-data")
+                    .map(id -> id+"-extra")
+                    .to(ConstructorParameter::bind)
+                .build();
+
+        Item aSource = new Item(null);
+        Item bSource = new Item("value");
+
+        //when
+        ItemDTO aResult = mapper.convert(aSource);
+        ItemDTO bResult = mapper.convert(bSource);
+
+        //then
+        assertThat(aResult.getId()).isEqualTo("fallback");
+        assertThat(aResult.getExtendedId()).isEqualTo("fallback-extra");
+
+        assertThat(bResult.getId()).isEqualTo("value-data");
+        assertThat(bResult.getExtendedId()).isEqualTo("value-data-extra");
+    }
+
+    @Test
+    public void conditionalMappingWithBiFnOrElseShouldWorkCorrectly() {
+        //given
+        Mapper<Item, ItemDTO> mapper = Datus.forTypes(Item.class, ItemDTO.class)
+                .immutable(ItemDTO::new)
+                .from(Item::getId)
+                    .given(Objects::isNull).then("fallback").orElse((in,v) -> in.getClass().getSimpleName())
+                    .to(ConstructorParameter::bind)
+                .from(Item::getId)
+                    .given(Objects::isNull).then("fallback").orElse((in,v) -> in.getClass().getSimpleName())
+                    .map(id -> id+"-extra")
+                    .to(ConstructorParameter::bind)
+                .build();
+
+        Item aSource = new Item(null);
+        Item bSource = new Item("value");
+
+        //when
+        ItemDTO aResult = mapper.convert(aSource);
+        ItemDTO bResult = mapper.convert(bSource);
+
+        //then
+        assertThat(aResult.getId()).isEqualTo("fallback");
+        assertThat(aResult.getExtendedId()).isEqualTo("fallback-extra");
+
+        assertThat(bResult.getId()).isEqualTo("Item");
+        assertThat(bResult.getExtendedId()).isEqualTo("Item-extra");
     }
 
     @Test
     public void whenBeforeAndAfterPipingShouldWorkCorrectly() {
-        Mapper<Item, Item> mapper = new ConstructorBuilder1<Item, String, Item>(Item::new)
+        //given
+        Mapper<Item, ItemDTO> mapper = Datus.forTypes(Item.class, ItemDTO.class)
+                .immutable(ItemDTO::new)
                 .from(Item::getId)
-                .when(Objects::isNull).fallback("-1")
-                .map(i -> i + "1")
-                .when("-11"::equals).fallback("error")
-                .mapTo(Function.identity())
+                    .given(Objects::isNull).then("-1").proceed()
+                    .map(i -> i + "1")
+                    .given("-11"::equals).then("error").proceed()
+                    .to(ConstructorParameter::bind)
+                .from(Item::getId).to(ConstructorParameter::bind)
                 .build();
 
         Item source = new Item(null);
-        Item result = mapper.convert(source);
 
-        assertThat("Should have mapped correctly", result.getId(), is("error"));
+        //when
+        ItemDTO result = mapper.convert(source);
+
+        //then
+        assertThat(result.getId()).isEqualTo("error");
+        assertThat(result.getExtendedId()).isNull();
     }
 }

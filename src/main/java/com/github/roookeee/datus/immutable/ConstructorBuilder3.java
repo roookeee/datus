@@ -6,7 +6,9 @@ import com.github.roookeee.datus.functions.Fn4;
 
 import java.util.function.Function;
 
-public class ConstructorBuilder3<In, A, B, C, Out> {
+public class ConstructorBuilder3<In, A, B, C, Out>
+    extends AbstractConstructorBuilder<In, ConstructorBuilder3<In, A, B,C, Out>>
+        implements ConstructorParameter<In, A, ConstructorBuilder2<In, B, C, Out>> {
     private final Fn4<In, A, B, C, Out> constructor;
 
     /**
@@ -25,32 +27,20 @@ public class ConstructorBuilder3<In, A, B, C, Out> {
     }
 
     /**
-     * Starts a construction step for the first parameter of the contained constructor starting from the provided getter
-     * of the input type.
-     *
-     * @param <GT> the getters return type
-     * @param getter the getter to start the construction process from
-     * @return a construction step to define the building process of the constructors first parameter
+     * {@inheritDoc}
      */
-    public <GT> ImmutableConstructionStep<In, GT, A, ConstructorBuilder2<In, B, C, Out>> from(Function<In, GT> getter) {
-        return new ImmutableConstructionStep<>(
-                getter,
-                (aGetter) -> new ConstructorBuilder2<>(applyGetter(aGetter))
-        );
-    }
-
-    /**
-     * Directly binds the contained constructors first parameter to the provided getter of the input type.
-     * (Utility function that works like {@link #from}.to(Function.identity()))
-     *
-     * @param getter the getter to use
-     * @return the next constructor builder to further define the building process of the output type
-     */
-    public ConstructorBuilder2<In, B, C, Out> take(Function<In, A> getter) {
+    @Override
+    public ConstructorBuilder2<In, B, C, Out> bind(Function<In, A> getter) {
         return new ConstructorBuilder2<>(applyGetter(getter));
     }
 
-    private Fn3<In, B, C, Out> applyGetter(Function<In, A> getter) {
-        return (in, b, c) -> constructor.apply(in, getter.apply(in), b, c);
+    @Override
+    ConstructorBuilder3<In, A, B, C, Out> getSelf() {
+        return this;
     }
+
+    private Fn3<In, B, C, Out> applyGetter(Function<In, A> getter) {
+        return (in,b,c) -> constructor.apply(in, getter.apply(in), b, c);
+    }
+
 }

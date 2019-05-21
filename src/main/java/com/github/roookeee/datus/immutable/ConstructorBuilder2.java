@@ -6,7 +6,9 @@ import com.github.roookeee.datus.functions.Fn3;
 
 import java.util.function.Function;
 
-public class ConstructorBuilder2<In, A, B, Out> {
+public class ConstructorBuilder2<In, A, B, Out>
+        extends AbstractConstructorBuilder<In, ConstructorBuilder2<In, A, B, Out>>
+        implements ConstructorParameter<In, A, ConstructorBuilder1<In, B, Out>> {
     private final Fn3<In, A, B, Out> constructor;
 
     /**
@@ -25,32 +27,19 @@ public class ConstructorBuilder2<In, A, B, Out> {
     }
 
     /**
-     * Starts a construction step for the first parameter of the contained constructor starting from the provided getter
-     * of the input type.
-     *
-     * @param <GT> the getters return type
-     * @param getter the getter to start the construction process from
-     * @return a construction step to define the building process of the constructors first parameter
+     * {@inheritDoc}
      */
-    public <GT> ImmutableConstructionStep<In, GT, A, ConstructorBuilder1<In, B, Out>> from(Function<In, GT> getter) {
-        return new ImmutableConstructionStep<>(
-                getter,
-                (aGetter) -> new ConstructorBuilder1<>(applyGetter(aGetter))
-        );
-    }
-
-    /**
-     * Directly binds the contained constructors first parameter to the provided getter of the input type.
-     * (Utility function that works like {@link #from}.to(Function.identity()))
-     *
-     * @param getter the getter to use
-     * @return the next constructor builder to further define the building process of the output type
-     */
-    public ConstructorBuilder1<In, B, Out> take(Function<In, A> getter) {
+    @Override
+    public ConstructorBuilder1<In, B, Out> bind(Function<In, A> getter) {
         return new ConstructorBuilder1<>(applyGetter(getter));
     }
 
+    @Override
+    ConstructorBuilder2<In, A, B, Out> getSelf() {
+        return this;
+    }
+
     private Fn2<In, B, Out> applyGetter(Function<In, A> getter) {
-        return (in, b) -> constructor.apply(in, getter.apply(in), b);
+        return (in,b) -> constructor.apply(in, getter.apply(in), b);
     }
 }

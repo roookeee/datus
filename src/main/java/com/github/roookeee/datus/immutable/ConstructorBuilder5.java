@@ -6,7 +6,9 @@ import com.github.roookeee.datus.functions.Fn6;
 
 import java.util.function.Function;
 
-public class ConstructorBuilder5<In, A, B, C, D, E, Out> {
+public class ConstructorBuilder5<In, A, B, C, D, E, Out>
+        extends AbstractConstructorBuilder<In, ConstructorBuilder5<In, A, B, C, D, E, Out>>
+        implements ConstructorParameter<In, A, ConstructorBuilder4<In, B, C, D, E, Out>> {
     private final Fn6<In, A, B, C, D, E, Out> constructor;
 
     /**
@@ -25,32 +27,20 @@ public class ConstructorBuilder5<In, A, B, C, D, E, Out> {
     }
 
     /**
-     * Starts a construction step for the first parameter of the contained constructor starting from the provided getter
-     * of the input type.
-     *
-     * @param <GT> the getters return type
-     * @param getter the getter to start the construction process from
-     * @return a construction step to define the building process of the constructors first parameter
+     * {@inheritDoc}
      */
-    public <GT> ImmutableConstructionStep<In, GT, A, ConstructorBuilder4<In, B, C, D, E, Out>> from(Function<In, GT> getter) {
-        return new ImmutableConstructionStep<>(
-                getter,
-                (aGetter) -> new ConstructorBuilder4<>(applyGetter(aGetter))
-        );
+    @Override
+    public ConstructorBuilder4<In, B, C, D, E, Out> bind(Function<In, A> getter) {
+        return new ConstructorBuilder4<>(applyGetter(getter));
     }
 
-    /**
-     * Directly binds the contained constructors first parameter to the provided getter of the input type.
-     * (Utility function that works like {@link #from}.to(Function.identity()))
-     *
-     * @param getter the getter to use
-     * @return the next constructor builder to further define the building process of the output type
-     */
-    public ConstructorBuilder4<In, B, C, D, E, Out> take(Function<In, A> getter) {
-        return new ConstructorBuilder4<>(applyGetter(getter));
+    @Override
+    ConstructorBuilder5<In, A, B, C, D, E, Out> getSelf() {
+        return this;
     }
 
     private Fn5<In, B, C, D, E, Out> applyGetter(Function<In, A> getter) {
         return (in, b, c, d, e) -> constructor.apply(in, getter.apply(in), b, c, d, e);
     }
+
 }

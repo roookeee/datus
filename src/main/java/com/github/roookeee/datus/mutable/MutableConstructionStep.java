@@ -1,6 +1,6 @@
 package com.github.roookeee.datus.mutable;
 
-import com.github.roookeee.datus.general.ConditionalHandlerBuilder;
+import com.github.roookeee.datus.conditional.ConditionalStart;
 
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -11,7 +11,7 @@ import java.util.function.Predicate;
  * Represents a construction step from a given input to an output type while holding a reference
  * to a getter on the input type that is currently being used to further construct the output type object.
  * <p>
- * This class enables the user to {@link #map} the current getters type or define fallbacks via {@link #when} before
+ * This class enables the user to {@link #map} the current getters type or define fallbacks via {@link #given} before
  * finishing the current construction step with a {@link #to} or {@link #into}-call.
  *
  * @param <In>          the input type
@@ -78,19 +78,37 @@ public class MutableConstructionStep<In, CurrentType, Out> {
      * @param predicate the predicate to use
      * @return a builder to configure the handling mechanism when the given predicate matches
      */
-    public ConditionalHandlerBuilder<In, CurrentType, MutableConstructionStep<In, CurrentType, Out>> when(Predicate<CurrentType> predicate) {
-        return new ConditionalHandlerBuilder<>(
-                fallback -> new MutableConstructionStep<>(builder, getterWithFallback(predicate, fallback))
+    public ConditionalStart<In, CurrentType, MutableConstructionStep<In, CurrentType, Out>> given(Predicate<CurrentType> predicate) {
+        return new ConditionalStart<>(
+                this,
+                predicate,
+                this::weaveConditional
         );
     }
 
-    private Function<In, CurrentType> getterWithFallback(Predicate<CurrentType> predicate, Function<In, CurrentType> fallback) {
+    private MutableConstructionStep<In, CurrentType, Out> weaveConditional(
+            MutableConstructionStep<In, CurrentType, Out> base,
+            Predicate<CurrentType> predicate,
+            BiFunction<In, CurrentType, CurrentType> matching,
+            BiFunction<In, CurrentType, CurrentType> orElse
+    ) {
+        return new MutableConstructionStep<>(
+                builder,
+                base.getterWithPredicateHandler(predicate, matching, orElse)
+        );
+    }
+
+    private Function<In, CurrentType> getterWithPredicateHandler(
+            Predicate<CurrentType> predicate,
+            BiFunction<In, CurrentType, CurrentType> matching,
+            BiFunction<In, CurrentType, CurrentType> orElse
+    ) {
         return in -> {
             CurrentType value = getter.apply(in);
             if (predicate.test(value)) {
-                return fallback.apply(in);
+                return matching.apply(in, value);
             }
-            return value;
+            return orElse.apply(in, value);
         };
     }
 }

@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 /**
  * The base class for defining a mutable mapping process from a given input type to a given output type
  * via getter -&gt; (optional processing) -&gt; setter chains.
- *
+ * <p>
  * All mapping steps added to this builder are guaranteed to be executed in the order they were specified.
  *
  * @param <In>  the input type
