@@ -191,7 +191,7 @@ Maven:
 <dependency>
   <groupId>com.github.roookeee</groupId>
   <artifactId>datus</artifactId>
-  <version>0.9.0</version>
+  <version>0.9.1</version>
 </dependency>
 ```
 
