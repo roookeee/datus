@@ -57,6 +57,21 @@ public class MapperTest {
     }
 
     @Test
+    public void collectionToMapConversionWithKeyMapperShouldWorkAsExpected() {
+        //given
+        Mapper<String, String> idMapper = s -> s;
+
+        //when
+        Map<Character, String> result = idMapper.convertToMap(Arrays.asList("Hello", "World", "!"), s -> s.charAt(0));
+
+        //then
+        assertThat(result.keySet()).hasSize(3);
+        assertThat(result.get('H')).isEqualTo("Hello");
+        assertThat(result.get('W')).isEqualTo("World");
+        assertThat(result.get('!')).isEqualTo("!");
+    }
+
+    @Test
     public void streamingConversionShouldWorkAsExpected() {
         //given
         AtomicInteger callCount = new AtomicInteger();

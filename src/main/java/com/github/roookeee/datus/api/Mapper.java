@@ -1,6 +1,7 @@
 package com.github.roookeee.datus.api;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -46,6 +47,23 @@ public interface Mapper<In, Out> {
         LinkedHashMap<In, Out> result = new LinkedHashMap<>();
         for (In in : input) {
             result.put(in, convert(in));
+        }
+        return result;
+    }
+
+    /**
+     * Converts a given collection of input instances to a map by using the given keyFunction to relate every input instance
+     * to the converted output instance.
+     *
+     * @param <KeyType> the type the keyFunction returns
+     * @param input the collection of input instances to convert
+     * @param keyFunction the function to apply to every input instance to generate the corresponding map key
+     * @return a map containing all (keyFunction(input),output) tuples
+     */
+    default <KeyType> LinkedHashMap<KeyType, Out> convertToMap(Collection<In> input, Function<In, KeyType> keyFunction) {
+        LinkedHashMap<KeyType, Out> result = new LinkedHashMap<>();
+        for (In in : input) {
+            result.put(keyFunction.apply(in), convert(in));
         }
         return result;
     }
