@@ -6,7 +6,9 @@ import com.github.roookeee.datus.functions.Fn5;
 
 import java.util.function.Function;
 
-public class ConstructorBuilder4<In, A, B, C, D, Out> {
+public class ConstructorBuilder4<In, A, B, C, D, Out>
+        extends AbstractConstructorBuilder<In, ConstructorBuilder4<In, A, B, C, D, Out>>
+        implements ConstructorParameter<In, A, ConstructorBuilder3<In, B, C, D, Out>> {
     private final Fn5<In, A, B, C, D, Out> constructor;
 
     /**
@@ -24,30 +26,18 @@ public class ConstructorBuilder4<In, A, B, C, D, Out> {
         this.constructor = constructor;
     }
 
-    /**
-     * Directly binds the contained constructors first parameter to the provided getter of the input type.
-     * (Utility function that works like {@link #from}.to(Function.identity()))
-     *
-     * @param <GT>   the getters return type
-     * @param getter the getter to use
-     * @return the next constructor builder to further define the building process of the output type
-     */
-    public <GT> ImmutableConstructionStep<In, GT, A, ConstructorBuilder3<In, B, C, D, Out>> from(Function<In, GT> getter) {
-        return new ImmutableConstructionStep<>(
-                getter,
-                (aGetter) -> new ConstructorBuilder3<>(applyGetter(aGetter))
-        );
-    }
 
     /**
-     * Directly binds the contained constructors first parameter to the provided getter of the input type.
-     * (Utility function that works like {@link #from}.to(Function.identity()))
-     *
-     * @param getter the getter to use
-     * @return the next constructor to further define the building process of the output type
+     * {@inheritDoc}
      */
-    public ConstructorBuilder3<In, B, C, D, Out> take(Function<In, A> getter) {
+    @Override
+    public ConstructorBuilder3<In, B, C, D, Out> bind(Function<In, A> getter) {
         return new ConstructorBuilder3<>(applyGetter(getter));
+    }
+
+    @Override
+    ConstructorBuilder4<In, A, B, C, D, Out> getSelf() {
+        return this;
     }
 
     private Fn4<In, B, C, D, Out> applyGetter(Function<In, A> getter) {

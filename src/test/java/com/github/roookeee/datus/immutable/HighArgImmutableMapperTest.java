@@ -18,14 +18,14 @@ public class HighArgImmutableMapperTest {
         //why o why java-type inference, why do you hate me so much
         Mapper<DetailedPerson, DetailedPerson> mapper = Datus.forTypes(DetailedPerson.class, DetailedPerson.class)
                 .immutable(DetailedPerson::new)
-                .take(DetailedPerson::getUniqueId)
-                .take(DetailedPerson::getSalutation)
-                .take(DetailedPerson::getFirstName)
-                .take(DetailedPerson::getLastName)
-                .take(DetailedPerson::getAddress)
-                .take(DetailedPerson::getAddressExtra)
-                .take(DetailedPerson::getCity)
-                .take(DetailedPerson::getOccupation)
+                .from(DetailedPerson::getUniqueId).to(ConstructorParameter::bind)
+                .from(DetailedPerson::getSalutation).to(ConstructorParameter::bind)
+                .from(DetailedPerson::getFirstName).to(ConstructorParameter::bind)
+                .from(DetailedPerson::getLastName).to(ConstructorParameter::bind)
+                .from(DetailedPerson::getAddress).to(ConstructorParameter::bind)
+                .from(DetailedPerson::getAddressExtra).to(ConstructorParameter::bind)
+                .from(DetailedPerson::getCity).to(ConstructorParameter::bind)
+                .from(DetailedPerson::getOccupation).to(ConstructorParameter::bind)
                 .build();
 
         DetailedPerson source = new DetailedPerson(
@@ -58,14 +58,14 @@ public class HighArgImmutableMapperTest {
         //given
         Mapper<Object, DetailedPerson> mapper = Datus.forTypes(Object.class, DetailedPerson.class)
                 .immutable(DetailedPerson::new)
-                .from(Function.identity()).mapTo(o -> "0")
-                .from(Function.identity()).mapTo(o -> "1")
-                .from(Function.identity()).mapTo(o -> "2")
-                .from(Function.identity()).mapTo(o -> "3")
-                .from(Function.identity()).mapTo(o -> "4")
-                .from(Function.identity()).mapTo(o -> "5")
-                .from(Function.identity()).mapTo(o -> "6")
-                .from(Function.identity()).mapTo(o -> "7")
+                .from(Function.identity()).map(o -> "0").to(ConstructorParameter::bind)
+                .from(Function.identity()).map(o -> "1").to(ConstructorParameter::bind)
+                .from(Function.identity()).map(o -> "2").to(ConstructorParameter::bind)
+                .from(Function.identity()).map(o -> "3").to(ConstructorParameter::bind)
+                .from(Function.identity()).map(o -> "4").to(ConstructorParameter::bind)
+                .from(Function.identity()).map(o -> "5").to(ConstructorParameter::bind)
+                .from(Function.identity()).map(o -> "6").to(ConstructorParameter::bind)
+                .from(Function.identity()).map(o -> "7").to(ConstructorParameter::bind)
                 .build();
 
         //when
@@ -88,14 +88,14 @@ public class HighArgImmutableMapperTest {
         //why o why java-type inference, why do you hate me so much
         Mapper<DetailedPerson, DetailedPerson> mapper = Datus.forTypes(DetailedPerson.class, DetailedPerson.class)
                 .immutable(DetailedPerson::new)
-                .from(DetailedPerson::getUniqueId).mapTo(this::appendExclamationMark)
-                .from(DetailedPerson::getSalutation).mapTo(this::appendExclamationMark)
-                .from(DetailedPerson::getFirstName).mapTo(this::appendExclamationMark)
-                .from(DetailedPerson::getLastName).mapTo(this::appendExclamationMark)
-                .from(DetailedPerson::getAddress).mapTo(this::appendExclamationMark)
-                .from(DetailedPerson::getAddressExtra).mapTo(this::appendExclamationMark)
-                .from(DetailedPerson::getCity).mapTo(this::appendExclamationMark)
-                .from(DetailedPerson::getOccupation).mapTo(this::appendExclamationMark)
+                .from(DetailedPerson::getUniqueId).map(this::appendExclamationMark).to(ConstructorParameter::bind)
+                .from(DetailedPerson::getSalutation).map(this::appendExclamationMark).to(ConstructorParameter::bind)
+                .from(DetailedPerson::getFirstName).map(this::appendExclamationMark).to(ConstructorParameter::bind)
+                .from(DetailedPerson::getLastName).map(this::appendExclamationMark).to(ConstructorParameter::bind)
+                .from(DetailedPerson::getAddress).map(this::appendExclamationMark).to(ConstructorParameter::bind)
+                .from(DetailedPerson::getAddressExtra).map(this::appendExclamationMark).to(ConstructorParameter::bind)
+                .from(DetailedPerson::getCity).map(this::appendExclamationMark).to(ConstructorParameter::bind)
+                .from(DetailedPerson::getOccupation).map(this::appendExclamationMark).to(ConstructorParameter::bind)
                 .build();
 
         DetailedPerson source = new DetailedPerson(

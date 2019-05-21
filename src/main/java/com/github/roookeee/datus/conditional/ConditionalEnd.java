@@ -18,7 +18,7 @@ public class ConditionalEnd<In, AffectedType, ConstructionStep> {
     private final ConditionalHandlingWeaver<In, AffectedType, ConstructionStep> nextStepProvider;
     private final BiFunction<In, AffectedType, AffectedType> matchingHandler;
 
-    public ConditionalEnd(
+    ConditionalEnd(
             ConstructionStep origin,
             Predicate<AffectedType> predicate,
             ConditionalHandlingWeaver<In, AffectedType, ConstructionStep> nextStepProvider,

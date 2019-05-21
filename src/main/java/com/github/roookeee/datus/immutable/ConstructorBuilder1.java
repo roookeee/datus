@@ -6,7 +6,9 @@ import com.github.roookeee.datus.functions.Fn2;
 
 import java.util.function.Function;
 
-public class ConstructorBuilder1<In, A, Out> {
+public class ConstructorBuilder1<In, A, Out>
+        extends AbstractConstructorBuilder<In, ConstructorBuilder1<In, A, Out>>
+        implements ConstructorParameter<In, A, ConstructorBuilder<In, Out>> {
     private final Fn2<In, A, Out> constructor;
 
     /**
@@ -25,32 +27,20 @@ public class ConstructorBuilder1<In, A, Out> {
     }
 
     /**
-     * Starts a construction step for the first parameter of the contained constructor starting from the provided getter
-     * of the input type.
-     *
-     * @param <GT>   the getters return type
-     * @param getter the getter to start the construction process from
-     * @return a construction step to define the building process of the constructors first parameter
+     * {@inheritDoc}
      */
-    public <GT> ImmutableConstructionStep<In, GT, A, ConstructorBuilder<In, Out>> from(Function<In, GT> getter) {
-        return new ImmutableConstructionStep<>(
-                getter,
-                (aGetter) -> new ConstructorBuilder<>(applyGetter(aGetter))
-        );
+    @Override
+    public ConstructorBuilder<In, Out> bind(Function<In, A> getter) {
+        return new ConstructorBuilder<>(applyGetter(getter));
     }
 
-    /**
-     * Directly binds the contained constructors first parameter to the provided getter of the input type.
-     * (Utility function that works like {@link #from}.to(Function.identity()))
-     *
-     * @param getter the getter to use
-     * @return the next constructor builder to further define the building process of the output type
-     */
-    public ConstructorBuilder<In, Out> take(Function<In, A> getter) {
-        return new ConstructorBuilder<>(applyGetter(getter));
+    @Override
+    ConstructorBuilder1<In, A, Out> getSelf() {
+        return this;
     }
 
     private Fn1<In, Out> applyGetter(Function<In, A> getter) {
         return in -> constructor.apply(in, getter.apply(in));
     }
+
 }

@@ -18,8 +18,8 @@ public class BasicImmutableMappingTest {
         //given
         Mapper<Item, ItemDTO> mapper = Datus.forTypes(Item.class, ItemDTO.class)
                 .immutable(ItemDTO::new)
-                .from(Item::getId).mapTo(Function.identity())
-                .from(Item::getId).mapTo(id -> id+"-extra")
+                .from(Item::getId).map(Function.identity()).to(ConstructorParameter::bind)
+                .from(Item::getId).map(id -> id+"-extra").to(ConstructorParameter::bind)
                 .build();
 
         //when
@@ -36,8 +36,8 @@ public class BasicImmutableMappingTest {
         //given
         Mapper<Item, ItemDTO> mapper = Datus.forTypes(Item.class, ItemDTO.class)
                 .immutable(ItemDTO::new)
-                .from(Item::getId).map(i -> i + "1").mapTo(Function.identity())
-                .from(Item::getId).map(i -> i + "1").mapTo(id -> id+"-extra")
+                    .from(Item::getId).map(i -> i + "1").to(ConstructorParameter::bind)
+                    .from(Item::getId).map(i -> i + "1").map(id -> id+"-extra").to(ConstructorParameter::bind)
                 .build();
 
         Item source = new Item("0");
@@ -57,10 +57,11 @@ public class BasicImmutableMappingTest {
                 .immutable(ItemDTO::new)
                 .from(Item::getId)
                     .given(Objects::isNull).then("-1").proceed()
-                    .mapTo(Function.identity())
+                    .to(ConstructorParameter::bind)
                 .from(Item::getId)
                     .given(Objects::isNull).then("-1").proceed()
-                    .mapTo(id -> id+"-extra")
+                    .map(id -> id+"-extra")
+                    .to(ConstructorParameter::bind)
                 .build();
 
         Item aSource = new Item("1");
@@ -85,10 +86,11 @@ public class BasicImmutableMappingTest {
                 .immutable(ItemDTO::new)
                 .from(Item::getId)
                     .given(Objects::isNull).then(() -> "-1").proceed()
-                    .mapTo(Function.identity())
+                    .to(ConstructorParameter::bind)
                 .from(Item::getId)
                     .given(Objects::isNull).then(() -> "-1").proceed()
-                    .mapTo(id -> id+"-extra")
+                    .map(id -> id+"-extra")
+                    .to(ConstructorParameter::bind)
                 .build();
 
         Item aSource = new Item("1");
@@ -113,10 +115,11 @@ public class BasicImmutableMappingTest {
                 .immutable(ItemDTO::new)
                 .from(Item::getId)
                     .given(id -> id.startsWith(" ")).then(String::trim).proceed()
-                    .mapTo(Function.identity())
+                    .to(ConstructorParameter::bind)
                 .from(Item::getId)
                 .given(id -> id.startsWith(" ")).then(String::trim).proceed()
-                    .mapTo(id -> id+"-extra")
+                    .map(id -> id+"-extra")
+                    .to(ConstructorParameter::bind)
                 .build();
 
         Item aSource = new Item("1 ");
@@ -140,11 +143,12 @@ public class BasicImmutableMappingTest {
         Mapper<Item, ItemDTO> mapper = Datus.forTypes(Item.class, ItemDTO.class)
                 .immutable(ItemDTO::new)
                 .from(Item::getId)
-                .given(Objects::isNull).then((in,v) -> in.getClass().getSimpleName()).proceed()
-                .mapTo(Function.identity())
+                    .given(Objects::isNull).then((in,v) -> in.getClass().getSimpleName()).proceed()
+                    .to(ConstructorParameter::bind)
                 .from(Item::getId)
-                .given(Objects::isNull).then((in,v) -> in.getClass().getSimpleName()).proceed()
-                .mapTo(id -> id+"-extra")
+                    .given(Objects::isNull).then((in,v) -> in.getClass().getSimpleName()).proceed()
+                    .map(id -> id+"-extra")
+                    .to(ConstructorParameter::bind)
                 .build();
 
         Item aSource = new Item("1");
@@ -169,10 +173,11 @@ public class BasicImmutableMappingTest {
                 .immutable(ItemDTO::new)
                 .from(Item::getId)
                     .given(Objects::isNull).then("fallback").orElse("none-fallback")
-                    .mapTo(Function.identity())
+                    .to(ConstructorParameter::bind)
                 .from(Item::getId)
                     .given(Objects::isNull).then("fallback").orElse("none-fallback")
-                    .mapTo(id -> id+"-extra")
+                    .map(id -> id+"-extra")
+                    .to(ConstructorParameter::bind)
                 .build();
 
         Item aSource = new Item(null);
@@ -197,10 +202,11 @@ public class BasicImmutableMappingTest {
                 .immutable(ItemDTO::new)
                 .from(Item::getId)
                     .given(Objects::isNull).then("fallback").orElse(() -> "none-fallback")
-                    .mapTo(Function.identity())
+                    .to(ConstructorParameter::bind)
                 .from(Item::getId)
                     .given(Objects::isNull).then("fallback").orElse(() -> "none-fallback")
-                    .mapTo(id -> id+"-extra")
+                    .map(id -> id+"-extra")
+                    .to(ConstructorParameter::bind)
                 .build();
 
         Item aSource = new Item(null);
@@ -225,10 +231,11 @@ public class BasicImmutableMappingTest {
                 .immutable(ItemDTO::new)
                 .from(Item::getId)
                     .given(Objects::isNull).then("fallback").orElse(v -> v+"-data")
-                    .mapTo(Function.identity())
+                    .to(ConstructorParameter::bind)
                 .from(Item::getId)
                     .given(Objects::isNull).then("fallback").orElse(v -> v+"-data")
-                    .mapTo(id -> id+"-extra")
+                    .map(id -> id+"-extra")
+                    .to(ConstructorParameter::bind)
                 .build();
 
         Item aSource = new Item(null);
@@ -253,10 +260,11 @@ public class BasicImmutableMappingTest {
                 .immutable(ItemDTO::new)
                 .from(Item::getId)
                     .given(Objects::isNull).then("fallback").orElse((in,v) -> in.getClass().getSimpleName())
-                    .mapTo(Function.identity())
+                    .to(ConstructorParameter::bind)
                 .from(Item::getId)
                     .given(Objects::isNull).then("fallback").orElse((in,v) -> in.getClass().getSimpleName())
-                    .mapTo(id -> id+"-extra")
+                    .map(id -> id+"-extra")
+                    .to(ConstructorParameter::bind)
                 .build();
 
         Item aSource = new Item(null);
@@ -283,8 +291,8 @@ public class BasicImmutableMappingTest {
                     .given(Objects::isNull).then("-1").proceed()
                     .map(i -> i + "1")
                     .given("-11"::equals).then("error").proceed()
-                    .mapTo(Function.identity())
-                .take(Item::getId)
+                    .to(ConstructorParameter::bind)
+                .from(Item::getId).to(ConstructorParameter::bind)
                 .build();
 
         Item source = new Item(null);

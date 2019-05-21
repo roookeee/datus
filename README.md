@@ -67,10 +67,10 @@ class PersonDTO {
 //define a building process for each constructor parameter, step by step
 //the immutable API defines constructor parameters in their declaration order
 Mapper<Person, PersonDTO> mapper = Datus.forTypes(Person.class, PersonDTO.class).immutable(PersonDTO::new)
-    .take(Person::getFirstName) //direct use without any more processing
+    .from(Person::getFirstName).to(ConstructorParameter::bind)
     .from(Person::getLastName)
         .given(Objects::nonNull).then(String::toUpperCase).orElse("fallback")
-        .mapTo(Function.identity())
+        .to(ConstructorParameter::bind)
     .build();
     
 Person person = new Person();
