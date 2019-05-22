@@ -5,6 +5,7 @@ import com.github.roookeee.datus.testutil.Person;
 import org.junit.jupiter.api.Test;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -19,7 +20,7 @@ public class MutableMappingPipingTest {
 
         Mapper<Person, Person> mapper = new MutableMappingBuilder<Person, Person>(Person::new)
                 .from(Person::getAddress)
-                .given(Objects::isNull).then("").proceed()
+                .given(Objects::isNull, "").orElse(Function.identity())
                 .map(String::toUpperCase)
                 .into(Person::setAddress)
                 .build();
@@ -60,7 +61,7 @@ public class MutableMappingPipingTest {
 
         Mapper<Person, Person> mapper = new MutableMappingBuilder<Person, Person>(Person::new)
                 .from(Person::getAddress).map(String::toUpperCase)
-                .given(String::isEmpty).then("fallback").proceed()
+                .given(String::isEmpty, "fallback").orElse(Function.identity())
                 .into(Person::setAddress)
                 .build();
 

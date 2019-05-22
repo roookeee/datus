@@ -69,7 +69,7 @@ class PersonDTO {
 Mapper<Person, PersonDTO> mapper = Datus.forTypes(Person.class, PersonDTO.class).immutable(PersonDTO::new)
     .from(Person::getFirstName).to(ConstructorParameter::bind)
     .from(Person::getLastName)
-        .given(Objects::nonNull).then(String::toUpperCase).orElse("fallback")
+        .given(Objects::nonNull, ln -> ln.toUpperCase()).orElse("fallback")
         .to(ConstructorParameter::bind)
     .build();
     
@@ -103,7 +103,7 @@ class PersonDTO {
 Mapper<Person, PersonDTO> mapper = Datus.forTypes(Person.class, PersonDTO.class).mutable(PersonDTO::new)
     .from(Person::getFirstName).into(PersonDTO.setFirstName)
     .from(Person::getLastName)
-        .given(Objects::nonNull).then(String::toUpperCase).orElse("fallback")
+        .given(Objects::nonNull, ln -> ln.toUpperCase()).orElse("fallback")
         .into(PersonDTO::setLastName)
     .from(/*...*/).into(/*...*/)
     .build();

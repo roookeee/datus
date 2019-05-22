@@ -1,10 +1,11 @@
 package com.github.roookeee.datus.immutable;
 
-import com.github.roookeee.datus.conditional.ConditionalStart;
+import com.github.roookeee.datus.conditional.ConditionalEnd;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class ConstructorParameterBinding<In, Type, Ctor> {
     private final Ctor ctor;
@@ -14,6 +15,7 @@ public class ConstructorParameterBinding<In, Type, Ctor> {
         this.ctor = ctor;
         this.getter = getter;
     }
+
     /**
      * Maps the current parameter binding type to another type (similar to {@link java.util.stream.Stream#map}
      *
@@ -29,7 +31,7 @@ public class ConstructorParameterBinding<In, Type, Ctor> {
      * Binds a parameter binding to its destination, most likely a {@link ConstructorParameter}.
      *
      * @param parameterBinder the function to pass the parameter binding too
-     * @param <ResultType> the type of the result, either another parameter binding or the end of the constructor
+     * @param <ResultType>    the type of the result, either another parameter binding or the end of the constructor
      * @return the next step in the constructor binding process
      */
     public <ResultType> ResultType to(BiFunction<Ctor, Function<In, Type>, ResultType> parameterBinder) {
@@ -37,18 +39,67 @@ public class ConstructorParameterBinding<In, Type, Ctor> {
     }
 
     /**
-     * Starts an adjustment-process for this parameter binding which is used when the given predicate matches (e.g. a fallback)
+     * Starts a conditional mapping process in regards to the given predicate for the current type.
      *
+     * @param <IntermediateType> the resulting type of the conditional mapping process
      * @param predicate the predicate to use
-     * @return a builer to configure the handling mechanism when the given predicate matches
+     * @param value the value to use when the provided predicate matches
+     * @return a builder to configure the handling mechanism when the given predicate does not match
      */
-    public ConditionalStart<In, Type, ConstructorParameterBinding<In, Type, Ctor>> given(
-            Predicate<Type> predicate
+    public <IntermediateType> ConditionalEnd<In, Type, IntermediateType, ConstructorParameterBinding<In, IntermediateType, Ctor>> given(
+            Predicate<Type> predicate,
+            IntermediateType value
     ) {
-        return new ConditionalStart<>(
+        return given(predicate, (in,v) -> value);
+    }
+
+    /**
+     * Starts a conditional mapping process in regards to the given predicate for the current type.
+     *
+     * @param <IntermediateType> the resulting type of the conditional mapping process
+     * @param predicate the predicate to use
+     * @param supplier the supplier to use when the provided predicate matches
+     * @return a builder to configure the handling mechanism when the given predicate does not match
+     */
+    public <IntermediateType> ConditionalEnd<In, Type, IntermediateType, ConstructorParameterBinding<In, IntermediateType, Ctor>> given(
+            Predicate<Type> predicate,
+            Supplier<IntermediateType> supplier
+    ) {
+        return given(predicate, (in,v) -> supplier.get());
+    }
+
+    /**
+     * Starts a conditional mapping process in regards to the given predicate for the current type.
+     *
+     * @param <IntermediateType> the resulting type of the conditional mapping process
+     * @param predicate the predicate to use
+     * @param mapper the function to map the current type with when the provided predicate matches
+     * @return a builder to configure the handling mechanism when the given predicate does not match
+     */
+    public <IntermediateType> ConditionalEnd<In, Type, IntermediateType, ConstructorParameterBinding<In, IntermediateType, Ctor>> given(
+            Predicate<Type> predicate,
+            Function<Type, IntermediateType> mapper
+    ) {
+        return given(predicate, (in,v) -> mapper.apply(v));
+    }
+
+    /**
+     * Starts a conditional mapping process in regards to the given predicate.
+     *
+     * @param <IntermediateType> the resulting type of the conditional mapping process
+     * @param predicate the predicate to use
+     * @param mapper the function to map the current type with when the provided predicate matches
+     * @return a builder to configure the handling mechanism when the given predicate does not match
+     */
+    public <IntermediateType> ConditionalEnd<In, Type, IntermediateType, ConstructorParameterBinding<In, IntermediateType, Ctor>> given(
+            Predicate<Type> predicate,
+            BiFunction<In, Type, IntermediateType> mapper
+    ) {
+        return new ConditionalEnd<>(
                 getter,
                 predicate,
-                newGetter -> new ConstructorParameterBinding<>(ctor, newGetter)
+                newGetter -> new ConstructorParameterBinding<>(ctor, newGetter),
+                mapper
         );
     }
 }

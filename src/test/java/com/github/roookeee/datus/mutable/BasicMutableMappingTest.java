@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -47,7 +48,7 @@ public class BasicMutableMappingTest {
         //given
         Mapper<Person, Person> mapper = new MutableMappingBuilder<Person, Person>(Person::new)
                 .from(Person::getAddress)
-                    .given(Objects::isNull).then("fallback-address").proceed()
+                    .given(Objects::isNull, "fallback-address").orElse(Function.identity())
                     .into(Person::setAddress)
                 .build();
         Person person = new Person();
@@ -66,7 +67,7 @@ public class BasicMutableMappingTest {
         //given
         Mapper<Person, Person> mapper = new MutableMappingBuilder<Person, Person>(Person::new)
                 .from(Person::getAddress)
-                    .given(Objects::isNull).then("fallback-address").orElse(addr -> addr.toUpperCase())
+                    .given(Objects::isNull, "fallback-address").orElse(addr -> addr.toUpperCase())
                 .into(Person::setAddress)
                 .build();
         Person person = new Person();
