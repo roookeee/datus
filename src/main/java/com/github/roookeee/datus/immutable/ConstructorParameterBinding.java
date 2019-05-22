@@ -46,35 +46,9 @@ public class ConstructorParameterBinding<In, Type, Ctor> {
             Predicate<Type> predicate
     ) {
         return new ConditionalStart<>(
-                this,
+                getter,
                 predicate,
-                this::weaveConditional
+                newGetter -> new ConstructorParameterBinding<>(ctor, newGetter)
         );
-    }
-
-    private ConstructorParameterBinding<In, Type, Ctor> weaveConditional(
-            ConstructorParameterBinding<In, Type, Ctor> base,
-            Predicate<Type> predicate,
-            BiFunction<In, Type, Type> matching,
-            BiFunction<In, Type, Type> orElse
-    ) {
-        return new ConstructorParameterBinding<>(
-                ctor,
-                base.getterWithPredicateHandler(predicate, matching, orElse)
-        );
-    }
-
-    private Function<In, Type> getterWithPredicateHandler(
-            Predicate<Type> predicate,
-            BiFunction<In, Type, Type> matching,
-            BiFunction<In, Type, Type> orElse
-    ) {
-        return in -> {
-            Type value = getter.apply(in);
-            if (predicate.test(value)) {
-                return matching.apply(in, value);
-            }
-            return orElse.apply(in, value);
-        };
     }
 }

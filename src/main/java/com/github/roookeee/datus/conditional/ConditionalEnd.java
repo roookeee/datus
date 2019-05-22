@@ -13,18 +13,19 @@ import java.util.function.Supplier;
  * @param <ConstructionStep> the construction step this instance has originated from (needed for further chaining)
  */
 public class ConditionalEnd<In, AffectedType, ConstructionStep> {
-    private final ConstructionStep origin;
+
+    private final Function<In, AffectedType> getter;
     private final Predicate<AffectedType> predicate;
-    private final ConditionalHandlingWeaver<In, AffectedType, ConstructionStep> nextStepProvider;
+    private final Function<Function<In, AffectedType>, ConstructionStep> nextStepProvider;
     private final BiFunction<In, AffectedType, AffectedType> matchingHandler;
 
     ConditionalEnd(
-            ConstructionStep origin,
+            Function<In, AffectedType> getter,
             Predicate<AffectedType> predicate,
-            ConditionalHandlingWeaver<In, AffectedType, ConstructionStep> nextStepProvider,
+            Function<Function<In, AffectedType>, ConstructionStep> nextStepProvider,
             BiFunction<In, AffectedType, AffectedType> matchingHandler
     ) {
-        this.origin = origin;
+        this.getter = getter;
         this.predicate = predicate;
         this.nextStepProvider = nextStepProvider;
         this.matchingHandler = matchingHandler;
@@ -87,6 +88,21 @@ public class ConditionalEnd<In, AffectedType, ConstructionStep> {
      * @return the construction step this instance has originated from
      */
     public ConstructionStep orElse(BiFunction<In, AffectedType, AffectedType> function) {
-        return nextStepProvider.weave(origin, predicate, matchingHandler, function);
+        return nextStepProvider.apply(weave(getter, predicate, matchingHandler, function));
+    }
+
+    private Function<In, AffectedType> weave(
+            Function<In, AffectedType> getter,
+            Predicate<AffectedType> predicate,
+            BiFunction<In, AffectedType, AffectedType> matching,
+            BiFunction<In, AffectedType, AffectedType> orElse
+    ) {
+        return in -> {
+            AffectedType value = getter.apply(in);
+            if (predicate.test(value)) {
+                return matching.apply(in, value);
+            }
+            return orElse.apply(in, value);
+        };
     }
 }

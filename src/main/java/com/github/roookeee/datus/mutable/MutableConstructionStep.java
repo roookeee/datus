@@ -80,35 +80,9 @@ public class MutableConstructionStep<In, CurrentType, Out> {
      */
     public ConditionalStart<In, CurrentType, MutableConstructionStep<In, CurrentType, Out>> given(Predicate<CurrentType> predicate) {
         return new ConditionalStart<>(
-                this,
+                getter,
                 predicate,
-                this::weaveConditional
+                newGetter -> new MutableConstructionStep<>(builder, newGetter)
         );
-    }
-
-    private MutableConstructionStep<In, CurrentType, Out> weaveConditional(
-            MutableConstructionStep<In, CurrentType, Out> base,
-            Predicate<CurrentType> predicate,
-            BiFunction<In, CurrentType, CurrentType> matching,
-            BiFunction<In, CurrentType, CurrentType> orElse
-    ) {
-        return new MutableConstructionStep<>(
-                builder,
-                base.getterWithPredicateHandler(predicate, matching, orElse)
-        );
-    }
-
-    private Function<In, CurrentType> getterWithPredicateHandler(
-            Predicate<CurrentType> predicate,
-            BiFunction<In, CurrentType, CurrentType> matching,
-            BiFunction<In, CurrentType, CurrentType> orElse
-    ) {
-        return in -> {
-            CurrentType value = getter.apply(in);
-            if (predicate.test(value)) {
-                return matching.apply(in, value);
-            }
-            return orElse.apply(in, value);
-        };
     }
 }

@@ -14,16 +14,16 @@ import java.util.function.Supplier;
  */
 public class ConditionalStart<In, AffectedType, ConstructionStep> {
 
-    private final ConstructionStep origin;
+    private final Function<In, AffectedType> getter;
     private final Predicate<AffectedType> predicate;
-    private final ConditionalHandlingWeaver<In, AffectedType, ConstructionStep> nextStepProvider;
+    private final Function<Function<In, AffectedType>, ConstructionStep> nextStepProvider;
 
     public ConditionalStart(
-            ConstructionStep origin,
+            Function<In, AffectedType> getter,
             Predicate<AffectedType> predicate,
-            ConditionalHandlingWeaver<In, AffectedType, ConstructionStep> nextStepProvider
+            Function<Function<In, AffectedType>, ConstructionStep> nextStepProvider
     ) {
-        this.origin = origin;
+        this.getter = getter;
         this.predicate = predicate;
         this.nextStepProvider = nextStepProvider;
     }
@@ -76,7 +76,7 @@ public class ConditionalStart<In, AffectedType, ConstructionStep> {
      */
     public ConditionalEnd<In, AffectedType, ConstructionStep> then(BiFunction<In, AffectedType, AffectedType> function) {
         return new ConditionalEnd<>(
-                origin,
+                getter,
                 predicate,
                 nextStepProvider,
                 function
