@@ -51,7 +51,7 @@ Datus.forTypes(Person.class, PersonDTO.class).immutable(PersonDTO::new)
 The mutable API expects exactly zero constructor parameters whereas the immutable API supports
 up to 8 constructor parameters (consider opening an issue if you need *datus* to support more constructor parameters).
 
-Even though the two APIs internally differ significantly *datus* strives to unify the experience of both workflows.
+Even though the two APIs internally differ significantly, *datus* strives to unify the experience of both workflows.
 Fundamentally both the immutable and mutable API define their mapping steps on a field-by-field/parameter-by-parameter basis:
 ```java
 .from(InputType::someGetter)
@@ -66,7 +66,7 @@ related to the input type and most likely a simple getter (`InputType::someGette
 `map` in *datus* is similar to `Optional.map` or `Stream.map` and may change the type of the
 mapping step as needed.
 
-`given(Object::nonNull, String::trim).orElse("fallback")`: Like `map` using `given` is entirely optional. `given`
+`given(Object::nonNull, String::trim).orElse("fallback")`: Like `map`, using `given` is entirely optional. `given`
 is similar to `map` but considers a given predicate to determine which function/supplier/value to use. As the type of the current 
 mapping step may change through the provided function/supplier/value in the `given`-call an `orElse` is
 mandatory to ensure both branches result in the same type (if the type does not change consider using `Function.identity()` in
