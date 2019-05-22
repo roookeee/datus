@@ -1,11 +1,8 @@
 package com.github.roookeee.datus.mutable;
 
-import com.github.roookeee.datus.conditional.ConditionalStart;
+import com.github.roookeee.datus.conditional.ConditionalEnd;
 
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.function.*;
 
 /**
  * Represents a construction step from a given input to an output type while holding a reference
@@ -73,42 +70,67 @@ public class MutableConstructionStep<In, CurrentType, Out> {
     }
 
     /**
-     * Starts an adjustment-process for this step which is used when the given predicate matches (e.g. a fallback)
+     * Starts a conditional mapping process in regards to the given predicate for the current type.
      *
+     * @param <IntermediateType> the resulting type of the conditional mapping process
      * @param predicate the predicate to use
-     * @return a builder to configure the handling mechanism when the given predicate matches
+     * @param value     the value to use when the provided predicate matches
+     * @return a builder to configure the handling mechanism when the given predicate does not
      */
-    public ConditionalStart<In, CurrentType, MutableConstructionStep<In, CurrentType, Out>> given(Predicate<CurrentType> predicate) {
-        return new ConditionalStart<>(
-                this,
+    public <IntermediateType> ConditionalEnd<In, CurrentType, IntermediateType, MutableConstructionStep<In, IntermediateType, Out>> given(
+            Predicate<CurrentType> predicate,
+            IntermediateType value
+    ) {
+        return given(predicate, (in, v) -> value);
+    }
+
+    /**
+     * Starts a conditional mapping process in regards to the given predicate for the current type.
+     *
+     * @param <IntermediateType> the resulting type of the conditional mapping process
+     * @param predicate the predicate to use
+     * @param supplier  the supplier to use when the provided predicate matches
+     * @return a builder to configure the handling mechanism when the given predicate does not
+     */
+    public <IntermediateType> ConditionalEnd<In, CurrentType, IntermediateType, MutableConstructionStep<In, IntermediateType, Out>> given(
+            Predicate<CurrentType> predicate,
+            Supplier<IntermediateType> supplier
+    ) {
+        return given(predicate, (in, v) -> supplier.get());
+    }
+
+    /**
+     * Starts a conditional mapping process in regards to the given predicate for the current type.
+     *
+     * @param <IntermediateType> the resulting type of the conditional mapping process
+     * @param predicate the predicate to use
+     * @param mapper    the function to map the current type with when the provided predicate matches
+     * @return a builder to configure the handling mechanism when the given predicate does not
+     */
+    public <IntermediateType> ConditionalEnd<In, CurrentType, IntermediateType, MutableConstructionStep<In, IntermediateType, Out>> given(
+            Predicate<CurrentType> predicate,
+            Function<CurrentType, IntermediateType> mapper
+    ) {
+        return given(predicate, (in, v) -> mapper.apply(v));
+    }
+
+    /**
+     * Starts a conditional mapping process in regards to the given predicate for the current type.
+     *
+     * @param <IntermediateType> the resulting type of the conditional mapping process
+     * @param predicate the predicate to use
+     * @param mapper    the function to map the current type with when the provided predicate matches
+     * @return a builder to configure the handling mechanism when the given predicate does not
+     */
+    public <IntermediateType> ConditionalEnd<In, CurrentType, IntermediateType, MutableConstructionStep<In, IntermediateType, Out>> given(
+            Predicate<CurrentType> predicate,
+            BiFunction<In, CurrentType, IntermediateType> mapper
+    ) {
+        return new ConditionalEnd<>(
+                getter,
                 predicate,
-                this::weaveConditional
+                newGetter -> new MutableConstructionStep<>(builder, newGetter),
+                mapper
         );
-    }
-
-    private MutableConstructionStep<In, CurrentType, Out> weaveConditional(
-            MutableConstructionStep<In, CurrentType, Out> base,
-            Predicate<CurrentType> predicate,
-            BiFunction<In, CurrentType, CurrentType> matching,
-            BiFunction<In, CurrentType, CurrentType> orElse
-    ) {
-        return new MutableConstructionStep<>(
-                builder,
-                base.getterWithPredicateHandler(predicate, matching, orElse)
-        );
-    }
-
-    private Function<In, CurrentType> getterWithPredicateHandler(
-            Predicate<CurrentType> predicate,
-            BiFunction<In, CurrentType, CurrentType> matching,
-            BiFunction<In, CurrentType, CurrentType> orElse
-    ) {
-        return in -> {
-            CurrentType value = getter.apply(in);
-            if (predicate.test(value)) {
-                return matching.apply(in, value);
-            }
-            return orElse.apply(in, value);
-        };
     }
 }

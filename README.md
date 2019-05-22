@@ -17,7 +17,7 @@
 
 #### Overview
 1. [Why use datus?](#why-use-datus)
-2. [Examples](#immutable-object-api-example)
+2. [Examples](#examples)
 3. [Conditional mapping](#conditional-mapping)
 4. [Drawbacks and when not to use datus](#drawbacks-and-when-not-to-use-datus)
 5. [When datus construction builders just won't fit](#when-datus-construction-builders-just-wont-fit)
@@ -31,18 +31,20 @@
 Using *datus* has the following benefits:
 - no more 'dumb'/businesslogic-less `*Factory`-classes that you have to unit-test
 - separating mapping-logic from business-logic of certain mapping steps (**single-responsibility**)*
-- enabling your business-logic to only operate on parts of a data-structure (e.g. in a `.map`-step) instead of depending on the whole object (e.g. upper-casing a persons name) (**reducing dependencies**)
+- enabling your business-logic to only operate on parts of a data-structure instead of depending on the whole object (e.g. upper-casing a persons name in a `.map`-step) (**reducing dependencies**)
 - programming against an `interface` instead of concrete classes (**cleaner dependencies**)
-- defining `what` to map, not `how` to do it (**functional-programming approach**)
+- focus on `what` to map, not `how` to do it (**functional-programming approach**)
 - easily add logging or other cross-cutting-concerns via `spy` or `process`(see below for more information about the full API)
 
 Other minor benefits include:
-- define the mapping process from `A -> B` and get `Collection<A> -> Collection<B>` for free
-- no need to unit-test logic that has no real business-case / is not worth a unit test once you have fixed it (e.g. `null`-checking, will not be a problem again after including it)
+- define the mapping process from `A -> B` and get `Collection<A> -> Collection<B>`, `Collection<A> -> Map<A, B>` and more for free
+- no need to unit-test trivial but necessary logic (e.g. `null`-checking, which once fixed won't be a problem at the given location again)
 - (subjectively) more self-documenting code
 
-\* = business logic (e.g. businessful `.map`-steps) should be extracted to a class responsible for said business logic instead of an inline lamda
+\* = when following the single responsibility pattern business logic (e.g. businessful `.map`-steps) should be extracted to a class instead of an inline lamda
 
+## Examples
+Two short examples are shown for the immutable and mutable API of *datus*. Please refer to the USAGE.md for an extensive guide on *datus*.
 #### Immutable object API example
 ```java
 
@@ -69,7 +71,7 @@ class PersonDTO {
 Mapper<Person, PersonDTO> mapper = Datus.forTypes(Person.class, PersonDTO.class).immutable(PersonDTO::new)
     .from(Person::getFirstName).to(ConstructorParameter::bind)
     .from(Person::getLastName)
-        .given(Objects::nonNull).then(String::toUpperCase).orElse("fallback")
+        .given(Objects::nonNull, ln -> ln.toUpperCase()).orElse("fallback")
         .to(ConstructorParameter::bind)
     .build();
     
@@ -81,6 +83,14 @@ PersonDTO personDto = mapper.convert(person);
     personDto = PersonDTO [
         firstName = "firstName",
         lastName = "fallback"
+    ]
+*/
+person.setLastName("lastName");
+personDto = mapper.convert(person);
+/*
+    personDto = PersonDTO [
+        firstName = "firstName",
+        lastName = "LASTNAME"
     ]
 */
 ```
@@ -103,7 +113,7 @@ class PersonDTO {
 Mapper<Person, PersonDTO> mapper = Datus.forTypes(Person.class, PersonDTO.class).mutable(PersonDTO::new)
     .from(Person::getFirstName).into(PersonDTO.setFirstName)
     .from(Person::getLastName)
-        .given(Objects::nonNull).then(String::toUpperCase).orElse("fallback")
+        .given(Objects::nonNull, ln -> ln.toUpperCase()).orElse("fallback")
         .into(PersonDTO::setLastName)
     .from(/*...*/).into(/*...*/)
     .build();
@@ -116,6 +126,14 @@ PersonDTO personDto = mapper.convert(person);
     personDto = PersonDTO [
         firstName = "firstName",
         lastName = "fallback"
+    ]
+*/
+person.setLastName("lastName");
+personDto = mapper.convert(person);
+/*
+    personDto = PersonDTO [
+        firstName = "firstName",
+        lastName = "LASTNAME"
     ]
 */
 ```
@@ -146,7 +164,7 @@ Refer to the next section for a possible workaround for this situation or others
 
 ## When *datus* construction builders just won't fit
 Maybe you are using *datus* in your project but there is this one mapping definition that feels awkward or just
-isn't possible to express with *datus* builder APIs. Surely you can just build a factory for this case, but the inconsistency 
+isn't possible to express with *datus* immutable / mutable builder APIs. Surely you can just build a factory for this case, but the inconsistency 
 isn't feeling too well...
 
 This is were the simplistic approach of the `Mapper`-interface comes in handy: just define your mapping process
@@ -186,21 +204,23 @@ public class SomeClass {
 Please refer to the USAGE.md for a complete user guide as the readme only serves as a broad overview.
 
 ## Dependency information
-Maven:
+Maven
 ```xml
 <dependency>
   <groupId>com.github.roookeee</groupId>
   <artifactId>datus</artifactId>
-  <version>0.9.1</version>
+  <version>0.9.2</version>
 </dependency>
 ```
+or any other build system via Maven Central
 
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.roookeee/datus.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.github.roookeee%22%20AND%20a:%22datus%22)
 ## Development principles 
 This section is about the core principles *datus* is developed with.
 
-#### Performance
-Every additional step between a `.from` and `.into`-call naturally comes at a performance cost because of the additional indirection.
-Depending on the context in which *datus* is used this cost may be significant which is why one of the core principles of *datus* is `pay for what you use`: the additional logic of e.g. `.given` and `.map`-calls is **only** checked/used when these features are actively used. This additional cost is only affecting `.from -> .into`-chains that use said features, other `.from -> to`-chains in the same builder that don't use said features are not affected.
+#### Branching
+The `master` branch always matches the latest release of *datus* while the `develop` branch houses the next version of datus
+that is still under development.
 
 #### Semver
 *datus* follows semantic versioning (see https://semver.org/)
