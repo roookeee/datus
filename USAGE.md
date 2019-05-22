@@ -29,6 +29,7 @@ Always consider if everyone on your team fulfills the outlined prerequisites bef
   <version>0.9.2</version>
 </dependency>
 ```
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.roookeee/datus.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.github.roookeee%22%20AND%20a:%22datus%22)
 
 *datus* supports any JDK (Hotspot, OpenJDK, J9 etc.) which supports Java 8 or newer.
 ### Basics

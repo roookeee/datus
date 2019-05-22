@@ -204,7 +204,7 @@ public class SomeClass {
 Please refer to the USAGE.md for a complete user guide as the readme only serves as a broad overview.
 
 ## Dependency information
-Maven:
+Maven
 ```xml
 <dependency>
   <groupId>com.github.roookeee</groupId>
@@ -212,7 +212,9 @@ Maven:
   <version>0.9.2</version>
 </dependency>
 ```
+or any other build system via Maven Central
 
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.roookeee/datus.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.github.roookeee%22%20AND%20a:%22datus%22)
 ## Development principles 
 This section is about the core principles *datus* is developed with.
 
