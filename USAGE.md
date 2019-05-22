@@ -5,14 +5,22 @@ This document is still under construction and will be filled before releasing *d
 I apologize for the current state of this document and would like to point you to the currently existing
 JavaDoc in the source code.
 
-#### Overview
+### Overview
+1. [Prerequisites](#prerequisites)
 1. [Getting started](#getting-started)
 1. [Basics](#basics)
 1. [Immutable API](#immutable-api)
 1. [Mutable API](#mutable-api)
-1. [Extended usage](#immutable-api)
+1. [Advanced usage](#advanced-usage)
 
-#### Getting started
+### Prerequisites 
+
+*datus* requires at least basic knowledge about functional programming and fluent APIs. A basic understanding of Java 8 `Optional` and/or
+`Stream` classes and their APIs (`map`, `filter`, `collect`, `orElse` etc.) should suffice to understand all concepts of *datus* that are needed to make use of its whole feature set.
+
+Always consider if everyone on your team fulfills the outlined prerequisites before deciding to use *datus* for your project.
+
+### Getting started
 *datus* is available at Maven Central:
 ```xml
 <dependency>
@@ -23,7 +31,7 @@ JavaDoc in the source code.
 ```
 
 *datus* supports any JDK (Hotspot, OpenJDK, J9 etc.) which supports Java 8 or newer.
-#### Basics
+### Basics
 *datus* core workflow revolves around the `Datus` and `Mapper<Input,Output>` classes.
 
 The `Datus` class serves as the main entry point for starting a mapping definition and provides both
@@ -39,7 +47,7 @@ Datus.forTypes(Person.class, PersonDTO.class).mutable(PersonDTO::new)
 Datus.forTypes(Person.class, PersonDTO.class).immutable(PersonDTO::new)
 ```
 
-The immutable API expects exactly zero constructor parameters whereas the immutable API supports
+The mutable API expects exactly zero constructor parameters whereas the immutable API supports
 up to 8 constructor parameters (consider opening an issue if you need *datus* to support more constructor parameters).
 
 Even though the two APIs internally differ significantly *datus* strives to unify the experience of both workflows.
@@ -65,12 +73,18 @@ cases where one branch should not modify the value in any way).
 
 `to(OutputType::someSetter OR ConstructorParameter::bind)`: The `to/into` operations of *datus* finalize
 the preceding mapping step definition by binding its definition to the current constructor parameter (immutable API)
-or a given setter (mutable API). Any type conversion (e.g. a nested `Address` has to be transformed to an 
-`AddressDTO`) has to happen in preceding `map` steps. A type mismatch will always result in a compilation error.
+or a given setter (mutable API). Any type conversion (e.g. an `Address` field in `Person` has to be transformed to an 
+`AddressDTO` for the `PersonDTO`) has to happen in preceding `map` steps. A type mismatch will always result in a compilation error.
 
-#### Immutable API
+### Immutable API
 TODO
-#### Mutable API
+### Mutable API
 TODO
-#### Extended usage
+### Advanced usage
+TODO
+#### Conditional mapping (don't convert the input if X)
+TODO
+#### Mapping recursive data structures
+TODO
+#### Mapping multiple inputs into one output object
 TODO
