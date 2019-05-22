@@ -17,7 +17,7 @@
 
 #### Overview
 1. [Why use datus?](#why-use-datus)
-2. [Examples](#immutable-object-api-example)
+2. [Examples](#examples)
 3. [Conditional mapping](#conditional-mapping)
 4. [Drawbacks and when not to use datus](#drawbacks-and-when-not-to-use-datus)
 5. [When datus construction builders just won't fit](#when-datus-construction-builders-just-wont-fit)
@@ -43,6 +43,8 @@ Other minor benefits include:
 
 \* = when following the single responsibility pattern business logic (e.g. businessful `.map`-steps) should be extracted to a class instead of an inline lamda
 
+## Examples
+Two short examples are shown for the immutable and mutable API of *datus*. Please refer to the USAGE.md for an extensive guide on *datus*.
 #### Immutable object API example
 ```java
 
@@ -84,7 +86,7 @@ PersonDTO personDto = mapper.convert(person);
     ]
 */
 person.setLastName("lastName");
-PersonDTO personDto = mapper.convert(person);
+personDto = mapper.convert(person);
 /*
     personDto = PersonDTO [
         firstName = "firstName",
@@ -127,7 +129,7 @@ PersonDTO personDto = mapper.convert(person);
     ]
 */
 person.setLastName("lastName");
-PersonDTO personDto = mapper.convert(person);
+personDto = mapper.convert(person);
 /*
     personDto = PersonDTO [
         firstName = "firstName",
