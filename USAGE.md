@@ -26,7 +26,7 @@ Always consider if everyone on your team fulfills the outlined prerequisites bef
 <dependency>
   <groupId>com.github.roookeee</groupId>
   <artifactId>datus</artifactId>
-  <version>0.9.1</version>
+  <version>0.9.2</version>
 </dependency>
 ```
 
