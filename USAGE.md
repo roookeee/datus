@@ -77,10 +77,67 @@ the preceding mapping step definition by binding its definition to the current c
 or a given setter (mutable API). Any type conversion (e.g. an `Address` field in `Person` has to be transformed to an 
 `AddressDTO` for the `PersonDTO`) has to happen in preceding `map` steps. A type mismatch will always result in a compilation error.
 
+Both the immutable and mutable API are statically checked and won't compile if an invalid mapping
+definition is given (e.g. type mismatches). 
+Finally as *datus* is about mapping an input object to an output object **it is strongly discouraged to change the input
+object in any way when defining a mapping process in one of *datus* APIs**.
+
 ### Immutable API
-TODO
+
+The immutable API of *datus* works by defining the mapping process of each constructor parameter in the order
+they occur in their constructor definition. 
+Every `.from(...).(...).to(ConstructorParameter::bind)` definition automatically moves to the next constructor parameter 
+or to an intermediate object when the mapping process for every constructor parameter is defined.
+
+*datus* provides additional functionality once every constructor parameter received its mapping process:
+
+`spy(BiConsumer<In, Out>)`: `spy` is used to notify a given function about a successfully applied mapping process. The main
+use case of `spy` is logging or other cross-cutting concerns. It is strongly discouraged to change the input object in any way.
+
+`process(BiFunction<Input, Output, Output>`: `process` enables additional post-processing after a given input object
+has been converted to an output object. `process` should only be used when other facilities of *datus* won't suffice or
+become too verbose. It is strongly discouraged to change the input object in any way.
+
+Finally, a `build()`-call finishes the mapping process definition by generating a `Mapper<Input,Output>` which internally 
+uses all preceding mapping definitions.
+
 ### Mutable API
-TODO
+
+The mutable API of *datus* works by defining a set of getter-setter chains. Every `.from(...).(...).to(Output::someSetter)` adds
+a mapping definition to the later generated `Mapper<Input, Output>`. There are no checks for exhaustiveness or
+duplicate mappings as there is no proper way to implement it (e.g. lambdas and/or function references have no reference
+equality guarantees in the Java specification).
+
+The mutable API offers two terminal operations to finalize a given mapping definition - `to` and `into`. `into` accepts a 
+simple setter on the output type whereas `to` accepts a function which takes the current mapping definition and applies it to the 
+later affected output object by returning a new instance of the output type. So why is `to` needed? Consider the following
+setter:
+```java
+public Output setSomeStuff(String value) {
+    return new Output(value);
+}
+```
+`to` is needed/more elegant for cases in which getters return a new instance of the output type or for some reason return the
+object for chaining. This is especially useful for [Kotlins data classes](https://kotlinlang.org/docs/reference/data-classes.html).
+`into` would not suffice in this context as it does not allow to replace the whole output object or support functions which have a return value.
+
+*datus* provides additional functions which are not directly related to mapping a single value from the input to the output
+object:
+
+`spy(BiConsumer<In, Out>)`: `spy` is used to notify a given function about the current state of the input and output objects. The main
+use case of `spy` is logging or other cross-cutting concerns. Compared to the immutable API, `spy` can be inserted before and after
+every mapping process definition. It is strongly discouraged to change the input object in any way.
+
+`process(BiFunction<Input, Output, Output>`: `process` enables additional post-processing of a given output object. `process` should only be used when other facilities of *datus* won't suffice or
+become too verbose. Compared to the immutable API, `process` can be inserted before and after every mapping process definition.
+Extensive use of `process` is discouraged as it is hard to reason about what fields of the output object are affected
+ (e.g. maybe it overrides a field for which you have just defined a mapping process). It is recommended to only use `process`
+ after all the getter-setter chains have been defined (which clearly signals some form of post-processing).
+ It is strongly discouraged to change the input object in any way.
+
+Finally, a `build()`-call finishes the mapping process definition by generating a `Mapper<Input,Output>` which internally 
+uses all preceding mapping definitions.
+
 ### Advanced usage
 TODO
 #### Conditional mapping (don't convert the input if X)
