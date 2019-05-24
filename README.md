@@ -13,7 +13,11 @@
 - a JVM data-mapping framework -
 </pre>
 
-*datus* is a library that enables you to define a mapping-process between two data-structures in a few lines of code while allowing for fluent processing / skipping along the way.
+*datus* enables you to define a mapping-process between two data-structures via a fluent functional API that allows for 
+additional processing along the way.
+
+Tired of writing the 100 factory class? Want to focus more on what to map, not how to implement it? Test coverage
+feels unnecessary when you actually just copy values from a to b? *datus* has got you covered!
 
 #### Overview
 1. [Why use datus?](#why-use-datus)
@@ -30,7 +34,7 @@
 ## Why use *datus*?
 Using *datus* has the following benefits:
 - no more 'dumb'/businesslogic-less `*Factory`-classes that you have to unit-test
-- separating mapping-logic from business-logic of certain mapping steps (**single-responsibility**)*
+- separating mapping-logic from business-logic of certain conversion steps (**single-responsibility**)*
 - enabling your business-logic to only operate on parts of a data-structure instead of depending on the whole object (e.g. upper-casing a persons name in a `.map`-step) (**reducing dependencies**)
 - programming against an `interface` instead of concrete classes (**cleaner dependencies**)
 - focus on `what` to map, not `how` to do it (**functional-programming approach**)
