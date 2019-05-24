@@ -9,8 +9,25 @@ public class DetailedPerson {
     private final String addressExtra;
     private final String city;
     private final String occupation;
+    private final String country;
+    private final String zipCode;
+    private final boolean active;
+    private final boolean allowedToLogin;
 
-    public DetailedPerson(String uniqueId, String salutation, String firstName, String lastName, String address, String addressExtra, String city, String occupation) {
+    public DetailedPerson(
+            String uniqueId,
+            String salutation,
+            String firstName,
+            String lastName,
+            String address,
+            String addressExtra,
+            String city,
+            String occupation,
+            String country,
+            String zipCode,
+            boolean active,
+            boolean allowedToLogin
+    ) {
         this.uniqueId = uniqueId;
         this.salutation = salutation;
         this.firstName = firstName;
@@ -19,6 +36,10 @@ public class DetailedPerson {
         this.addressExtra = addressExtra;
         this.city = city;
         this.occupation = occupation;
+        this.country = country;
+        this.zipCode = zipCode;
+        this.active = active;
+        this.allowedToLogin = allowedToLogin;
     }
 
     public String getUniqueId() {
@@ -51,5 +72,21 @@ public class DetailedPerson {
 
     public String getOccupation() {
         return occupation;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public String getZipCode() {
+        return zipCode;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public boolean isAllowedToLogin() {
+        return allowedToLogin;
     }
 }

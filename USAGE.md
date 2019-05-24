@@ -50,7 +50,7 @@ Datus.forTypes(Person.class, PersonDTO.class).immutable(PersonDTO::new)
 ```
 
 The mutable API expects exactly zero constructor parameters whereas the immutable API supports
-up to 8 constructor parameters (consider opening an issue if you need *datus* to support more constructor parameters).
+up to 12 constructor parameters (consider opening an issue if you need *datus* to support more constructor parameters).
 
 Even though the two APIs internally differ significantly, *datus* strives to unify the experience of both workflows.
 Fundamentally both the immutable and mutable API define their mapping steps on a field-by-field/parameter-by-parameter basis:

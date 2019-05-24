@@ -9,7 +9,7 @@ import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class HighArgImmutableMapperTest {
+public class MaxArgImmutableMapperTest {
 
 
     @Test
@@ -26,6 +26,10 @@ public class HighArgImmutableMapperTest {
                 .from(DetailedPerson::getAddressExtra).to(ConstructorParameter::bind)
                 .from(DetailedPerson::getCity).to(ConstructorParameter::bind)
                 .from(DetailedPerson::getOccupation).to(ConstructorParameter::bind)
+                .from(DetailedPerson::getCountry).to(ConstructorParameter::bind)
+                .from(DetailedPerson::getZipCode).to(ConstructorParameter::bind)
+                .from(DetailedPerson::isActive).to(ConstructorParameter::bind)
+                .from(DetailedPerson::isAllowedToLogin).to(ConstructorParameter::bind)
                 .build();
 
         DetailedPerson source = new DetailedPerson(
@@ -36,7 +40,11 @@ public class HighArgImmutableMapperTest {
                 "address",
                 "addressExtra",
                 "city",
-                "occupation"
+                "occupation",
+                "country",
+                "zipCode",
+                false,
+                false
         );
 
         //when
@@ -51,6 +59,10 @@ public class HighArgImmutableMapperTest {
         assertThat(result.getAddressExtra()).isEqualTo("addressExtra");
         assertThat(result.getCity()).isEqualTo("city");
         assertThat(result.getOccupation()).isEqualTo("occupation");
+        assertThat(result.getCountry()).isEqualTo("country");
+        assertThat(result.getZipCode()).isEqualTo("zipCode");
+        assertThat(result.isActive()).isEqualTo(false);
+        assertThat(result.isAllowedToLogin()).isEqualTo(false);
     }
 
     @Test
@@ -66,6 +78,10 @@ public class HighArgImmutableMapperTest {
                 .from(Function.identity()).map(o -> "5").to(ConstructorParameter::bind)
                 .from(Function.identity()).map(o -> "6").to(ConstructorParameter::bind)
                 .from(Function.identity()).map(o -> "7").to(ConstructorParameter::bind)
+                .from(Function.identity()).map(o -> "8").to(ConstructorParameter::bind)
+                .from(Function.identity()).map(o -> "9").to(ConstructorParameter::bind)
+                .from(Function.identity()).map(o -> true).to(ConstructorParameter::bind)
+                .from(Function.identity()).map(o -> false).to(ConstructorParameter::bind)
                 .build();
 
         //when
@@ -80,6 +96,10 @@ public class HighArgImmutableMapperTest {
         assertThat(result.getAddressExtra()).isEqualTo("5");
         assertThat(result.getCity()).isEqualTo("6");
         assertThat(result.getOccupation()).isEqualTo("7");
+        assertThat(result.getCountry()).isEqualTo("8");
+        assertThat(result.getZipCode()).isEqualTo("9");
+        assertThat(result.isActive()).isEqualTo(true);
+        assertThat(result.isAllowedToLogin()).isEqualTo(false);
     }
 
     @Test
@@ -96,6 +116,10 @@ public class HighArgImmutableMapperTest {
                 .from(DetailedPerson::getAddressExtra).map(this::appendExclamationMark).to(ConstructorParameter::bind)
                 .from(DetailedPerson::getCity).map(this::appendExclamationMark).to(ConstructorParameter::bind)
                 .from(DetailedPerson::getOccupation).map(this::appendExclamationMark).to(ConstructorParameter::bind)
+                .from(DetailedPerson::getCountry).map(this::appendExclamationMark).to(ConstructorParameter::bind)
+                .from(DetailedPerson::getZipCode).map(this::appendExclamationMark).to(ConstructorParameter::bind)
+                .from(DetailedPerson::isActive).to(ConstructorParameter::bind)
+                .from(DetailedPerson::isAllowedToLogin).to(ConstructorParameter::bind)
                 .build();
 
         DetailedPerson source = new DetailedPerson(
@@ -106,7 +130,11 @@ public class HighArgImmutableMapperTest {
                 "address",
                 "addressExtra",
                 "city",
-                "occupation"
+                "occupation",
+                "country",
+                "zipCode",
+                true,
+                true
         );
 
         //when
@@ -121,6 +149,10 @@ public class HighArgImmutableMapperTest {
         assertThat(result.getAddressExtra()).isEqualTo("addressExtra!");
         assertThat(result.getCity()).isEqualTo("city!");
         assertThat(result.getOccupation()).isEqualTo("occupation!");
+        assertThat(result.getCountry()).isEqualTo("country!");
+        assertThat(result.getZipCode()).isEqualTo("zipCode!");
+        assertThat(result.isActive()).isEqualTo(true);
+        assertThat(result.isAllowedToLogin()).isEqualTo(true);
     }
 
     private String appendExclamationMark(String input) {

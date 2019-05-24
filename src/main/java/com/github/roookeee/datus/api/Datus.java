@@ -164,6 +164,92 @@ public class Datus<In, Out> {
         return new ConstructorBuilder8<>(constructor);
     }
 
+    /**
+     * Starts an immutable mapping process definition using the given constructor of the output type.
+     *
+     * @param constructor the constructor to use
+     * @param <A>         the constructors 1st parameters type
+     * @param <B>         the constructors 2nd parameters type
+     * @param <C>         the constructors 3rd parameters type
+     * @param <D>         the constructors 4th parameters type
+     * @param <E>         the constructors 5th parameters type
+     * @param <F>         the constructors 6th parameters type
+     * @param <G>         the constructors 7th parameters type
+     * @param <H>         the constructors 8th parameters type
+     * @param <I>         the constructors 9th parameters type
+     * @return an immutable mapping builder
+     */
+    public <A, B, C, D, E, F, G, H, I>
+    ConstructorBuilder9<In, A, B, C, D, E, F, G, H, I, Out> immutable(Fn9<A, B, C, D, E, F, G, H, I, Out> constructor) {
+        return new ConstructorBuilder9<>(constructor);
+    }
+
+
+    /**
+     * Starts an immutable mapping process definition using the given constructor of the output type.
+     *
+     * @param constructor the constructor to use
+     * @param <A>         the constructors 1st parameters type
+     * @param <B>         the constructors 2nd parameters type
+     * @param <C>         the constructors 3rd parameters type
+     * @param <D>         the constructors 4th parameters type
+     * @param <E>         the constructors 5th parameters type
+     * @param <F>         the constructors 6th parameters type
+     * @param <G>         the constructors 7th parameters type
+     * @param <H>         the constructors 8th parameters type
+     * @param <I>         the constructors 9th parameters type
+     * @param <J>         the constructors 10th parameters type
+     * @return an immutable mapping builder
+     */
+    public <A, B, C, D, E, F, G, H, I, J>
+    ConstructorBuilder10<In, A, B, C, D, E, F, G, H, I, J, Out> immutable(Fn10<A, B, C, D, E, F, G, H, I, J, Out> constructor) {
+        return new ConstructorBuilder10<>(constructor);
+    }
+
+    /**
+     * Starts an immutable mapping process definition using the given constructor of the output type.
+     *
+     * @param constructor the constructor to use
+     * @param <A>         the constructors 1st parameters type
+     * @param <B>         the constructors 2nd parameters type
+     * @param <C>         the constructors 3rd parameters type
+     * @param <D>         the constructors 4th parameters type
+     * @param <E>         the constructors 5th parameters type
+     * @param <F>         the constructors 6th parameters type
+     * @param <G>         the constructors 7th parameters type
+     * @param <H>         the constructors 8th parameters type
+     * @param <I>         the constructors 9th parameters type
+     * @param <J>         the constructors 10th parameters type
+     * @param <K>         the constructors 11th parameters type
+     * @return an immutable mapping builder
+     */
+    public <A, B, C, D, E, F, G, H, I, J, K>
+    ConstructorBuilder11<In, A, B, C, D, E, F, G, H, I, J, K, Out> immutable(Fn11<A, B, C, D, E, F, G, H, I, J, K, Out> constructor) {
+        return new ConstructorBuilder11<>(constructor);
+    }
+
+    /**
+     * Starts an immutable mapping process definition using the given constructor of the output type.
+     *
+     * @param constructor the constructor to use
+     * @param <A>         the constructors 1st parameters type
+     * @param <B>         the constructors 2nd parameters type
+     * @param <C>         the constructors 3rd parameters type
+     * @param <D>         the constructors 4th parameters type
+     * @param <E>         the constructors 5th parameters type
+     * @param <F>         the constructors 6th parameters type
+     * @param <G>         the constructors 7th parameters type
+     * @param <H>         the constructors 8th parameters type
+     * @param <I>         the constructors 9th parameters type
+     * @param <J>         the constructors 10th parameters type
+     * @param <K>         the constructors 11th parameters type
+     * @return an immutable mapping builder
+     */
+    public <A, B, C, D, E, F, G, H, I, J, K, L>
+    ConstructorBuilder12<In, A, B, C, D, E, F, G, H, I, J, K, L, Out> immutable(Fn12<A, B, C, D, E, F, G, H, I, J, K, L, Out> constructor) {
+        return new ConstructorBuilder12<>(constructor);
+    }
+
     private Datus() {
     }
 }
