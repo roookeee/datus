@@ -221,7 +221,6 @@ public class Datus<In, Out> {
      * @param <I>         the constructors 9th parameters type
      * @param <J>         the constructors 10th parameters type
      * @param <K>         the constructors 11th parameters type
-     * @param <L>         the constructors 12th parameters type
      * @return an immutable mapping builder
      */
     public <A, B, C, D, E, F, G, H, I, J, K>
@@ -244,6 +243,7 @@ public class Datus<In, Out> {
      * @param <I>         the constructors 9th parameters type
      * @param <J>         the constructors 10th parameters type
      * @param <K>         the constructors 11th parameters type
+     * @param <L>         the constructors 12th parameters type
      * @return an immutable mapping builder
      */
     public <A, B, C, D, E, F, G, H, I, J, K, L>
