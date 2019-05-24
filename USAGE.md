@@ -90,7 +90,7 @@ Stream<Output> conversionStream(Collection<Input> input)
 Map<Input, Output> convert(Collection<Input> input)
 Map<MapKeyType, Output> convert(Collection<Input> input, Function<Input, MapKeyType> keyMapper)
 ```
-While others allow predicating a `Mapper<Input, Output>` in regards to the input object (e.g. input must not be null), the generated output (e.g. some business-logic validation) object or both:
+Other functions allow predicating a given `Mapper<Input, Output>` in regards to the input object (e.g. input must not be null), the generated output (e.g. some business-logic validation) object or both:
 ```java
 Mapper<Input, Optional<Output>> predicateInput(Predicate<Input> predicate)
 Mapper<Input, Optional<Output>> predicateOutput(Predicate<Output> predicate)
@@ -100,7 +100,7 @@ Mapper<Input, Optional<Output>> predicate(Predicate<Input> inputPredicate, Predi
 Some last basic side notes on how to program with and what to expect from *datus* before moving on to more advanced topics:
 
 Both the immutable and mutable API are statically type checked and thus won't compile if an invalid mapping
-definition is given (e.g. type mismatches). 
+definition is given (e.g. type mismatches).
 Finally as *datus* is about mapping an input object to an output object, **it is strongly discouraged to change the input
 object in any way when defining a mapping process in one of *datus* APIs**.
 
@@ -108,8 +108,8 @@ object in any way when defining a mapping process in one of *datus* APIs**.
 
 The immutable API of *datus* works by defining the mapping process of each constructor parameter in the order
 they occur in their constructor definition. 
-Every `.from(...).(...).to(ConstructorParameter::bind)` definition automatically moves to the next constructor parameter 
-or to an intermediate object when the mapping process for every constructor parameter is defined.
+Every `.from(...).(...).to(ConstructorParameter::bind)` definition automatically moves to the next constructor parameter
+until every constructor parameter is bound to a mapping process.
 
 *datus* provides additional functionality once every constructor parameter received its mapping process:
 
@@ -139,7 +139,7 @@ public Output setSomeStuff(String value) {
     return new Output(value);
 }
 ```
-`to` is needed/more elegant for cases in which getters return a new instance of the output type or for some reason return the
+`to` is needed/more elegant for cases in which setters return a new instance of the output type or for some reason return the
 object for chaining. This is especially useful for [Kotlins data classes](https://kotlinlang.org/docs/reference/data-classes.html).
 `into` would not suffice in this context as it does not allow to replace the whole output object or support functions which have a return value.
 
@@ -188,6 +188,10 @@ class PersonDTO {
     }
 }
 ```
+The following examples focus on the immutable API of *datus* but every `ConstructorParameter::bind` could be
+directly replaced by a setter on `PersonDTO` to accomplish the same task in the mutable API without changing
+anything else besides the initial `.immutable(PersonDTO::new)`-call.
+
 Let's start with a simple copying mapper and some predicated variations:
 ```java
     class MapperDefinitions {

@@ -5,7 +5,7 @@
 *datus* enables you to define a mapping-process between two data-structures via a fluent functional API that allows for 
 additional processing along the way.
 
-Tired of writing the 100 factory class? Want to focus more on what to map, not how to implement it? Test coverage
+Tired of writing the 100th factory class? Want to focus more on what to map, not how to implement it? Test coverage
 feels unnecessary when you actually just copy values from a to b? *datus* has got you covered!
 
 #### Overview
@@ -28,6 +28,9 @@ Using *datus* has the following benefits:
 - programming against an `interface` instead of concrete classes (**cleaner dependencies**)
 - focus on `what` to map, not `how` to do it (**functional-programming approach**)
 - easily add logging or other cross-cutting-concerns via `spy` or `process`(see below for more information about the full API)
+- compared to [Lombok](https://projectlombok.org/) and [Apache MapStruct](http://mapstruct.org/): no additional IDE or build system plugins are needed (**simplicity**)
+- no black magic - you define what to map and how (compile-time checked), not some naming conventions, annotations or heuristics (**explicitness**)
+- leave your POJO/data classes 'as is' - no need for annotations or any other modifications (**low coupling**)
 
 Other minor benefits include:
 - define the mapping process from `A -> B` and get `Collection<A> -> Collection<B>`, `Collection<A> -> Map<A, B>` and more for free
