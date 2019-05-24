@@ -236,7 +236,8 @@ Maybe some parts of the mapping logic are businessful or too complex to express 
     }
     
     class MapperDefinitions {
-        //or get these values via dependency injection or a parameter when using a function to generate the mapper
+        //maybe get these instances via dependency injection 
+        //or a parameter when using a function to generate the mapper
         private PersonNameCleaner personNameCleaner = new PersonNameCleaner();
         private PersonValidator personValidator = new PersonValidator();
         
@@ -265,7 +266,8 @@ before we pass `null` to the functions of `PersonNameCleaner`:
     }
     
     class MapperDefinitions {
-        //or get these values via dependency injection or a parameter when using a function to generate the mapper
+        //maybe get these instances via dependency injection
+        //or a parameter when using a function to generate the mapper
         private PersonNameCleaner personNameCleaner = new PersonNameCleaner();
         private PersonValidator personValidator = new PersonValidator();
         
