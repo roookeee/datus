@@ -1,17 +1,6 @@
 #### Note: datus is still in a pre-release state and will be released at the end of may 2019
-<!-- https://www.kammerl.de/ascii/AsciiSignature.php , Georgia11 + adjustments-->
-<pre style="background-color: red">
-       ,,              ,                            
-      7MM             mm                      
-       MM             MM                      
-  ,M""bMM    ,6"Yb. mmMMmm  7MM   7MM   ,pP"Ybd
-,AP    MM   8)   MM   MM     MM    MM   8I   `"
-8MI    MM    ,pm9MM   MM     MM    MM   `YMMMa.
-`Mb    MM   8M   MM   MM     MM    MM   L.   I8
- `Wbmd"MML. `Moo9^Yo. `Mbmo  `Mbod"YML. M9mmmP'
- 
-- a JVM data-mapping framework -
-</pre>
+
+<img width="400px" src="https://raw.githubusercontent.com/roookeee/datus/assets/assets/datus-logo.png" >
 
 *datus* enables you to define a mapping-process between two data-structures via a fluent functional API that allows for 
 additional processing along the way.
