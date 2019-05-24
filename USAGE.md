@@ -111,7 +111,7 @@ they occur in their constructor definition.
 Every `.from(...).(...).to(ConstructorParameter::bind)` definition automatically moves to the next constructor parameter
 until every constructor parameter is bound to a mapping process.
 
-*datus* provides additional functionality once every constructor parameter received its mapping process:
+*datus* immutable API provides additional functionality once every constructor parameter received its mapping process:
 
 `spy(BiConsumer<In, Out>)`: `spy` is used to notify a given function about a successfully applied mapping process. The main
 use case of `spy` is logging or other cross-cutting concerns. It is strongly discouraged to change the input object in any way.
@@ -143,7 +143,7 @@ public Output setSomeStuff(String value) {
 object for chaining. This is especially useful for [Kotlins data classes](https://kotlinlang.org/docs/reference/data-classes.html).
 `into` would not suffice in this context as it does not allow to replace the whole output object or support functions which have a return value.
 
-*datus* provides additional functions which are not directly related to mapping a single value from the input to the output
+*datus* mutable API provides additional functions which are not directly related to mapping a single value from the input to the output
 object:
 
 `spy(BiConsumer<In, Out>)`: `spy` is used to notify a given function about the current state of the input and output objects. The main
