@@ -11,6 +11,7 @@ JavaDoc in the source code.
 1. [Basics](#basics)
 1. [Immutable API](#immutable-api)
 1. [Mutable API](#mutable-api)
+1. [Examples](#mutable-api)
 1. [Advanced usage](#advanced-usage)
 
 ### Prerequisites 
@@ -77,9 +78,30 @@ the preceding mapping step definition by binding its definition to the current c
 or a given setter (mutable API). Any type conversion (e.g. an `Address` field in `Person` has to be transformed to an 
 `AddressDTO` for the `PersonDTO`) has to happen in preceding `map` steps. A type mismatch will always result in a compilation error.
 
-Both the immutable and mutable API are statically checked and won't compile if an invalid mapping
+Once all necessary mapping steps are completed, calling `build()` will finalize the mapping definition and
+generate a `Mapper<Input, Output>` object. Most features of the `Mapper`-Interface are about the conversion from input to output:
+```java
+//the only function that is actually implemented by the given mapping steps 
+//all other functions are based on it:
+Output convert(Input input) 
+List<Output> convert(Collection<Input> input)
+Stream<Output> conversionStream(Collection<Input> input)
+
+Map<Input, Output> convert(Collection<Input> input)
+Map<MapKeyType, Output> convert(Collection<Input> input, Function<Input, MapKeyType> keyMapper)
+```
+While others allow predicating a `Mapper<Input, Output>` in regards to the input object (e.g. input must not be null), the generated output (e.g. some business-logic validation) object or both:
+```java
+Mapper<Input, Optional<Output>> predicateInput(Predicate<Input> predicate)
+Mapper<Input, Optional<Output>> predicateOutput(Predicate<Output> predicate)
+Mapper<Input, Optional<Output>> predicate(Predicate<Input> inputPredicate, Predicate<Output> outputPredicate)
+```
+
+Some last basic side notes on how to program with and what to expect from *datus* before moving on to more advanced topics:
+
+Both the immutable and mutable API are statically type checked and thus won't compile if an invalid mapping
 definition is given (e.g. type mismatches). 
-Finally as *datus* is about mapping an input object to an output object **it is strongly discouraged to change the input
+Finally as *datus* is about mapping an input object to an output object, **it is strongly discouraged to change the input
 object in any way when defining a mapping process in one of *datus* APIs**.
 
 ### Immutable API
@@ -137,6 +159,9 @@ Extensive use of `process` is discouraged as it is hard to reason about what fie
 
 Finally, a `build()`-call finishes the mapping process definition by generating a `Mapper<Input,Output>` which internally 
 uses all preceding mapping definitions.
+
+### Examples
+
 
 ### Advanced usage
 TODO
