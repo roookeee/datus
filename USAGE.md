@@ -12,7 +12,7 @@ JavaDoc in the source code.
 1. [Immutable API](#immutable-api)
 1. [Mutable API](#mutable-api)
 1. [Examples](#mutable-api)
-1. [Advanced usage](#advanced-usage)
+1. [Advanced usage / FAQ](#advanced-usage--faq)
 
 ### Prerequisites 
 
@@ -290,11 +290,65 @@ before we pass `null` to the functions of `PersonNameCleaner`:
             .build();
     }
 ```
-### Advanced usage
-TODO
-#### Conditional mapping (don't convert the input if X)
-TODO
-#### Mapping recursive data structures
-TODO
+### Advanced usage / FAQ
+This section is focused on use cases of *datus* that are either not directly supported via *datus* classes or
+represent a problem that is frequently occurring in *datus* issue tracker.
+
 #### Mapping multiple inputs into one output object
+*datus* by design only supports mapping one input object into one output object.
+Converting input object sometimes requires additional information on a per input object basis
+which makes using *datus* for these kind of conversions unpleasant, badly performing or even impossible. 
+
+The best way to handle multiple input objects when using *datus* is to use `Pair<Input1, Input2>`, `Triple<Input1, Input2, Input3>`
+(, ...) alike container objects. Please note that *datus* does not supply these container types as
+these kind of objects lie outside of *datus* scope of mapping from an input to an output object. Feel
+free to use any other library which implement said container types but please reconsider if *datus* is really the
+right solution for aggregating multiple input objects into one output object as these kind of mappings often imply a 
+great amount of logic which might justify implementing it in a standalone factory class.
+
+#### I cannot express X with the immutable / mutable API (but want consistency by using the Mapper<Input,Output> interface)
+(Preamble: Feel free to open an issue if you think *datus* could be improved or extended)
+
+Some mapping scenarios are cumbersome or even impossible in *datus* immutable / mutable API.
 TODO
+
+#### Mapping recursive data structures
+Consider the following class:
+```java
+class Node {
+    //getter + setter omitted for brevity
+    private Node parent;
+    private Object someData;
+}
+```
+At first glance it seems like it is impossible to define a mapping process for such a self-recursive data structure as 
+the `Mapper<Anything, Node>` cannot be referenced while still under construction: the java compiler will complain about referencing
+an uninitialized variable. But there is a way to use *datus* immutable / mutable API to generate a mapper for self-recursive 
+data structures with the following helper class:
+```java
+class MapperDelegate<Input, Output> implements Mapper<Input, Output> {
+    private Mapper<Input, Output> mapper;
+    
+    @Override
+    public Output convert(Input input) {
+        return mapper.convert(input);
+    }
+    
+    public void setMapper(Mapper<Input, Output> mapper) {
+        this.mapper = mapper;
+    }
+}
+
+public Mapper<Node, Node> generateMapper() {
+    MapperDelegate<Node, Node> delegate = new MapperDelegate<>();
+    Mapper<Node, Node> mapper = Datus.forTypes(Node.class, Node.class)
+        .mutable(Node::new)
+        .from(Node::someData).to(Node::setSomeData)
+        .from(Node::getParent)
+            .given(Objects::nonNull, parent -> delegate.convert(parent)).orElse(null)
+            .to(Node::setParent)
+        .build();
+    delegate.setMapper(mapper);
+    return mapper;
+}
+```
