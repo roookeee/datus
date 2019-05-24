@@ -40,7 +40,8 @@ Other minor benefits include:
 \* = when following the single responsibility pattern business logic (e.g. businessful `.map`-steps) should be extracted to a class instead of an inline lamda
 
 ## Examples
-Two short examples are shown for the immutable and mutable API of *datus*. Please refer to the USAGE.md for an extensive guide on *datus*.
+The following examples outline the general usage of both the immutable and mutable API of *datus*.
+Please refer to the [USAGE.md](https://github.com/roookeee/datus/blob/master/USAGE.md) for an extensive guide on *datus*.
 #### Immutable object API example
 ```java
 
@@ -197,7 +198,7 @@ public class SomeClass {
 ```
 
 ## User guide
-Please refer to the USAGE.md for a complete user guide as the readme only serves as a broad overview.
+Please refer to the [USAGE.md](https://github.com/roookeee/datus/blob/master/USAGE.md) for a complete user guide as the readme only serves as a broad overview.
 
 ## Dependency information
 Maven
