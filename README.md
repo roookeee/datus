@@ -3,7 +3,7 @@
 <img width="400px" src="https://raw.githubusercontent.com/roookeee/datus/assets/assets/datus-logo.png" >
 
 *datus* enables you to define a mapping-process between two data-structures via a fluent functional API that allows for 
-additional processing along the way.
+additional processing along the way - even for immutable objects.
 
 Tired of writing the 100th factory class? Want to focus more on what to map, not how to implement it? Test coverage
 feels unnecessary when you actually just copy values from a to b? *datus* has got you covered!
