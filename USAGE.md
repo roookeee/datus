@@ -296,7 +296,7 @@ represent a problem that is frequently occurring in *datus* issue tracker.
 
 #### Mapping multiple inputs into one output object
 *datus* by design only supports mapping one input object into one output object.
-Converting input object sometimes requires additional information on a per input object basis
+Converting input objects sometimes requires additional information on a per input object basis
 which makes using *datus* for these kind of conversions unpleasant, badly performing or even impossible. 
 
 The best way to handle multiple input objects when using *datus* is to use `Pair<Input1, Input2>`, `Triple<Input1, Input2, Input3>`
