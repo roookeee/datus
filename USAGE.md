@@ -316,7 +316,7 @@ as outlined [at the end of basics](#basics).
 
 Here is a simple list copying mapper for example:
 ```java
-    Mapper<List<String>, List<String>> copyMapper = l -> new ArrayList<>(l)
+    Mapper<List<String>, List<String>> copyMapper = list -> new ArrayList<>(list)
 ```
 You can always implement the `Mapper<Input, Output>` interface to gain a more consistent usage of
 factories / converters across your library / application which would also allow for a more
