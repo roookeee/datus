@@ -194,101 +194,101 @@ anything else besides the initial `.immutable(PersonDTO::new)`-call.
 
 Let's start with a simple copying mapper and some predicated variations:
 ```java
-    class MapperDefinitions {
-        private Mapper<Person, PersonDTO> mapper = Datus.forTypes(Person.class, PersonDTO.class)
-            .immutable(PersonDTO::new)
-            .from(Person::getFirstName).to(ConstructorParameter::bind)
-            .from(Person::getLastName).to(ConstructorParameter::bind)
-            .from(Person::isActive).to(ConstructorParameter::bind)
-            .from(Person::isCanLogin).to(ConstructorParameter::bind)
-            .build();
-        
-        //let's not try to convert null inputs
-        private Mapper<Person, Optional<PersonDTO>> inputCheckedMapper = 
-            mapper.predicateInput(Object::nonNull);
-        
-        //let's not try to convert null inputs and only output active users
-        private Mapper<Person, Optional<PersonDTO>> onlyActiveResults = 
-            mapper.predicate(Object::nonNull, PersonDTO::isActive);
-    }
+class MapperDefinitions {
+    private Mapper<Person, PersonDTO> mapper = Datus.forTypes(Person.class, PersonDTO.class)
+        .immutable(PersonDTO::new)
+        .from(Person::getFirstName).to(ConstructorParameter::bind)
+        .from(Person::getLastName).to(ConstructorParameter::bind)
+        .from(Person::isActive).to(ConstructorParameter::bind)
+        .from(Person::isCanLogin).to(ConstructorParameter::bind)
+        .build();
+    
+    //let's not try to convert null inputs
+    private Mapper<Person, Optional<PersonDTO>> inputCheckedMapper = 
+        mapper.predicateInput(Object::nonNull);
+    
+    //let's not try to convert null inputs and only output active users
+    private Mapper<Person, Optional<PersonDTO>> onlyActiveResults = 
+        mapper.predicate(Object::nonNull, PersonDTO::isActive);
+}
 ```
 Let's assume a `PersonDTO's` `canLogin` respects the `Person's` `isActive` flag and a `Person's` `firstName` and `lastName`
 may contain unnecessary whitespaces that need to be trimmed: 
 ```java
-    class MapperDefinitions {
-        private Mapper<Person, PersonDTO> mapper = Datus.forTypes(Person.class, PersonDTO.class)
-            .immutable(PersonDTO::new)
-            .from(Person::getFirstName).map(String::trim).to(ConstructorParameter::bind)
-            .from(Person::getLastName).map(String::trim).to(ConstructorParameter::bind)
-            .from(Person::isActive).to(ConstructorParameter::bind)
-            .from((Function.identity())
-                .map(person -> person.isActive() && person.isCanLogin())
-                .to(ConstructorParameter::bind)
-            .build();
-    }
+class MapperDefinitions {
+    private Mapper<Person, PersonDTO> mapper = Datus.forTypes(Person.class, PersonDTO.class)
+        .immutable(PersonDTO::new)
+        .from(Person::getFirstName).map(String::trim).to(ConstructorParameter::bind)
+        .from(Person::getLastName).map(String::trim).to(ConstructorParameter::bind)
+        .from(Person::isActive).to(ConstructorParameter::bind)
+        .from((Function.identity())
+            .map(person -> person.isActive() && person.isCanLogin())
+            .to(ConstructorParameter::bind)
+        .build();
+}
 ```
 
 Maybe some parts of the mapping logic are businessful or too complex to express in a simple lamdba:
 ```java
-    class PersonNameCleaner {
-        public String cleanupFirstName(String firstName) { ... }
-        public String cleanupLastName(String firstName) { ... }
-    }
+class PersonNameCleaner {
+    public String cleanupFirstName(String firstName) { ... }
+    public String cleanupLastName(String firstName) { ... }
+}
+
+class PersonValidator {
+    public boolean shouldBeActive(Person person) { ... }
+}
+
+class MapperDefinitions {
+    //maybe get these instances via dependency injection 
+    //or a parameter when using a function to generate the mapper
+    private PersonNameCleaner personNameCleaner = new PersonNameCleaner();
+    private PersonValidator personValidator = new PersonValidator();
     
-    class PersonValidator {
-        public boolean shouldBeActive(Person person) { ... }
-    }
-    
-    class MapperDefinitions {
-        //maybe get these instances via dependency injection 
-        //or a parameter when using a function to generate the mapper
-        private PersonNameCleaner personNameCleaner = new PersonNameCleaner();
-        private PersonValidator personValidator = new PersonValidator();
-        
-        private Mapper<Person, PersonDTO> mapper = Datus.forTypes(Person.class, PersonDTO.class)
-            .immutable(PersonDTO::new)
-            .from(Person::getFirstName).map(personNameCleaner::cleanupFirstName).to(ConstructorParameter::bind)
-            .from(Person::getLastName).map(personNameCleaner::cleanupLastName).to(ConstructorParameter::bind)
-            .from(Person::isActive).map(personValidator::shouldBeActive).to(ConstructorParameter::bind)
-            .from((Function.identity())
-                .map(person -> personValidator.shouldBeActive(person) && person.isCanLogin())
-                .to(ConstructorParameter::bind)
-            .build();
-    }
+    private Mapper<Person, PersonDTO> mapper = Datus.forTypes(Person.class, PersonDTO.class)
+        .immutable(PersonDTO::new)
+        .from(Person::getFirstName).map(personNameCleaner::cleanupFirstName).to(ConstructorParameter::bind)
+        .from(Person::getLastName).map(personNameCleaner::cleanupLastName).to(ConstructorParameter::bind)
+        .from(Person::isActive).map(personValidator::shouldBeActive).to(ConstructorParameter::bind)
+        .from((Function.identity())
+            .map(person -> personValidator.shouldBeActive(person) && person.isCanLogin())
+            .to(ConstructorParameter::bind)
+        .build();
+}
 ```
 
 Some changes were done and the `Person's` `firstName` and `lastName` are now nullable, let's integrate that
 before we pass `null` to the functions of `PersonNameCleaner`:
 ```java
-    class PersonNameCleaner {
-        public String cleanupFirstName(String firstName) { ... }
-        public String cleanupLastName(String firstName) { ... }
-    }
+class PersonNameCleaner {
+    public String cleanupFirstName(String firstName) { ... }
+    public String cleanupLastName(String firstName) { ... }
+}
+
+class PersonValidator {
+    public boolean shouldBeActive(Person person) { ... }
+}
+
+class MapperDefinitions {
+    //maybe get these instances via dependency injection
+    //or a parameter when using a function to generate the mapper
+    private PersonNameCleaner personNameCleaner = new PersonNameCleaner();
+    private PersonValidator personValidator = new PersonValidator();
     
-    class PersonValidator {
-        public boolean shouldBeActive(Person person) { ... }
-    }
-    
-    class MapperDefinitions {
-        //maybe get these instances via dependency injection
-        //or a parameter when using a function to generate the mapper
-        private PersonNameCleaner personNameCleaner = new PersonNameCleaner();
-        private PersonValidator personValidator = new PersonValidator();
-        
-        private Mapper<Person, PersonDTO> mapper = Datus.forTypes(Person.class, PersonDTO.class)
-            .immutable(PersonDTO::new)
-            .from(Person::getFirstName)
-                .given(Object::nonNull, personNameCleaner::cleanupFirstName).orElse(null)
-                .to(ConstructorParameter::bind)
-            .from(Person::getLastName)
-                .given(Object::nonNull, personNameCleaner::cleanupLastName).orElse(null)
-                .to(ConstructorParameter::bind)
-            .from(Person::isActive).map(personValidator::shouldBeActive).to(ConstructorParameter::bind)
-            .from((Function.identity())
-                .map(person -> personValidator.shouldBeActive(person) && person.isCanLogin())
-                .to(ConstructorParameter::bind)
-            .build();
-    }
+    private Mapper<Person, PersonDTO> mapper = Datus.forTypes(Person.class, PersonDTO.class)
+        .immutable(PersonDTO::new)
+        .from(Person::getFirstName)
+            .given(Object::nonNull, personNameCleaner::cleanupFirstName).orElse(null)
+            .to(ConstructorParameter::bind)
+        .from(Person::getLastName)
+            .given(Object::nonNull, personNameCleaner::cleanupLastName).orElse(null)
+            .to(ConstructorParameter::bind)
+        .from(Person::isActive).map(personValidator::shouldBeActive).to(ConstructorParameter::bind)
+        .from((Function.identity())
+            .map(person -> personValidator.shouldBeActive(person) && person.isCanLogin())
+            .to(ConstructorParameter::bind)
+        .build();
+}
 ```
 ### Advanced usage / FAQ
 This section is focused on use cases of *datus* that are either not directly supported via *datus* classes or
@@ -316,7 +316,7 @@ as outlined [at the end of basics](#basics).
 
 Here is a simple list copying mapper for example:
 ```java
-    Mapper<List<String>, List<String>> copyMapper = list -> new ArrayList<>(list)
+Mapper<List<String>, List<String>> copyMapper = list -> new ArrayList<>(list)
 ```
 You can always implement the `Mapper<Input, Output>` interface to gain a more consistent usage of
 factories / converters across your library / application which would also allow for a more
