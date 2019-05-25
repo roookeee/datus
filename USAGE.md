@@ -11,7 +11,7 @@ JavaDoc in the source code.
 1. [Basics](#basics)
 1. [Immutable API](#immutable-api)
 1. [Mutable API](#mutable-api)
-1. [Examples](#mutable-api)
+1. [Examples](#examples)
 1. [Advanced usage / FAQ](#advanced-usage--faq)
 
 ### Prerequisites 
