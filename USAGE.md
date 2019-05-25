@@ -309,8 +309,19 @@ great amount of logic which might justify implementing it in a standalone factor
 #### I cannot express X with the immutable / mutable API (but want consistency by using the Mapper<Input,Output> interface)
 (Preamble: Feel free to open an issue if you think *datus* could be improved or extended)
 
-Some mapping scenarios are cumbersome or even impossible in *datus* immutable / mutable API.
-TODO
+Some mapping scenarios are cumbersome or even impossible to express in *datus* immutable / mutable API.
+This is where the simplistic `Mapper<Input, Output>` interface comes in handy.
+It only requires one function, `Output convert(Input input)`, to provide all the mapper functionality
+as outlined [at the end of basics](#basics).
+
+Here is a simple list copying mapper for example:
+```java
+    Mapper<List<String>, List<String>> copyMapper = l -> new ArrayList<>(l)
+```
+You can always implement the `Mapper<Input, Output>` interface to gain a more consistent usage of
+factories / converters across your library / application which would also allow for a more
+sophisticated implementation of e.g. `Collection<Output> convert(Collection<Input>)` (e.g. batch some operations to a
+helper class).
 
 #### Mapping recursive data structures
 Consider the following class:
