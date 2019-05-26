@@ -136,6 +136,8 @@ personDto = mapper.convert(person);
 ```
 ## User guide
 Please refer to the [USAGE.md](https://github.com/roookeee/datus/blob/master/USAGE.md) for a complete user guide as the readme only serves as a broad overview.
+The user guide is designed to take **at most 15 minutes** to get you covered on everything about *datus* and how to use it
+in different scenarios.
 
 ## Dependency information
 Maven
