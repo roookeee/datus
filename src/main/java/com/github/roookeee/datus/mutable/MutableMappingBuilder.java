@@ -18,7 +18,7 @@ import java.util.function.Supplier;
  * @param <In>  the input type
  * @param <Out> the output type
  */
-public class MutableMappingBuilder<In, Out> {
+public final class MutableMappingBuilder<In, Out> {
     private final List<BiFunction<In, Out, Out>> mappers = new ArrayList<>();
     private final Supplier<Out> generator;
 

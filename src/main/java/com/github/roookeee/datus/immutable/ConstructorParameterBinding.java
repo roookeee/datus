@@ -7,7 +7,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public class ConstructorParameterBinding<In, Type, Ctor> {
+public final class ConstructorParameterBinding<In, Type, Ctor> {
     private final Ctor ctor;
     private final Function<In, Type> getter;
 

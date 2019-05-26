@@ -15,7 +15,7 @@ import java.util.function.*;
  * @param <CurrentType> the getters type
  * @param <Out>         the output type
  */
-public class MutableConstructionStep<In, CurrentType, Out> {
+public final class MutableConstructionStep<In, CurrentType, Out> {
 
     private final MutableMappingBuilder<In, Out> builder;
     private final Function<In, CurrentType> getter;

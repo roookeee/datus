@@ -7,7 +7,7 @@ import com.github.roookeee.datus.functions.Fn9;
 
 import java.util.function.Function;
 
-public class ConstructorBuilder9<In, A, B, C, D, E, F, G, H, I, Out>
+public final class ConstructorBuilder9<In, A, B, C, D, E, F, G, H, I, Out>
         extends AbstractConstructorBuilder<In, ConstructorBuilder9<In, A, B, C, D, E, F, G, H, I, Out>>
         implements ConstructorParameter<In, A, ConstructorBuilder8<In, B, C, D, E, F, G, H, I, Out>> {
     private final Fn10<In, A, B, C, D, E, F, G, H, I, Out> constructor;

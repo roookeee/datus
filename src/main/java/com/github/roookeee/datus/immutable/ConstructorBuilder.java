@@ -7,8 +7,8 @@ import com.github.roookeee.datus.mutable.MutableMappingBuilder;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
-public class ConstructorBuilder<In, Out> {
-    private Fn1<In, Out> constructor;
+public final class ConstructorBuilder<In, Out> {
+    private final Fn1<In, Out> constructor;
 
     ConstructorBuilder(Fn1<In, Out> constructor) {
         this.constructor = constructor;

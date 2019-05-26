@@ -6,7 +6,7 @@ import com.github.roookeee.datus.functions.Fn3;
 
 import java.util.function.Function;
 
-public class ConstructorBuilder2<In, A, B, Out>
+public final class ConstructorBuilder2<In, A, B, Out>
         extends AbstractConstructorBuilder<In, ConstructorBuilder2<In, A, B, Out>>
         implements ConstructorParameter<In, A, ConstructorBuilder1<In, B, Out>> {
     private final Fn3<In, A, B, Out> constructor;
