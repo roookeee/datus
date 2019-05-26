@@ -13,6 +13,7 @@ JavaDoc in the source code.
 1. [Mutable API](#mutable-api)
 1. [Examples](#examples)
 1. [Advanced usage / FAQ](#advanced-usage--faq)
+1. [Closing words](#closing-words)
 
 ### Prerequisites 
 
@@ -83,18 +84,23 @@ generate a `Mapper<Input, Output>` object. Most features of the `Mapper`-Interfa
 ```java
 //the only function that is actually implemented by the given mapping steps 
 //all other functions are based on it:
-Output convert(Input input) 
-List<Output> convert(Collection<Input> input)
-Stream<Output> conversionStream(Collection<Input> input)
-
-Map<Input, Output> convert(Collection<Input> input)
-Map<MapKeyType, Output> convert(Collection<Input> input, Function<Input, MapKeyType> keyMapper)
+interface Mapper<Input, Output> {
+    Output convert(Input input);
+    List<Output> convert(Collection<Input> input);
+    Stream<Output> conversionStream(Collection<Input> input);
+    
+    Map<Input, Output> convert(Collection<Input> input);
+    Map<MapKeyType, Output> convert(Collection<Input> input, Function<Input, MapKeyType> keyMapper);
+}
 ```
 Other functions allow predicating a given `Mapper<Input, Output>` in regards to the input object (e.g. input must not be null), the generated output (e.g. some business-logic validation) object or both:
 ```java
-Mapper<Input, Optional<Output>> predicateInput(Predicate<Input> predicate)
-Mapper<Input, Optional<Output>> predicateOutput(Predicate<Output> predicate)
-Mapper<Input, Optional<Output>> predicate(Predicate<Input> inputPredicate, Predicate<Output> outputPredicate)
+interface Mapper<Input, Output> {
+    // omitting the above functions for brevity
+    Mapper<Input, Optional<Output>> predicateInput(Predicate<Input> predicate);
+    Mapper<Input, Optional<Output>> predicateOutput(Predicate<Output> predicate);
+    Mapper<Input, Optional<Output>> predicate(Predicate<Input> inputPredicate, Predicate<Output> outputPredicate);
+}
 ```
 
 Some last basic side notes on how to program with and what to expect from *datus* before moving on to more advanced topics:
@@ -363,3 +369,50 @@ public Mapper<Node, Node> generateMapper() {
     return mapper;
 }
 ```
+
+#### Dependency injection (e.g. Spring)
+*datus* has no explicit code to support dependency injection and its accompanying concepts but is **easily integrated into any dependency injection framework** (e.g Spring):
+```java
+@Configuration
+public class MapperConfiguration {
+    @Bean
+    public Mapper<Person, PersonDTO> generatePersonMapper() {
+        return Datus.forTypes(Person.class, PersonDTO.class).mutable(PersonDTO::new)
+            .from(Person::getFirstName).into(PersonDTO.setFirstName)
+            .build();
+    } 
+}
+
+@Component
+public class SomeClass {
+    
+    private final Mapper<Person, PersonDTO> personMapper;
+    
+    @Autowired
+    public SomeClass(Mapper<Person, PersonDTO> personMapper) {
+        this.personMapper = personMapper;
+    }
+}
+```
+
+#### Drawbacks and when not to use *datus*
+*datus* is an abstraction-layer which like all of its kind (e.g. guava, Spring etc.) comes at a certain performance cost that in some scenarios will not justify the outlined benefits of it.
+*datus* is rigorously profiled while developing its features which results in the following advice:
+
+If you map a massive amount of objects (**> 40000 objects / ms (millisecond) per thread on an i7 6700k**) whilst not having any computationally significant `.map`-steps you 
+will suffer a performance loss of up to 70% compared to a traditional factory with imperative style mapping code. The performance cost
+of using the immutable / mutable API of *datus* will probably decrease over time as the JVM is getting more optimized in regards to handling
+code which relies heavily on functional programming concepts. 
+
+But remember: you can always implement performance critical conversion factories as standalone classes that implement the `Mapper<Input, Outpu>` interface
+to alleviate the performance hit while retaining consistency across your project.
+
+### Closing words
+Congratulations - you have just mastered all the basics of *datus*!
+
+Feel free to create an issue if something is missing in *datus* documentation or its implementation. Thank you
+for reading the usage guide.
+
+Like *datus* ? Consider buying me a coffee :)
+
+<a href="https://www.buymeacoffee.com/roookeee" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>

@@ -134,69 +134,6 @@ personDto = mapper.convert(person);
     ]
 */
 ```
-
-## Conditional mapping
-There may be reasons why a given input cannot be converted to an output object or why a converted output object is invalid
-which can be handled in the following way:
-```java
-Mapper<Person, PersonDTO> mapper = Datus.forTypes(Person.class, PersonDTO.class).mutable(PersonDTO::new)
-         .from(Person::getFirstName).into(PersonDTO.setFirstName)
-         .build();
-
-Mapper<Person, Optional<PersonDTO>> predicatedMapper = mapper.predicateInput(Object::nonNull)
-//or .predicateOutput / .predicate(inputPredicate, outputPredicate)
-```
-
-*datus* opts for an approach that uses pre- and post-conversion validation instead of allowing
-to interrupt the conversion process at any point in time. This simplifies *datus* API and implementation
-while also separating this (not directly to conversion related) concern out of *datus* core workflow.
-
-## Drawbacks and when not to use *datus*
-*datus* is an abstraction-layer which like all of its kind (e.g. guava, Spring etc.) comes at a certain performance cost that in some scenarios will not justify the outlined benefits of it.
-*datus* is rigorously profiled while developing its features which results in the following advice:
-
-If you map a massive amount of objects (**> 40000 objects / ms (millisecond) per thread on an i7 6700k**) whilst not having any computationally significant `.map`-steps you will suffer a performance loss of up to 70% compared to a traditional factory with imperative style mapping code.
-
-Refer to the next section for a possible workaround for this situation or others where *datus* just won't fit.
-
-## When *datus* construction builders just won't fit
-Maybe you are using *datus* in your project but there is this one mapping definition that feels awkward or just
-isn't possible to express with *datus* immutable / mutable builder APIs. Surely you can just build a factory for this case, but the inconsistency 
-isn't feeling too well...
-
-This is were the simplistic approach of the `Mapper`-interface comes in handy: just define your mapping process
-via a simple lambda and you are already getting the extended functionality like `.predicate` and the automatic availability
-of converting collections:
-```java
-Mapper<List<String>, List<String>> copyMapper = list -> new ArrayList<>(list);
-Mapper<List<String>,Optional<List<String>>> optionalCopyMapper = copyMapper.predicateInput(Object::nonNull);
-```
-
-## Dependency injection (e.g. Spring)
-*datus* has no explicit code to support dependency injection and its accompanying concepts but is **easily integrated into any dependency injection framework** (e.g Spring):
-```java
-@Configuration
-public class MapperConfiguration {
-    @Bean
-    public Mapper<Person, PersonDTO> generatePersonMapper() {
-        return Datus.forTypes(Person.class, PersonDTO.class).mutable(PersonDTO::new)
-            .from(Person::getFirstName).into(PersonDTO.setFirstName)
-            .build();
-    } 
-}
-
-@Component
-public class SomeClass {
-    
-    private final Mapper<Person, PersonDTO> personMapper;
-    
-    @Autowired
-    public SomeClass(Mapper<Person, PersonDTO> personMapper) {
-        this.personMapper = personMapper;
-    }
-}
-```
-
 ## User guide
 Please refer to the [USAGE.md](https://github.com/roookeee/datus/blob/master/USAGE.md) for a complete user guide as the readme only serves as a broad overview.
 
@@ -220,7 +157,7 @@ The `master` branch always matches the latest release of *datus* while the `deve
 that is still under development.
 
 #### Semver
-*datus* follows semantic versioning (see https://semver.org/)
+*datus* follows semantic versioning (see https://semver.org/) starting with the 1.0 release.
 
 #### Licensing
 *datus* is licensed under The MIT License (MIT)
@@ -234,6 +171,6 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ## Supporting datus development
-Like datus ? Consider buying me a coffee :)
+Like *datus* ? Consider buying me a coffee :)
 
 <a href="https://www.buymeacoffee.com/roookeee" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>
