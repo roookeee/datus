@@ -39,7 +39,6 @@ public class MutableConstructionStep<In, CurrentType, Out> {
         );
     }
 
-
     /**
      * Finishes the current construction step by generating a function that applies the given setter on the Out object.
      *
@@ -78,7 +77,7 @@ public class MutableConstructionStep<In, CurrentType, Out> {
      * @return a builder to configure the handling mechanism when the given predicate does not
      */
     public <IntermediateType> ConditionalEnd<In, CurrentType, IntermediateType, MutableConstructionStep<In, IntermediateType, Out>> given(
-            Predicate<CurrentType> predicate,
+            Predicate<? super CurrentType> predicate,
             IntermediateType value
     ) {
         return given(predicate, (in, v) -> value);
@@ -93,7 +92,7 @@ public class MutableConstructionStep<In, CurrentType, Out> {
      * @return a builder to configure the handling mechanism when the given predicate does not
      */
     public <IntermediateType> ConditionalEnd<In, CurrentType, IntermediateType, MutableConstructionStep<In, IntermediateType, Out>> given(
-            Predicate<CurrentType> predicate,
+            Predicate<? super CurrentType> predicate,
             Supplier<IntermediateType> supplier
     ) {
         return given(predicate, (in, v) -> supplier.get());
@@ -108,7 +107,7 @@ public class MutableConstructionStep<In, CurrentType, Out> {
      * @return a builder to configure the handling mechanism when the given predicate does not
      */
     public <IntermediateType> ConditionalEnd<In, CurrentType, IntermediateType, MutableConstructionStep<In, IntermediateType, Out>> given(
-            Predicate<CurrentType> predicate,
+            Predicate<? super CurrentType> predicate,
             Function<CurrentType, IntermediateType> mapper
     ) {
         return given(predicate, (in, v) -> mapper.apply(v));
@@ -123,7 +122,7 @@ public class MutableConstructionStep<In, CurrentType, Out> {
      * @return a builder to configure the handling mechanism when the given predicate does not
      */
     public <IntermediateType> ConditionalEnd<In, CurrentType, IntermediateType, MutableConstructionStep<In, IntermediateType, Out>> given(
-            Predicate<CurrentType> predicate,
+            Predicate<? super CurrentType> predicate,
             BiFunction<In, CurrentType, IntermediateType> mapper
     ) {
         return new ConditionalEnd<>(
