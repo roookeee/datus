@@ -15,13 +15,13 @@ import java.util.function.Supplier;
 public class ConditionalEnd<In, AffectedType, IntermediateType, ConstructionStep> {
 
     private final Function<In, AffectedType> getter;
-    private final Predicate<? super AffectedType> predicate;
+    private final Predicate<AffectedType> predicate;
     private final Function<Function<In, IntermediateType>, ConstructionStep> nextStepProvider;
     private final BiFunction<In, AffectedType, IntermediateType> matchingHandler;
 
     public ConditionalEnd(
             Function<In, AffectedType> getter,
-            Predicate<? super AffectedType> predicate,
+            Predicate<AffectedType> predicate,
             Function<Function<In, IntermediateType>, ConstructionStep> nextStepProvider,
             BiFunction<In, AffectedType, IntermediateType> matchingHandler
     ) {
@@ -83,7 +83,7 @@ public class ConditionalEnd<In, AffectedType, IntermediateType, ConstructionStep
 
     private Function<In, IntermediateType> weave(
             Function<In, AffectedType> getter,
-            Predicate<? super AffectedType> predicate,
+            Predicate<AffectedType> predicate,
             BiFunction<In, AffectedType, IntermediateType> matching,
             BiFunction<In, AffectedType, IntermediateType> orElse
     ) {
