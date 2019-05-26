@@ -31,7 +31,7 @@ public class ConstructorBuilder11<In, A, B, C, D, E, F, G, H, I, J, K, Out>
      * {@inheritDoc}
      */
     @Override
-    public ConstructorBuilder10<In, B, C, D, E, F, G, H, I, J, K, Out> bind(Function<In, A> getter) {
+    public ConstructorBuilder10<In, B, C, D, E, F, G, H, I, J, K, Out> bind(Function<? super In, A> getter) {
         return new ConstructorBuilder10<>(applyGetter(getter));
     }
 
@@ -40,7 +40,7 @@ public class ConstructorBuilder11<In, A, B, C, D, E, F, G, H, I, J, K, Out>
         return this;
     }
 
-    private Fn11<In, B, C, D, E, F, G, H, I, J, K, Out> applyGetter(Function<In, A> getter) {
+    private Fn11<In, B, C, D, E, F, G, H, I, J, K, Out> applyGetter(Function<? super In, A> getter) {
         return (in, b, c, d, e, f, g, h, i, j, k) -> constructor.apply(in, getter.apply(in), b, c, d, e, f, g, h, i, j, k);
     }
 }

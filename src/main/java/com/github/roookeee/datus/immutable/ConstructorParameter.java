@@ -18,5 +18,5 @@ public interface ConstructorParameter<In, GetterReturnType, Result> {
      * @return the result of the bind operation, usually another
      *  *                ConstructorParameter to bind the next constructor parameter
      */
-    Result bind(Function<In, GetterReturnType> getter);
+    Result bind(Function<? super In, GetterReturnType> getter);
 }
