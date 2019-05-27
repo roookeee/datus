@@ -16,12 +16,13 @@ public class MappingOptimizerTest {
     public void shouldRetainOrderAndProduceWorkingCode() {
         for (List<String> parts : sublists(Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h", "i"))) {
             //given
-            List<BiFunction<String, String, String>> functions = parts.stream()
+            List<BiFunction<? super String, ? super String, ? extends String>> functions = parts.stream()
                     .map(this::toConcatStringFn)
                     .collect(Collectors.toList());
 
             //when
-            BiFunction<String, String, String> function = MappingOptimizer.flattenAndOptimizeMappings(functions);
+            BiFunction<? super String, ? super String, ? extends String> function
+                    = MappingOptimizer.flattenAndOptimizeMappings(functions);
             String result = function.apply("", "");
 
             //then

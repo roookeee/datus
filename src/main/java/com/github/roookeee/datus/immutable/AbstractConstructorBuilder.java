@@ -19,7 +19,7 @@ abstract class AbstractConstructorBuilder<In, T extends AbstractConstructorBuild
      * @return a parameter binding process to bind the constructors first parameter
      */
     public <IntermediateType> ConstructorParameterBinding<In, IntermediateType, T> from(
-            Function<In, IntermediateType> getter
+            Function<? super In, IntermediateType> getter
     ) {
         return new ConstructorParameterBinding<>(getSelf(), getter);
     }

@@ -10,10 +10,10 @@ import java.util.function.Supplier;
  */
 class MutableMapperImpl<In, Out> implements Mapper<In, Out> {
 
-    private final BiFunction<In, Out, Out> mappingProcess;
-    private final Supplier<Out> generator;
+    private final BiFunction<? super In, ? super Out, ? extends Out> mappingProcess;
+    private final Supplier<? extends Out> generator;
 
-    MutableMapperImpl(BiFunction<In, Out, Out> mappingProcess, Supplier<Out> generator) {
+    MutableMapperImpl(BiFunction<? super In, ? super Out, ? extends Out> mappingProcess, Supplier<? extends Out> generator) {
         this.mappingProcess = mappingProcess;
         this.generator = generator;
     }

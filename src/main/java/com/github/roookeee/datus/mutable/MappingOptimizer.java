@@ -1,5 +1,6 @@
 package com.github.roookeee.datus.mutable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -8,7 +9,9 @@ class MappingOptimizer {
 
     private static final int LAST_CASE_MAPPING_COUNT = 8;
 
-    static <In, Out> BiFunction<In, Out, Out> flattenAndOptimizeMappings(List<BiFunction<In, Out, Out>> mappings) {
+    static <In, Out> BiFunction<? super In, ? super Out, ? extends Out> flattenAndOptimizeMappings(
+            List<BiFunction<? super In, ? super Out, ? extends Out>> mappings
+    ) {
         /*
             [perf]: naive .andThen()-chaining generates n-1 wrapper-functions which amount to a total of n + (n-1)
             function calls. Especially simple mappers are affected by this additional indirection (cost of function-
@@ -36,80 +39,85 @@ class MappingOptimizer {
             case LAST_CASE_MAPPING_COUNT:
                 return optimize8Mappings(mappings);
             default:
-                BiFunction<In, Out, Out> firstEightMappings = optimize8Mappings(mappings);
-                BiFunction<In, Out, Out> remainingMappings = flattenAndOptimizeMappings(
+                BiFunction<? super In, ? super Out, ? extends Out> firstEightMappings = optimize8Mappings(mappings);
+                BiFunction<? super In, ? super Out, ? extends Out> remainingMappings = flattenAndOptimizeMappings(
                         mappings.subList(LAST_CASE_MAPPING_COUNT, mappings.size())
                 );
-                return optimize2Mappings(Arrays.asList(firstEightMappings, remainingMappings));
+
+                List<BiFunction<? super In, ? super Out, ? extends Out>> toOptimize = new ArrayList<>();
+                toOptimize.add(firstEightMappings);
+                toOptimize.add(remainingMappings);
+
+                return optimize2Mappings(toOptimize);
         }
     }
 
-    private static <In, Out> BiFunction<In, Out, Out> optimize2Mappings(List<BiFunction<In, Out, Out>> remaining) {
-        BiFunction<In, Out, Out> a = remaining.get(0);
-        BiFunction<In, Out, Out> b = remaining.get(1);
+    private static <In, Out> BiFunction<? super In, ? super Out, ? extends Out> optimize2Mappings(List<BiFunction<? super In, ? super Out, ? extends Out>> remaining) {
+        BiFunction<? super In, ? super Out, ? extends Out> a = remaining.get(0);
+        BiFunction<? super In, ? super Out, ? extends Out> b = remaining.get(1);
 
         return (in, out) -> b.apply(in, a.apply(in, out));
     }
 
-    private static <In, Out> BiFunction<In, Out, Out> optimize3Mappings(List<BiFunction<In, Out, Out>> remaining) {
-        BiFunction<In, Out, Out> a = remaining.get(0);
-        BiFunction<In, Out, Out> b = remaining.get(1);
-        BiFunction<In, Out, Out> c = remaining.get(2);
+    private static <In, Out> BiFunction<? super In, ? super Out, ? extends Out> optimize3Mappings(List<BiFunction<? super In, ? super Out, ? extends Out>> remaining) {
+        BiFunction<? super In, ? super Out, ? extends Out> a = remaining.get(0);
+        BiFunction<? super In, ? super Out, ? extends Out> b = remaining.get(1);
+        BiFunction<? super In, ? super Out, ? extends Out> c = remaining.get(2);
 
         return (in, out) -> c.apply(in, b.apply(in, a.apply(in, out)));
     }
 
-    private static <In, Out> BiFunction<In, Out, Out> optimize4Mappings(List<BiFunction<In, Out, Out>> remaining) {
-        BiFunction<In, Out, Out> a = remaining.get(0);
-        BiFunction<In, Out, Out> b = remaining.get(1);
-        BiFunction<In, Out, Out> c = remaining.get(2);
-        BiFunction<In, Out, Out> d = remaining.get(3);
+    private static <In, Out> BiFunction<? super In, ? super Out, ? extends Out> optimize4Mappings(List<BiFunction<? super In, ? super Out, ? extends Out>> remaining) {
+        BiFunction<? super In, ? super Out, ? extends Out> a = remaining.get(0);
+        BiFunction<? super In, ? super Out, ? extends Out> b = remaining.get(1);
+        BiFunction<? super In, ? super Out, ? extends Out> c = remaining.get(2);
+        BiFunction<? super In, ? super Out, ? extends Out> d = remaining.get(3);
 
         return (in, out) -> d.apply(in, c.apply(in, b.apply(in, a.apply(in, out))));
     }
 
-    private static <In, Out> BiFunction<In, Out, Out> optimize5Mappings(List<BiFunction<In, Out, Out>> remaining) {
-        BiFunction<In, Out, Out> a = remaining.get(0);
-        BiFunction<In, Out, Out> b = remaining.get(1);
-        BiFunction<In, Out, Out> c = remaining.get(2);
-        BiFunction<In, Out, Out> d = remaining.get(3);
-        BiFunction<In, Out, Out> e = remaining.get(4);
+    private static <In, Out> BiFunction<? super In, ? super Out, ? extends Out> optimize5Mappings(List<BiFunction<? super In, ? super Out, ? extends Out>> remaining) {
+        BiFunction<? super In, ? super Out, ? extends Out> a = remaining.get(0);
+        BiFunction<? super In, ? super Out, ? extends Out> b = remaining.get(1);
+        BiFunction<? super In, ? super Out, ? extends Out> c = remaining.get(2);
+        BiFunction<? super In, ? super Out, ? extends Out> d = remaining.get(3);
+        BiFunction<? super In, ? super Out, ? extends Out> e = remaining.get(4);
 
         return (in, out) -> e.apply(in, d.apply(in, c.apply(in, b.apply(in, a.apply(in, out)))));
     }
 
-    private static <In, Out> BiFunction<In, Out, Out> optimize6Mappings(List<BiFunction<In, Out, Out>> remaining) {
-        BiFunction<In, Out, Out> a = remaining.get(0);
-        BiFunction<In, Out, Out> b = remaining.get(1);
-        BiFunction<In, Out, Out> c = remaining.get(2);
-        BiFunction<In, Out, Out> d = remaining.get(3);
-        BiFunction<In, Out, Out> e = remaining.get(4);
-        BiFunction<In, Out, Out> f = remaining.get(5);
+    private static <In, Out> BiFunction<? super In, ? super Out, ? extends Out> optimize6Mappings(List<BiFunction<? super In, ? super Out, ? extends Out>> remaining) {
+        BiFunction<? super In, ? super Out, ? extends Out> a = remaining.get(0);
+        BiFunction<? super In, ? super Out, ? extends Out> b = remaining.get(1);
+        BiFunction<? super In, ? super Out, ? extends Out> c = remaining.get(2);
+        BiFunction<? super In, ? super Out, ? extends Out> d = remaining.get(3);
+        BiFunction<? super In, ? super Out, ? extends Out> e = remaining.get(4);
+        BiFunction<? super In, ? super Out, ? extends Out> f = remaining.get(5);
 
         return (in, out) -> f.apply(in, e.apply(in, d.apply(in, c.apply(in, b.apply(in, a.apply(in, out))))));
     }
 
-    private static <In, Out> BiFunction<In, Out, Out> optimize7Mappings(List<BiFunction<In, Out, Out>> remaining) {
-        BiFunction<In, Out, Out> a = remaining.get(0);
-        BiFunction<In, Out, Out> b = remaining.get(1);
-        BiFunction<In, Out, Out> c = remaining.get(2);
-        BiFunction<In, Out, Out> d = remaining.get(3);
-        BiFunction<In, Out, Out> e = remaining.get(4);
-        BiFunction<In, Out, Out> f = remaining.get(5);
-        BiFunction<In, Out, Out> g = remaining.get(6);
+    private static <In, Out> BiFunction<? super In, ? super Out, ? extends Out> optimize7Mappings(List<BiFunction<? super In, ? super Out, ? extends Out>> remaining) {
+        BiFunction<? super In, ? super Out, ? extends Out> a = remaining.get(0);
+        BiFunction<? super In, ? super Out, ? extends Out> b = remaining.get(1);
+        BiFunction<? super In, ? super Out, ? extends Out> c = remaining.get(2);
+        BiFunction<? super In, ? super Out, ? extends Out> d = remaining.get(3);
+        BiFunction<? super In, ? super Out, ? extends Out> e = remaining.get(4);
+        BiFunction<? super In, ? super Out, ? extends Out> f = remaining.get(5);
+        BiFunction<? super In, ? super Out, ? extends Out> g = remaining.get(6);
 
         return (in, out) -> g.apply(in, f.apply(in, e.apply(in, d.apply(in, c.apply(in, b.apply(in, a.apply(in, out)))))));
     }
 
-    private static <In, Out> BiFunction<In, Out, Out> optimize8Mappings(List<BiFunction<In, Out, Out>> remaining) {
-        BiFunction<In, Out, Out> a = remaining.get(0);
-        BiFunction<In, Out, Out> b = remaining.get(1);
-        BiFunction<In, Out, Out> c = remaining.get(2);
-        BiFunction<In, Out, Out> d = remaining.get(3);
-        BiFunction<In, Out, Out> e = remaining.get(4);
-        BiFunction<In, Out, Out> f = remaining.get(5);
-        BiFunction<In, Out, Out> g = remaining.get(6);
-        BiFunction<In, Out, Out> h = remaining.get(7);
+    private static <In, Out> BiFunction<? super In, ? super Out, ? extends Out> optimize8Mappings(List<BiFunction<? super In, ? super Out, ? extends Out>> remaining) {
+        BiFunction<? super In, ? super Out, ? extends Out> a = remaining.get(0);
+        BiFunction<? super In, ? super Out, ? extends Out> b = remaining.get(1);
+        BiFunction<? super In, ? super Out, ? extends Out> c = remaining.get(2);
+        BiFunction<? super In, ? super Out, ? extends Out> d = remaining.get(3);
+        BiFunction<? super In, ? super Out, ? extends Out> e = remaining.get(4);
+        BiFunction<? super In, ? super Out, ? extends Out> f = remaining.get(5);
+        BiFunction<? super In, ? super Out, ? extends Out> g = remaining.get(6);
+        BiFunction<? super In, ? super Out, ? extends Out> h = remaining.get(7);
 
         return (in, out) -> h.apply(in, g.apply(in, f.apply(in, e.apply(in, d.apply(in, c.apply(in, b.apply(in, a.apply(in, out))))))));
     }

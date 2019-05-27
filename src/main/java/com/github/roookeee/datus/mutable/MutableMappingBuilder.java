@@ -19,7 +19,7 @@ import java.util.function.Supplier;
  * @param <Out> the output type
  */
 public final class MutableMappingBuilder<In, Out> {
-    private final List<BiFunction<In, Out, Out>> mappers = new ArrayList<>();
+    private final List<BiFunction<? super In, ? super Out, ? extends Out>> mappers = new ArrayList<>();
     private final Supplier<Out> generator;
 
     /**
@@ -53,7 +53,7 @@ public final class MutableMappingBuilder<In, Out> {
      * @param processor the function to apply
      * @return the builder instance for chaining
      */
-    public MutableMappingBuilder<In, Out> process(BiFunction<In, Out, Out> processor) {
+    public MutableMappingBuilder<In, Out> process(BiFunction<? super In, ? super Out, ? extends Out> processor) {
         mappers.add(processor);
         return this;
     }
@@ -67,7 +67,7 @@ public final class MutableMappingBuilder<In, Out> {
      * @param consumer the function to apply
      * @return the builder instance for chaining
      */
-    public MutableMappingBuilder<In, Out> spy(BiConsumer<In, Out> consumer) {
+    public MutableMappingBuilder<In, Out> spy(BiConsumer<? super In, ? super Out> consumer) {
         process((in, out) -> {
             consumer.accept(in, out);
             return out;
@@ -81,14 +81,14 @@ public final class MutableMappingBuilder<In, Out> {
      * @return a mapper instance representing the defined construction process
      */
     public Mapper<In, Out> build() {
-        BiFunction<In, Out, Out> mappingProcess = MappingOptimizer.flattenAndOptimizeMappings(mappers);
+        BiFunction<? super In, ? super Out, ? extends Out> mappingProcess = MappingOptimizer.flattenAndOptimizeMappings(mappers);
         return new MutableMapperImpl<>(
                 mappingProcess,
                 generator
         );
     }
 
-    void addMapper(BiFunction<In, Out, Out> mapper) {
+    void addMapper(BiFunction<? super In, ? super Out, ? extends Out> mapper) {
         mappers.add(mapper);
     }
 }

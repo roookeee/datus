@@ -14,16 +14,16 @@ import java.util.function.Supplier;
  */
 public class ConditionalEnd<In, AffectedType, IntermediateType, ConstructionStep> {
 
-    private final Function<In, AffectedType> getter;
+    private final Function<? super In, ? extends AffectedType> getter;
     private final Predicate<? super AffectedType> predicate;
-    private final Function<Function<In, IntermediateType>, ConstructionStep> nextStepProvider;
-    private final BiFunction<In, AffectedType, IntermediateType> matchingHandler;
+    private final Function<Function<? super In, ? extends IntermediateType>, ConstructionStep> nextStepProvider;
+    private final BiFunction<? super In, ? super AffectedType, ? extends IntermediateType> matchingHandler;
 
     public ConditionalEnd(
-            Function<In, AffectedType> getter,
+            Function<? super In, ? extends AffectedType> getter,
             Predicate<? super AffectedType> predicate,
-            Function<Function<In, IntermediateType>, ConstructionStep> nextStepProvider,
-            BiFunction<In, AffectedType, IntermediateType> matchingHandler
+            Function<Function<? super In, ? extends IntermediateType>, ConstructionStep> nextStepProvider,
+            BiFunction<? super In, ? super AffectedType, ? extends IntermediateType> matchingHandler
     ) {
         this.getter = getter;
         this.predicate = predicate;
@@ -49,7 +49,7 @@ public class ConditionalEnd<In, AffectedType, IntermediateType, ConstructionStep
      * @param supplier the supplier to use
      * @return the construction step this instance has originated from
      */
-    public ConstructionStep orElse(Supplier<IntermediateType> supplier) {
+    public ConstructionStep orElse(Supplier<? extends IntermediateType> supplier) {
         return orElse((in, v) -> supplier.get());
     }
 
@@ -63,7 +63,7 @@ public class ConditionalEnd<In, AffectedType, IntermediateType, ConstructionStep
      * @param function the function to use
      * @return the construction step this instance has originated from
      */
-    public ConstructionStep orElse(Function<AffectedType, IntermediateType> function) {
+    public ConstructionStep orElse(Function<? super AffectedType, ? extends IntermediateType> function) {
         return orElse((in, v) -> function.apply(v));
     }
 
@@ -77,15 +77,15 @@ public class ConditionalEnd<In, AffectedType, IntermediateType, ConstructionStep
      * @param function the function to use
      * @return the construction step this instance has originated from
      */
-    public ConstructionStep orElse(BiFunction<In, AffectedType, IntermediateType> function) {
+    public ConstructionStep orElse(BiFunction<? super In, ? super AffectedType, ? extends IntermediateType> function) {
         return nextStepProvider.apply(weave(getter, predicate, matchingHandler, function));
     }
 
     private Function<In, IntermediateType> weave(
-            Function<In, AffectedType> getter,
+            Function<? super In, ? extends AffectedType> getter,
             Predicate<? super AffectedType> predicate,
-            BiFunction<In, AffectedType, IntermediateType> matching,
-            BiFunction<In, AffectedType, IntermediateType> orElse
+            BiFunction<? super In, ? super AffectedType, ? extends IntermediateType> matching,
+            BiFunction<? super In, ? super AffectedType, ? extends IntermediateType> orElse
     ) {
         return in -> {
             AffectedType value = getter.apply(in);

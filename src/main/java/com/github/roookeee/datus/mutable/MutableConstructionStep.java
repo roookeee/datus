@@ -18,9 +18,9 @@ import java.util.function.*;
 public final class MutableConstructionStep<In, CurrentType, Out> {
 
     private final MutableMappingBuilder<In, Out> builder;
-    private final Function<In, CurrentType> getter;
+    private final Function<? super In, ? extends CurrentType> getter;
 
-    MutableConstructionStep(MutableMappingBuilder<In, Out> builder, Function<In, CurrentType> getter) {
+    MutableConstructionStep(MutableMappingBuilder<In, Out> builder, Function<? super In, ? extends CurrentType> getter) {
         this.builder = builder;
         this.getter = getter;
     }
@@ -32,7 +32,7 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
      * @param <NextType> the return type of the converter function which is used for the new construction step
      * @return a new construction step based on the new type
      */
-    public <NextType> MutableConstructionStep<In, NextType, Out> map(Function<CurrentType, NextType> mapper) {
+    public <NextType> MutableConstructionStep<In, NextType, Out> map(Function<? super CurrentType, ? extends NextType> mapper) {
         return new MutableConstructionStep<>(
                 builder,
                 in -> mapper.apply(getter.apply(in))
@@ -45,7 +45,7 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
      * @param setter the setter to apply
      * @return the builder this step originated from
      */
-    public MutableMappingBuilder<In, Out> into(BiConsumer<Out, CurrentType> setter) {
+    public MutableMappingBuilder<In, Out> into(BiConsumer<? super Out, ? super CurrentType> setter) {
         builder.addMapper((in, out) -> {
             setter.accept(out, getter.apply(in));
             return out;
@@ -63,7 +63,7 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
      * @param setter the setter to apply
      * @return the builder this step originated from
      */
-    public MutableMappingBuilder<In, Out> to(BiFunction<Out, CurrentType, Out> setter) {
+    public MutableMappingBuilder<In, Out> to(BiFunction<? super Out, ? super CurrentType, ? extends Out> setter) {
         builder.addMapper((in, out) -> setter.apply(out, getter.apply(in)));
         return builder;
     }
@@ -93,7 +93,7 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
      */
     public <IntermediateType> ConditionalEnd<In, CurrentType, IntermediateType, MutableConstructionStep<In, IntermediateType, Out>> given(
             Predicate<? super CurrentType> predicate,
-            Supplier<IntermediateType> supplier
+            Supplier<? extends IntermediateType> supplier
     ) {
         return given(predicate, (in, v) -> supplier.get());
     }
@@ -108,7 +108,7 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
      */
     public <IntermediateType> ConditionalEnd<In, CurrentType, IntermediateType, MutableConstructionStep<In, IntermediateType, Out>> given(
             Predicate<? super CurrentType> predicate,
-            Function<CurrentType, IntermediateType> mapper
+            Function<? super CurrentType, ? extends IntermediateType> mapper
     ) {
         return given(predicate, (in, v) -> mapper.apply(v));
     }
@@ -123,7 +123,7 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
      */
     public <IntermediateType> ConditionalEnd<In, CurrentType, IntermediateType, MutableConstructionStep<In, IntermediateType, Out>> given(
             Predicate<? super CurrentType> predicate,
-            BiFunction<In, CurrentType, IntermediateType> mapper
+            BiFunction<? super In, ? super CurrentType, ? extends IntermediateType> mapper
     ) {
         return new ConditionalEnd<>(
                 getter,

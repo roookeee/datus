@@ -9,9 +9,9 @@ import java.util.function.Supplier;
 
 public final class ConstructorParameterBinding<In, Type, Ctor> {
     private final Ctor ctor;
-    private final Function<In, Type> getter;
+    private final Function<? super In, ? extends Type> getter;
 
-    ConstructorParameterBinding(Ctor ctor, Function<In, Type> getter) {
+    ConstructorParameterBinding(Ctor ctor, Function<? super In, ? extends Type> getter) {
         this.ctor = ctor;
         this.getter = getter;
     }
@@ -23,18 +23,18 @@ public final class ConstructorParameterBinding<In, Type, Ctor> {
      * @param <IntermediateType> the return type of the converter function
      * @return a new parameter binding based based on the given mapper
      */
-    public <IntermediateType> ConstructorParameterBinding<In, IntermediateType, Ctor> map(Function<Type, IntermediateType> mapper) {
+    public <IntermediateType> ConstructorParameterBinding<In, IntermediateType, Ctor> map(Function<? super Type, ? extends IntermediateType> mapper) {
         return new ConstructorParameterBinding<>(ctor, getter.andThen(mapper));
     }
 
     /**
-     * Binds a parameter binding to its destination, most likely a {@link ConstructorParameter}.
+     * Binds a parameter binding to its destination, should always be a {@link ConstructorParameter#bind} reference.
      *
      * @param parameterBinder the function to pass the parameter binding too
      * @param <ResultType>    the type of the result, either another parameter binding or the end of the constructor
      * @return the next step in the constructor binding process
      */
-    public <ResultType> ResultType to(BiFunction<Ctor, Function<In, Type>, ResultType> parameterBinder) {
+    public <ResultType> ResultType to(BiFunction<Ctor, Function<? super In, ? extends Type>, ResultType> parameterBinder) {
         return parameterBinder.apply(ctor, getter);
     }
 
@@ -63,7 +63,7 @@ public final class ConstructorParameterBinding<In, Type, Ctor> {
      */
     public <IntermediateType> ConditionalEnd<In, Type, IntermediateType, ConstructorParameterBinding<In, IntermediateType, Ctor>> given(
             Predicate<? super Type> predicate,
-            Supplier<IntermediateType> supplier
+            Supplier<? extends IntermediateType> supplier
     ) {
         return given(predicate, (in,v) -> supplier.get());
     }
@@ -78,7 +78,7 @@ public final class ConstructorParameterBinding<In, Type, Ctor> {
      */
     public <IntermediateType> ConditionalEnd<In, Type, IntermediateType, ConstructorParameterBinding<In, IntermediateType, Ctor>> given(
             Predicate<? super Type> predicate,
-            Function<Type, IntermediateType> mapper
+            Function<? super Type, ? extends IntermediateType> mapper
     ) {
         return given(predicate, (in,v) -> mapper.apply(v));
     }
@@ -93,7 +93,7 @@ public final class ConstructorParameterBinding<In, Type, Ctor> {
      */
     public <IntermediateType> ConditionalEnd<In, Type, IntermediateType, ConstructorParameterBinding<In, IntermediateType, Ctor>> given(
             Predicate<? super Type> predicate,
-            BiFunction<In, Type, IntermediateType> mapper
+            BiFunction<? super In, ? super Type, ? extends IntermediateType> mapper
     ) {
         return new ConditionalEnd<>(
                 getter,
