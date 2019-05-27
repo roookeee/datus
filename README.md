@@ -145,7 +145,7 @@ Maven
 <dependency>
   <groupId>com.github.roookeee</groupId>
   <artifactId>datus</artifactId>
-  <version>0.9.3</version>
+  <version>0.9.4</version>
 </dependency>
 ```
 or any other build system via Maven Central
