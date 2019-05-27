@@ -47,7 +47,7 @@ public final class ConstructorParameterBinding<In, Type, Ctor> {
      * @return a builder to configure the handling mechanism when the given predicate does not match
      */
     public <IntermediateType> ConditionalEnd<In, Type, IntermediateType, ConstructorParameterBinding<In, IntermediateType, Ctor>> given(
-            Predicate<Type> predicate,
+            Predicate<? super Type> predicate,
             IntermediateType value
     ) {
         return given(predicate, (in,v) -> value);
@@ -62,7 +62,7 @@ public final class ConstructorParameterBinding<In, Type, Ctor> {
      * @return a builder to configure the handling mechanism when the given predicate does not match
      */
     public <IntermediateType> ConditionalEnd<In, Type, IntermediateType, ConstructorParameterBinding<In, IntermediateType, Ctor>> given(
-            Predicate<Type> predicate,
+            Predicate<? super Type> predicate,
             Supplier<IntermediateType> supplier
     ) {
         return given(predicate, (in,v) -> supplier.get());
@@ -77,7 +77,7 @@ public final class ConstructorParameterBinding<In, Type, Ctor> {
      * @return a builder to configure the handling mechanism when the given predicate does not match
      */
     public <IntermediateType> ConditionalEnd<In, Type, IntermediateType, ConstructorParameterBinding<In, IntermediateType, Ctor>> given(
-            Predicate<Type> predicate,
+            Predicate<? super Type> predicate,
             Function<Type, IntermediateType> mapper
     ) {
         return given(predicate, (in,v) -> mapper.apply(v));
@@ -92,7 +92,7 @@ public final class ConstructorParameterBinding<In, Type, Ctor> {
      * @return a builder to configure the handling mechanism when the given predicate does not match
      */
     public <IntermediateType> ConditionalEnd<In, Type, IntermediateType, ConstructorParameterBinding<In, IntermediateType, Ctor>> given(
-            Predicate<Type> predicate,
+            Predicate<? super Type> predicate,
             BiFunction<In, Type, IntermediateType> mapper
     ) {
         return new ConditionalEnd<>(
