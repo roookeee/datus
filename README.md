@@ -1,5 +1,3 @@
-#### Note: datus is still in a pre-release state and will be released at the end of may 2019
-
 <img width="400px" src="https://raw.githubusercontent.com/roookeee/datus/assets/assets/datus-logo.png" >
 
 *datus* enables you to define a mapping-process between two data-structures via a fluent functional API that allows for 
