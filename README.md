@@ -11,14 +11,10 @@ feels unnecessary when you actually just copy values from a to b? *datus* has go
 #### Overview
 1. [Why use datus?](#why-use-datus)
 2. [Examples](#examples)
-3. [Conditional mapping](#conditional-mapping)
-4. [Drawbacks and when not to use datus](#drawbacks-and-when-not-to-use-datus)
-5. [When datus construction builders just won't fit](#when-datus-construction-builders-just-wont-fit)
-6. [datus and dependency injection](#dependency-injection-eg-spring)
-7. [User guide](#user-guide)
-8. [Dependency information (Maven etc.)](#dependency-information)
-9. [Development principles](#development-principles)
-10. [Supporting datus development](#supporting-datus-development)
+3. [User guide](#user-guide)
+4. [Dependency information (Maven etc.)](#dependency-information)
+5. [Development principles](#development-principles)
+6. [Supporting datus development](#supporting-datus-development)
 
 ## Why use *datus*?
 Using *datus* has the following benefits:
