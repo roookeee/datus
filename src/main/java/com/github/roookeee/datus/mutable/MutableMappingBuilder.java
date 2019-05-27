@@ -20,7 +20,7 @@ import java.util.function.Supplier;
  */
 public final class MutableMappingBuilder<In, Out> {
     private final List<BiFunction<? super In, ? super Out, ? extends Out>> mappers = new ArrayList<>();
-    private final Supplier<Out> generator;
+    private final Supplier<? extends Out> generator;
 
     /**
      * Create a mutable mapping builder that uses the provided generator for its {@link Mapper} generation
@@ -28,7 +28,7 @@ public final class MutableMappingBuilder<In, Out> {
      *
      * @param generator the generator to later instantiate a {@link Mapper} with
      */
-    public MutableMappingBuilder(Supplier<Out> generator) {
+    public MutableMappingBuilder(Supplier<? extends Out> generator) {
         this.generator = generator;
     }
 

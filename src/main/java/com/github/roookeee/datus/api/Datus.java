@@ -36,7 +36,7 @@ public class Datus<In, Out> {
      * @param supplier a supplier to instantiate the output type when converting an input type
      * @return a mutable mapping builder
      */
-    public MutableMappingBuilder<In, Out> mutable(Supplier<Out> supplier) {
+    public MutableMappingBuilder<In, Out> mutable(Supplier<? extends Out> supplier) {
         return new MutableMappingBuilder<>(supplier);
     }
 

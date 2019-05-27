@@ -23,7 +23,7 @@ public final class ConstructorBuilder<In, Out> {
      * @param processor the function to apply
      * @return a new constructor builder including the given post-processing
      */
-    public ConstructorBuilder<In, Out> process(BiFunction<In, Out, Out> processor) {
+    public ConstructorBuilder<In, Out> process(BiFunction<? super In, ? super Out, ? extends Out> processor) {
         return new ConstructorBuilder<>(
                 in -> processor.apply(in, constructor.apply(in))
         );
@@ -38,7 +38,7 @@ public final class ConstructorBuilder<In, Out> {
      * @param consumer the function to apply
      * @return a new constructor builder including the given spy-processing
      */
-    public ConstructorBuilder<In, Out> spy(BiConsumer<In, Out> consumer) {
+    public ConstructorBuilder<In, Out> spy(BiConsumer<? super In, ? super Out> consumer) {
         return new ConstructorBuilder<>(
                 in -> {
                     Out result = constructor.apply(in);
