@@ -1,10 +1,12 @@
 <img width="400px" src="https://raw.githubusercontent.com/roookeee/datus/assets/assets/datus-logo.png" >
 
-*datus* enables you to define a mapping-process between two data-structures via a fluent functional API that allows for 
-additional processing along the way - even for immutable objects.
+datus enables you to define a conversion process between two data structures in a fluent functional API.
+Define conditional processing, do some business relevant work or just pass values from a to b - just about everything 
+is possible for both mutable and immutable data structures.
 
-Tired of writing the 100th factory class? Want to focus more on what to map, not how to implement it? Test coverage
-feels unnecessary when you actually just copy values from a to b? *datus* has got you covered!
+Replace your conversion factories/helpers with *datus* and focus on what to map, not how:
+define your conversion, eliminate the need to test the conversion aspects
+of your application and focus on what really matters - your project.
 
 #### Overview
 1. [Why use datus?](#why-use-datus)
@@ -16,11 +18,11 @@ feels unnecessary when you actually just copy values from a to b? *datus* has go
 
 ## Why use *datus*?
 Using *datus* has the following benefits:
-- no more 'dumb'/businesslogic-less `*Factory`-classes that you have to unit-test
+- no more 'dumb'/businesslogic-less `*Factory`-classes that you have to unit-test (**less classes**)
 - separating mapping-logic from business-logic of certain conversion steps (**single-responsibility**)*
-- enabling your business-logic to only operate on parts of a data-structure instead of depending on the whole object (e.g. upper-casing a persons name in a `.map`-step) (**reducing dependencies**)
-- programming against an `interface` instead of concrete classes (**cleaner dependencies**)
+- enabling your business-logic to operate on parts of a data-structure instead of depending on the whole object (e.g. upper-casing a persons name in a `.map`-step) (**reducing dependencies**)
 - focus on `what` to map, not `how` to do it (**functional-programming approach**)
+- programming against an `interface` instead of concrete classes (**cleaner dependencies**)
 - easily add logging or other cross-cutting-concerns via `spy` or `process`(see below for more information about the full API)
 - compared to [Lombok](https://projectlombok.org/) and [Apache MapStruct](http://mapstruct.org/): no additional IDE or build system plugins are needed (**simplicity**)
 - no black magic - you define what to map and how (compile-time checked), not some naming conventions, annotations or heuristics (**explicitness**)
@@ -31,7 +33,7 @@ Other minor benefits include:
 - no need to unit-test trivial but necessary logic (e.g. `null`-checking, which once fixed won't be a problem at the given location again)
 - (subjectively) more self-documenting code
 
-\* = when following the single responsibility pattern business logic (e.g. businessful `.map`-steps) should be extracted to a class instead of an inline lamda
+\* = when following the single responsibility pattern business logic (e.g. businessful `.map`-steps) should be extracted to a class instead of an inline lambda.
 
 ## Examples
 The following examples outline the general usage of both the immutable and mutable API of *datus*.
