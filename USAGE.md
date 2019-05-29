@@ -400,7 +400,7 @@ will suffer a performance loss of up to 70% compared to a traditional factory wi
 of using the immutable / mutable API of *datus* will probably decrease over time as the JVM is getting more optimized in regards to handling
 code which relies heavily on functional programming concepts. 
 
-But remember: you can always implement performance critical conversion factories as standalone classes that implement the `Mapper<Input, Outpu>` interface
+But remember: you can always implement performance critical conversion factories as standalone classes that implement the `Mapper<Input, Output>` interface
 to alleviate the performance hit while retaining consistency across your project.
 
 ### Closing words
@@ -409,6 +409,6 @@ Congratulations - you have just mastered all the basics of *datus*!
 Feel free to create an issue if something is missing in *datus* documentation or its implementation. Thank you
 for reading the usage guide.
 
-Like *datus* ? Consider buying me a coffee :)
+Like *datus*? Consider buying me a coffee :)
 
 <a href="https://www.buymeacoffee.com/roookeee" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>

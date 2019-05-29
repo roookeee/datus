@@ -44,7 +44,7 @@ public class BasicMutableMappingTest {
     }
 
     @Test
-    public void basicConditionalUsageShouldWorkAsExpected() {
+    public void basicConditionalUsageShouldWorkAsExpectedWithValue() {
         //given
         Mapper<Person, Person> mapper = new MutableMappingBuilder<Person, Person>(Person::new)
                 .from(Person::getAddress)
@@ -60,6 +60,44 @@ public class BasicMutableMappingTest {
         //then
         assertThat(result).isNotNull();
         assertThat(result.getAddress()).isEqualTo("fallback-address");
+    }
+
+    @Test
+    public void basicConditionalUsageShouldWorkAsExpectedWithSupplier() {
+        //given
+        Mapper<Person, Person> mapper = new MutableMappingBuilder<Person, Person>(Person::new)
+                .from(Person::getAddress)
+                .given(Objects::isNull, () -> "fallback-address").orElse(Function.identity())
+                .into(Person::setAddress)
+                .build();
+        Person person = new Person();
+        person.setAddress(null);
+
+        //when
+        Person result = mapper.convert(person);
+
+        //then
+        assertThat(result).isNotNull();
+        assertThat(result.getAddress()).isEqualTo("fallback-address");
+    }
+
+    @Test
+    public void basicConditionalUsageShouldWorkAsExpectedWithFn() {
+        //given
+        Mapper<Person, Person> mapper = new MutableMappingBuilder<Person, Person>(Person::new)
+                .from(Person::getAddress)
+                .given("address"::equals, address -> address+"-extras").orElse(Function.identity())
+                .into(Person::setAddress)
+                .build();
+        Person person = new Person();
+        person.setAddress("address");
+
+        //when
+        Person result = mapper.convert(person);
+
+        //then
+        assertThat(result).isNotNull();
+        assertThat(result.getAddress()).isEqualTo("address-extras");
     }
 
     @Test
