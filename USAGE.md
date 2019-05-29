@@ -230,7 +230,7 @@ class MapperDefinitions {
 }
 ```
 
-Maybe some parts of the mapping logic are businessful or too complex to express in a simple lamdba:
+Maybe some parts of the mapping logic are businessful or too complex to express in a simple lambda:
 ```java
 class PersonNameCleaner {
     public String cleanupFirstName(String firstName) { ... }
