@@ -60,7 +60,7 @@ Fundamentally both the immutable and mutable API define their mapping steps on a
 `from(Input::someGetter)`: The first step is to supply a data source from which the current mapping step receives its data. This data source is naturally 
 related to the input type and most likely a simple getter (`InputType::someGetter` here).
 
-`map(Logic::someProcessing)`: Mapping the value of the data-source is purely optional and can be chained as much as needed. 
+`map(Logic::someProcessing)`: Mapping the value of the datasource is purely optional and can be chained as much as needed. 
 `map` in *datus* is similar to `Optional.map` or `Stream.map` and may change the type of the
 mapping step as needed.
 
@@ -76,7 +76,7 @@ or a given setter (mutable API). Any type conversion (e.g. an `Address` field in
 `AddressDTO` for the `PersonDTO`) has to happen in preceding `map` steps. A type mismatch will always result in a compilation error.
 
 Once all necessary mapping steps are completed, calling `build()` will finalize the mapping definition and
-generate a `Mapper<Input, Output>` object. Most features of the `Mapper`-Interface are about the conversion from input to output:
+generate a `Mapper<Input, Output>` object. Most features of the `Mapper` interface are about the conversion from input to output:
 ```java
 //the only function that is actually implemented by the given mapping steps 
 //all other functions are based on it:
@@ -89,7 +89,7 @@ interface Mapper<Input, Output> {
     Map<MapKeyType, Output> convert(Collection<Input> input, Function<Input, MapKeyType> keyMapper);
 }
 ```
-Other functions allow predicating a given `Mapper<Input, Output>` in regards to the input object (e.g. input must not be null), the generated output (e.g. some business-logic validation) object or both:
+Other functions allow predicating a given `Mapper<Input, Output>` in regards to the input object (e.g. input must not be null), the generated output (e.g. some business logic validation) object or both:
 ```java
 interface Mapper<Input, Output> {
     // omitting the above functions for brevity
@@ -164,7 +164,7 @@ uses all preceding mapping definitions.
 
 ### Examples
 
-This section shows some basic usage-scenarios for datus and most of its features. The following two simple objects
+This section shows some basic usage scenarios for datus and most of its features. The following two simple objects
 are the foundation of this section:
 ```java
 class Person {
@@ -392,7 +392,7 @@ public class SomeClass {
 ```
 
 #### Drawbacks and when not to use *datus*
-*datus* is an abstraction-layer which like all of its kind (e.g. guava, Spring etc.) comes at a certain performance cost that in some scenarios will not justify the outlined benefits of it.
+*datus* is an abstraction layer which like all of its kind (e.g. guava, Spring etc.) comes at a certain performance cost that in some scenarios will not justify the outlined benefits of it.
 *datus* is rigorously profiled while developing its features which results in the following advice:
 
 If you map a massive amount of objects (**> 40000 objects / ms (millisecond) per thread on an i7 6700k**) whilst not having any computationally significant `.map`-steps you 

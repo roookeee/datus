@@ -19,20 +19,18 @@ of your application and focus on what really matters - your project.
 ## Why use *datus*?
 Using *datus* has the following benefits:
 
-- **single-responsibility**: separating mapping-logic from business-logic of certain conversion steps*
-- **reducing dependencies**: enabling your business-logic to operate on parts of a data-structure instead of depending on the whole object (e.g. upper-casing a persons name in a `.map`-step)
-- **cleaner dependencies**: programming against an `interface` instead of concrete classes
+- **separation of concerns**: write your mapping in *datus* while using the business logic of other components (no more monolithic classes that do both)
+- **reducing dependencies**: enable your businesslogic to operate on parts of a data structure instead of depending on the whole object (e.g. upper casing a persons name in a `.map`-step)
+- **cleaner abstractions**: programming against an `interface` instead of concrete classes
 - **declarative/functional-programming approach**: focus on `what` to map, not `how` to do it 
 - **simplicity**: compared to [Lombok](https://projectlombok.org/) and [Apache MapStruct](http://mapstruct.org/) no additional IDE or build system plugins are needed
 - **explicitness**: no black magic - you define what to map and how (compile-time checked), not naming conventions, annotations or heuristics
 - **low coupling**: leave your POJO/data classes 'as is' - no need for annotations or any other modifications
-- **less classes**: no more 'dumb'/businesslogic-less `*Factory`-classes that you have to unit-test
-- **cross-cutting-concerns**: easily add logging (or other cross-cutting-concerns) via `spy` or `process`(see below for more information about the full API)
+- **less classes**: no more 'dumb'/businesslogic less `Factory`-classes that you have to unit test
+- **cross-cutting concerns**: easily add logging (or other cross-cutting concerns) via `spy` or `process`(see below for more information about the full API)
 - **rich mapping API**: define the mapping process from `A -> B` and get `Collection<A> -> Collection<B>`, `Collection<A> -> Map<A, B>` and more for free
-- **focus on meaningful unit tests**: no need to unit-test trivial but necessary logic (e.g. `null`-checking, which once fixed won't be a problem at the given location again)
+- **focus on meaningful unit tests**: no need to unit test trivial but necessary logic (e.g. `null` checking, which once fixed won't be a problem at the given location again)
 - **clarity**: (subjectively) more self-documenting code when using *datus* mapping definitions
-
-\* = when following the single responsibility pattern business logic (e.g. businessful `.map`-steps) should be extracted to a class instead of an inline lambda.
 
 ## Examples
 The following examples outline the general usage of both the immutable and mutable API of *datus*.
