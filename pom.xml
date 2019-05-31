@@ -4,7 +4,7 @@
 
     <groupId>com.github.roookeee</groupId>
     <artifactId>datus</artifactId>
-    <version>0.9.5-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
 
     <name>datus</name>
     <description>a JVM fluent data mapping library for immutable and mutable data types</description>
