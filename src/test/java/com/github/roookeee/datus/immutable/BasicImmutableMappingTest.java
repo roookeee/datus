@@ -283,7 +283,7 @@ public class BasicImmutableMappingTest {
     }
 
     @Test
-    public void whenBeforeAndAfterPipingShouldWorkCorrectly() {
+    public void conditionalBeforeAndAfterPipingShouldWorkCorrectly() {
         //given
         Mapper<Item, ItemDTO> mapper = Datus.forTypes(Item.class, ItemDTO.class)
                 .immutable(ItemDTO::new)
@@ -303,5 +303,25 @@ public class BasicImmutableMappingTest {
         //then
         assertThat(result.getId()).isEqualTo("error");
         assertThat(result.getExtendedId()).isNull();
+    }
+
+    @Test
+    public void orElseNullShouldWokAsExpected() {
+        //given
+        Mapper<Item, ItemDTO> mapper = Datus.forTypes(Item.class, ItemDTO.class)
+                .immutable(ItemDTO::new)
+                .from(Item::getId)
+                    .given(id -> !id.isEmpty(), id -> id.toUpperCase()).orElseNull()
+                    .to(ConstructorParameter::bind)
+                .from(Item::getId).to(ConstructorParameter::bind)
+                .build();
+
+        //when
+        Item source = new Item("");
+        ItemDTO result = mapper.convert(source);
+
+        //then
+        assertThat(result.getId()).isNull();
+        assertThat(result.getExtendedId()).isEqualTo("");
     }
 }

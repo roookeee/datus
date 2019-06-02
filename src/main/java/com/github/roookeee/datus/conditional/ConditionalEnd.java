@@ -32,6 +32,18 @@ public class ConditionalEnd<In, AffectedType, IntermediateType, ConstructionStep
     }
 
     /**
+     * Finish the conditional handling process by using null as a value when the predicate the current handling is
+     * based on did <strong>not</strong> match.
+     *
+     * This is a utility function as orElse(null) would be ambiguous for the java compilers overload resolution.
+     *
+     * @return the construction step this instance has originated from
+     */
+    public ConstructionStep orElseNull() {
+        return orElse((in, v) -> null);
+    }
+
+    /**
      * Finish the conditional handling process by using the passed value when the predicate the current handling is
      * based on did <strong>not</strong> match.
      *

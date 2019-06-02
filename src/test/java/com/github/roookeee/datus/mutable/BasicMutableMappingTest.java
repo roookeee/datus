@@ -118,4 +118,23 @@ public class BasicMutableMappingTest {
         assertThat(result).isNotNull();
         assertThat(result.getAddress()).isEqualTo("ADDRESS");
     }
+
+    @Test
+    public void orElseNullShouldWokAsExpected() {
+        //given
+        Mapper<Person, Person> mapper = new MutableMappingBuilder<Person, Person>(Person::new)
+                .from(Person::getAddress)
+                .given(address -> !address.isEmpty(), address -> address.toUpperCase()).orElseNull()
+                .into(Person::setAddress)
+                .build();
+        Person person = new Person();
+        person.setAddress("");
+
+        //when
+        Person result = mapper.convert(person);
+
+        //then
+        assertThat(result).isNotNull();
+        assertThat(result.getAddress()).isNull();
+    }
 }
