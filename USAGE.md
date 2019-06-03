@@ -280,10 +280,10 @@ class MapperDefinitions {
     private Mapper<Person, PersonDTO> mapper = Datus.forTypes(Person.class, PersonDTO.class)
         .immutable(PersonDTO::new)
         .from(Person::getFirstName)
-            .given(Object::nonNull, personNameCleaner::cleanupFirstName).orElse(null)
+            .given(Object::nonNull, personNameCleaner::cleanupFirstName).orElseNull()
             .to(ConstructorParameter::bind)
         .from(Person::getLastName)
-            .given(Object::nonNull, personNameCleaner::cleanupLastName).orElse(null)
+            .given(Object::nonNull, personNameCleaner::cleanupLastName).orElseNull()
             .to(ConstructorParameter::bind)
         .from(Person::isActive).map(personValidator::shouldBeActive).to(ConstructorParameter::bind)
         .from((Function.identity())
@@ -358,7 +358,7 @@ public Mapper<Node, Node> generateMapper() {
         .mutable(Node::new)
         .from(Node::someData).to(Node::setSomeData)
         .from(Node::getParent)
-            .given(Objects::nonNull, parent -> delegate.convert(parent)).orElse(null)
+            .given(Objects::nonNull, parent -> delegate.convert(parent)).orElseNull()
             .to(Node::setParent)
         .build();
     delegate.setMapper(mapper);
