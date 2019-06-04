@@ -24,7 +24,7 @@ Always consider if everyone on your team fulfills the outlined prerequisites bef
 <dependency>
   <groupId>com.github.roookeee</groupId>
   <artifactId>datus</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.roookeee/datus.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.github.roookeee%22%20AND%20a:%22datus%22)
