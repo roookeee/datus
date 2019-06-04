@@ -149,8 +149,8 @@ This section is about the core principles *datus* is developed with.
 
 #### Mutation testing
 *datus* uses [pitest](http://pitest.org/) to secure the quality of all implemented tests and has no surviving mutations outside
-of `Datus` helper functions (which only aid type inference and are thus not tested) and some constructors of the immutable API that should never be used directly
-(the `Datus` class should be used, the constructors are only public because of Javas cross-package visibility limitations). 
+of `Datus` helper functions (which only aid type inference and are thus not tested) and some constructors of the immutable API that only
+delegate and are thus not explicitly tested.
 
 #### Branching
 The `master` branch always matches the latest release of *datus* while the `develop` branch houses the next version of datus
