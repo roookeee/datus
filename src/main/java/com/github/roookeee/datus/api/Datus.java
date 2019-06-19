@@ -10,7 +10,7 @@ import java.util.function.Supplier;
  * Main (helper)class to start building a mapping process between two types.
  * <p>
  * The main benefit of using this class over directly instantiating its functions return values is a better
- * type inference as most of the datus api (especially the immutable) is currently uninferable for the java compiler
+ * type inference as most of datus api (especially the immutable) is currently uninferable for the java compiler
  * (diamond does not work)
  *
  * @param <In>  the input type
