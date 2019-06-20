@@ -40,6 +40,11 @@ public interface Mapper<In, Out> {
      * Converts a given collection of input instances to a map relating every input instance
      * to the converted output instance.
      *
+     * Any key collisions (e.g. duplicate objects in the input collection) will retain the last
+     * processed item (last as defined by the collections iterator). Use {@link #conversionStream(Collection)} with
+     * any overload of {@link java.util.stream.Collectors#toMap} if more fine grained control is needed (e.g. use a
+     * plain {@link java.util.HashMap} or use the first mapped value on key collisions).
+     *
      * @param input the collection of input instances to convert
      * @return a map containing all (input,output) tuples
      */
@@ -54,6 +59,11 @@ public interface Mapper<In, Out> {
     /**
      * Converts a given collection of input instances to a map by using the given keyFunction to relate every input instance
      * to the converted output instance.
+     *
+     * Any key collisions (e.g. duplicate objects in the input collection) will retain the last
+     * processed item (last as defined by the collections iterator). Use {@link #conversionStream(Collection)} with
+     * any overload of {@link java.util.stream.Collectors#toMap} if more fine grained control is needed (e.g. use a
+     * plain {@link java.util.HashMap} or use the first mapped value on key collisions).
      *
      * @param <KeyType> the type the keyFunction returns
      * @param input the collection of input instances to convert
