@@ -337,35 +337,25 @@ class Node {
 At first glance it seems like it is impossible to define a mapping process for such a self-recursive data structure as 
 the `Mapper<Anything, Node>` cannot be referenced while still under construction: the java compiler will complain about referencing
 an uninitialized variable. But there is a way to use *datus* immutable / mutable API to generate a mapper for self-recursive 
-data structures with the following helper class:
+data structures by using a helper class - `MapperProxy`:
 ```java
-class MapperDelegate<Input, Output> implements Mapper<Input, Output> {
-    private Mapper<Input, Output> mapper;
-    
-    @Override
-    public Output convert(Input input) {
-        return mapper.convert(input);
-    }
-    
-    public void setMapper(Mapper<Input, Output> mapper) {
-        this.mapper = mapper;
-    }
-}
 
 public Mapper<Node, Node> generateMapper() {
-    MapperDelegate<Node, Node> delegate = new MapperDelegate<>();
+    MapperProxy<Node, Node> proxy = new MapperProxy<>();
     Mapper<Node, Node> mapper = Datus.forTypes(Node.class, Node.class)
         .mutable(Node::new)
         .from(Node::someData).to(Node::setSomeData)
         .from(Node::getParent)
-            .given(Objects::nonNull, parent -> delegate.convert(parent)).orElseNull()
+            .given(Objects::nonNull, parent -> proxy.convert(parent)).orElseNull()
             .to(Node::setParent)
         .build();
-    delegate.setMapper(mapper);
+    proxy.setMapper(mapper);
     return mapper;
 }
 ```
-
+A `MapperProxy` implements the `Mapper` interface by using another mapper
+which can be set even after the `MapperProxy` is instantiated and referenced which circumvents the
+outlined restrictions of the Java compiler.
 #### Dependency injection (e.g. Spring)
 *datus* has no explicit code to support dependency injection and its accompanying concepts but is **easily integrated into any dependency injection framework** (e.g Spring):
 ```java
