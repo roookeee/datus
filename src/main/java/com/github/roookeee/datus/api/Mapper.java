@@ -28,7 +28,7 @@ public interface Mapper<In, Out> {
      * @param input the collection of input instances to convert
      * @return a list containing the converted output instances
      */
-    default List<Out> convert(Collection<In> input) {
+    default List<Out> convert(Collection<? extends In> input) {
         List<Out> result = new ArrayList<>(input.size());
         for (In in : input) {
             result.add(convert(in));
@@ -48,7 +48,7 @@ public interface Mapper<In, Out> {
      * @param input the collection of input instances to convert
      * @return a map containing all (input,output) tuples
      */
-    default LinkedHashMap<In, Out> convertToMap(Collection<In> input) {
+    default LinkedHashMap<In, Out> convertToMap(Collection<? extends In> input) {
         LinkedHashMap<In, Out> result = new LinkedHashMap<>();
         for (In in : input) {
             result.put(in, convert(in));
@@ -70,7 +70,7 @@ public interface Mapper<In, Out> {
      * @param keyFunction the function to apply to every input instance to generate the corresponding map key
      * @return a map containing all (keyFunction(input),output) tuples
      */
-    default <KeyType> LinkedHashMap<KeyType, Out> convertToMap(Collection<In> input, Function<In, KeyType> keyFunction) {
+    default <KeyType> LinkedHashMap<KeyType, Out> convertToMap(Collection<? extends In> input, Function<? super In, ? extends KeyType> keyFunction) {
         LinkedHashMap<KeyType, Out> result = new LinkedHashMap<>();
         for (In in : input) {
             result.put(keyFunction.apply(in), convert(in));
@@ -84,7 +84,7 @@ public interface Mapper<In, Out> {
      * @param input the collection of input instances to convert
      * @return a (lazy) stream of the converted output instances
      */
-    default Stream<Out> conversionStream(Collection<In> input) {
+    default Stream<Out> conversionStream(Collection<? extends In> input) {
         return input.stream().map(this::convert);
     }
 
@@ -94,7 +94,7 @@ public interface Mapper<In, Out> {
      * @param predicate the predicate to consider when converting input instances
      * @return a new mapper that expresses the optionality of an output instance because of the given predicate
      */
-    default Mapper<In, Optional<Out>> predicateInput(Predicate<In> predicate) {
+    default Mapper<In, Optional<Out>> predicateInput(Predicate<? super In> predicate) {
         Mapper<In, Out> mapper = this;
         return input -> {
             if (!predicate.test(input)) {
@@ -110,7 +110,7 @@ public interface Mapper<In, Out> {
      * @param predicate the predicate to consider after converting input instances
      * @return a new mapper that expresses the optionality of an output instance because of the given predicate
      */
-    default Mapper<In, Optional<Out>> predicateOutput(Predicate<Out> predicate) {
+    default Mapper<In, Optional<Out>> predicateOutput(Predicate<? super Out> predicate) {
         Mapper<In, Out> mapper = this;
         return input -> {
             Out output = mapper.convert(input);
@@ -128,7 +128,7 @@ public interface Mapper<In, Out> {
      * @param outputPredicate the predicate to consider after converting input instances
      * @return a new mapper that expresses the optionality of an output instance because of the given predicates
      */
-    default Mapper<In, Optional<Out>> predicate(Predicate<In> inputPredicate, Predicate<Out> outputPredicate) {
+    default Mapper<In, Optional<Out>> predicate(Predicate<? super In> inputPredicate, Predicate<? super Out> outputPredicate) {
         Mapper<In, Out> mapper = this;
         return input -> {
             if (!inputPredicate.test(input)) {

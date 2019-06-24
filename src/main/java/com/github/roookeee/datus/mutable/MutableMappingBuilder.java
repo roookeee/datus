@@ -40,7 +40,7 @@ public final class MutableMappingBuilder<In, Out> {
      * @param <A>    the getters return type
      * @return the construction step to further configure
      */
-    public <A> MutableConstructionStep<In, A, Out> from(Function<In, A> getter) {
+    public <A> MutableConstructionStep<In, A, Out> from(Function<? super In, ? extends A> getter) {
         return new MutableConstructionStep<>(this, getter);
     }
 
