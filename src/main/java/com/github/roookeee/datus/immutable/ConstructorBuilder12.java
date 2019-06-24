@@ -1,7 +1,6 @@
 package com.github.roookeee.datus.immutable;
 
 import com.github.roookeee.datus.api.Datus;
-import com.github.roookeee.datus.functions.Fn11;
 import com.github.roookeee.datus.functions.Fn12;
 import com.github.roookeee.datus.functions.Fn13;
 

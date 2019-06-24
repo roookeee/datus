@@ -1,7 +1,29 @@
 package com.github.roookeee.datus.api;
 
-import com.github.roookeee.datus.functions.*;
-import com.github.roookeee.datus.immutable.*;
+import com.github.roookeee.datus.functions.Fn1;
+import com.github.roookeee.datus.functions.Fn10;
+import com.github.roookeee.datus.functions.Fn11;
+import com.github.roookeee.datus.functions.Fn12;
+import com.github.roookeee.datus.functions.Fn2;
+import com.github.roookeee.datus.functions.Fn3;
+import com.github.roookeee.datus.functions.Fn4;
+import com.github.roookeee.datus.functions.Fn5;
+import com.github.roookeee.datus.functions.Fn6;
+import com.github.roookeee.datus.functions.Fn7;
+import com.github.roookeee.datus.functions.Fn8;
+import com.github.roookeee.datus.functions.Fn9;
+import com.github.roookeee.datus.immutable.ConstructorBuilder1;
+import com.github.roookeee.datus.immutable.ConstructorBuilder10;
+import com.github.roookeee.datus.immutable.ConstructorBuilder11;
+import com.github.roookeee.datus.immutable.ConstructorBuilder12;
+import com.github.roookeee.datus.immutable.ConstructorBuilder2;
+import com.github.roookeee.datus.immutable.ConstructorBuilder3;
+import com.github.roookeee.datus.immutable.ConstructorBuilder4;
+import com.github.roookeee.datus.immutable.ConstructorBuilder5;
+import com.github.roookeee.datus.immutable.ConstructorBuilder6;
+import com.github.roookeee.datus.immutable.ConstructorBuilder7;
+import com.github.roookeee.datus.immutable.ConstructorBuilder8;
+import com.github.roookeee.datus.immutable.ConstructorBuilder9;
 import com.github.roookeee.datus.mutable.MutableMappingBuilder;
 
 import java.util.function.Supplier;

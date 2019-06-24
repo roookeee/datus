@@ -2,7 +2,11 @@ package com.github.roookeee.datus.mutable;
 
 import com.github.roookeee.datus.conditional.ConditionalEnd;
 
-import java.util.function.*;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * Represents a construction step from a given input to an output type while holding a reference
