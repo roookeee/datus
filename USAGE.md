@@ -78,9 +78,9 @@ or a given setter (mutable API). Any type conversion (e.g. an `Address` field in
 Once all necessary mapping steps are completed, calling `build()` will finalize the mapping definition and
 generate a `Mapper<Input, Output>` object. Most features of the `Mapper` interface are about the conversion from input to output:
 ```java
-//the only function that is actually implemented by the given mapping steps 
-//all other functions are based on it:
 interface Mapper<Input, Output> {
+    //the only function that is actually implemented by the given mapping steps 
+    //all other functions are based on it:
     Output convert(Input input);
     List<Output> convert(Collection<Input> input);
     Stream<Output> conversionStream(Collection<Input> input);
