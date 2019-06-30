@@ -31,6 +31,9 @@ Using *datus* has the following benefits:
 - **rich mapping API**: define the mapping process from `A -> B` and get `Collection<A> -> Collection<B>`, `Collection<A> -> Map<A, B>` and more for free
 - **focus on meaningful unit tests**: no need to unit test trivial but necessary logic (e.g. `null` checking, which once fixed won't be a problem at the given location again)
 - **clarity**: (subjectively) more self-documenting code when using *datus* mapping definitions
+- **no reflection or code generation**: *datus* implementation is just plain java, 
+use [GraalVM Native Image](https://www.graalvm.org/docs/reference-manual/aot-compilation/) or any JVM out there -
+ *datus* will always run out of the box without any further configuration or limitations
 
 ## Examples
 The following examples outline the general usage of both the immutable and mutable API of *datus*.
