@@ -37,7 +37,8 @@ use [GraalVM Native Image](https://www.graalvm.org/docs/reference-manual/aot-com
 
 ## Examples
 The following examples outline the general usage of both the immutable and mutable API of *datus*.
-Please refer to the [USAGE.md](https://github.com/roookeee/datus/blob/master/USAGE.md) for an extensive guide on *datus*.
+Please refer to the [USAGE.md](https://github.com/roookeee/datus/blob/master/USAGE.md) for an extensive guide on *datus*
+that includes [a fictional, more complex scenario with changing requirements](https://github.com/roookeee/datus/blob/master/USAGE.md#examples).
 #### Immutable object API example
 ```java
 
