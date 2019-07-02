@@ -190,7 +190,7 @@ class PersonDTO {
     }
 }
 ```
-The following examples focus on the immutable API of *datus* but every `ConstructorParameter::bind` could be
+The following examples focuses on the immutable API of *datus* but every `ConstructorParameter::bind` can be
 directly replaced by a setter on `PersonDTO` to accomplish the same task in the mutable API without changing
 anything else besides the initial `.immutable(PersonDTO::new)`-call.
 
