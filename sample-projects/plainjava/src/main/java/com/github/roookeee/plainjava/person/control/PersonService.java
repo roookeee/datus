@@ -14,18 +14,18 @@ import java.util.stream.Collectors;
 public class PersonService {
 
     private final PersonResourceDataSource dataSource;
-    private final Mapper<PersonResource, Person> standardConverter;
+    private final Mapper<PersonResource, Person> converter;
     private final Mapper<PersonResource, Optional<Person>> onlyValidConverter;
 
-    public PersonService(PersonResourceDataSource dataSource, Mapper<PersonResource, Person> standardConverter) {
+    public PersonService(PersonResourceDataSource dataSource, Mapper<PersonResource, Person> converter) {
         this.dataSource = dataSource;
-        this.standardConverter = standardConverter;
+        this.converter = converter;
         this.onlyValidConverter =
-                standardConverter.predicateInput(resource -> resource.getId() != null && resource.isActive());
+                converter.predicateInput(resource -> resource.getId() != null && resource.isActive());
     }
 
     public List<Person> getAllPersons() {
-        return standardConverter.convert(dataSource.getAllPersons());
+        return converter.convert(dataSource.getAllPersons());
     }
 
     public List<Person> getAllActivePersons() {
@@ -46,7 +46,7 @@ public class PersonService {
     }
 
     public List<Person> getAllInactivePersons() {
-        return standardConverter.conversionStream(dataSource.getAllPersons())
+        return converter.conversionStream(dataSource.getAllPersons())
                 .filter(person -> !person.isActive())
                 .collect(Collectors.toList());
     }
