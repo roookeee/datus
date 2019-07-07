@@ -5,14 +5,14 @@ public class PersonResource {
     private final String firstName;
     private final String lastName;
     private final boolean active;
-    private final boolean receiveNewsletter;
+    private final boolean acceptedNewsletter;
 
-    public PersonResource(Long id, String firstName, String lastName, boolean active, boolean receiveNewsletter) {
+    public PersonResource(Long id, String firstName, String lastName, boolean active, boolean acceptedNewsletter) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.active = active;
-        this.receiveNewsletter = receiveNewsletter;
+        this.acceptedNewsletter = acceptedNewsletter;
     }
 
     public Long getId() {
@@ -31,8 +31,8 @@ public class PersonResource {
         return active;
     }
 
-    public boolean isReceiveNewsletter() {
-        return receiveNewsletter;
+    public boolean hasAcceptedNewsletter() {
+        return acceptedNewsletter;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class PersonResource {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", active=" + active +
-                ", receiveNewsletter=" + receiveNewsletter +
+                ", acceptedNewsletter=" + acceptedNewsletter +
                 "}\n";
     }
 }

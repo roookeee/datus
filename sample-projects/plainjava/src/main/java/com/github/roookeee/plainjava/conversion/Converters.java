@@ -17,7 +17,7 @@ public class Converters {
                     .from(PersonResource::isActive).to(ConstructorParameter::bind)
                     //consider the active flag for newsletter sending
                     .from(Function.identity())
-                        .map(resource -> resource.isActive() && resource.isReceiveNewsletter())
+                        .map(resource -> resource.isActive() && resource.hasAcceptedNewsletter())
                         .to(ConstructorParameter::bind)
                     .build();
 

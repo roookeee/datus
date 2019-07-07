@@ -27,7 +27,7 @@ public class Person {
         return lastName;
     }
 
-    public boolean isReceiveNewsletter() {
+    public boolean shouldReceiveNewsletter() {
         return receiveNewsletter;
     }
 
@@ -42,7 +42,7 @@ public class Person {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", isActive=" + isActive +
-                ", receiveNewsletter=" + receiveNewsletter +
+                ", shouldReceiveNewsletter=" + receiveNewsletter +
                 "}\n";
     }
 }
