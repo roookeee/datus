@@ -1,4 +1,4 @@
-package com.github.roookeee.plainjava.person.entity;
+package com.github.roookeee.sample.spring.person.entity;
 
 public class Person {
     private final Long id;

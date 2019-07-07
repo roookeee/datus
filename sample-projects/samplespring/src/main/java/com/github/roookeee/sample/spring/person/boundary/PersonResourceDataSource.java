@@ -1,4 +1,4 @@
-package com.github.roookeee.plainjava.person.boundary;
+package com.github.roookeee.sample.spring.person.boundary;
 
 import java.util.List;
 

@@ -1,8 +1,11 @@
-package com.github.roookeee.plainjava.person.boundary;
+package com.github.roookeee.sample.spring.person.boundary;
+
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
 
+@Component
 public class MockPersonResourceDataSource implements PersonResourceDataSource {
 
     public List<PersonResource> getAllPersons() {

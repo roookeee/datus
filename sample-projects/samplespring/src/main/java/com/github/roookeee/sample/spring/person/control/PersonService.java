@@ -1,9 +1,11 @@
-package com.github.roookeee.plainjava.person.control;
+package com.github.roookeee.sample.spring.person.control;
+
 
 import com.github.roookeee.datus.api.Mapper;
-import com.github.roookeee.plainjava.person.boundary.PersonResource;
-import com.github.roookeee.plainjava.person.boundary.PersonResourceDataSource;
-import com.github.roookeee.plainjava.person.entity.Person;
+import com.github.roookeee.sample.spring.person.boundary.PersonResource;
+import com.github.roookeee.sample.spring.person.boundary.PersonResourceDataSource;
+import com.github.roookeee.sample.spring.person.entity.Person;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
@@ -11,6 +13,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Component
 public class PersonService {
 
     private final PersonResourceDataSource dataSource;

@@ -1,10 +1,10 @@
-package com.github.roookeee.plainjava.conversion;
+package com.github.roookeee.sample.plainjava.conversion;
 
 import com.github.roookeee.datus.api.Datus;
 import com.github.roookeee.datus.api.Mapper;
 import com.github.roookeee.datus.immutable.ConstructorParameter;
-import com.github.roookeee.plainjava.person.boundary.PersonResource;
-import com.github.roookeee.plainjava.person.entity.Person;
+import com.github.roookeee.sample.plainjava.person.boundary.PersonResource;
+import com.github.roookeee.sample.plainjava.person.entity.Person;
 
 import java.util.function.Function;
 

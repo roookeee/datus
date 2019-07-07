@@ -1,9 +1,9 @@
-package com.github.roookeee.plainjava.application;
+package com.github.roookeee.sample.plainjava.application;
 
-import com.github.roookeee.plainjava.conversion.Converters;
-import com.github.roookeee.plainjava.person.boundary.MockPersonResourceDataSource;
-import com.github.roookeee.plainjava.person.boundary.PersonResourceDataSource;
-import com.github.roookeee.plainjava.person.control.PersonService;
+import com.github.roookeee.sample.plainjava.conversion.Converters;
+import com.github.roookeee.sample.plainjava.person.boundary.MockPersonResourceDataSource;
+import com.github.roookeee.sample.plainjava.person.boundary.PersonResourceDataSource;
+import com.github.roookeee.sample.plainjava.person.control.PersonService;
 
 public class Application {
     public static void main(String[] args) {

@@ -1,4 +1,4 @@
-package com.github.roookeee.plainjava.person.boundary;
+package com.github.roookeee.sample.plainjava.person.boundary;
 
 public class PersonResource {
     private final Long id;
