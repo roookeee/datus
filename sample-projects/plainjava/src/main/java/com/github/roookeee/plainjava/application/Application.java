@@ -7,6 +7,9 @@ import com.github.roookeee.plainjava.person.control.PersonService;
 
 public class Application {
     public static void main(String[] args) {
+        /*
+        Some sample setup with manual dependency injection.
+         */
         PersonResourceDataSource dataSource = new MockPersonResourceDataSource();
         PersonService personService = new PersonService(
                 dataSource,
