@@ -11,10 +11,11 @@ of your application and focus on what really matters - your project.
 #### Overview
 1. [Why use datus?](#why-use-datus)
 2. [Examples](#examples)
-3. [User guide](#user-guide)
-4. [Dependency information (Maven etc.)](#dependency-information)
-5. [Development principles](#development-principles)
-6. [Supporting datus development](#supporting-datus-development)
+3. [Sample projects](#sample-projects)
+4. [User guide](#user-guide)
+5. [Dependency information (Maven etc.)](#dependency-information)
+6. [Development principles](#development-principles)
+7. [Supporting datus development](#supporting-datus-development)
 
 ## Why use *datus*?
 Using *datus* has the following benefits:
@@ -131,6 +132,13 @@ personDto = mapper.convert(person);
     ]
 */
 ```
+## Sample projects
+There are two sample projects located in the [sample-projects](https://github.com/roookeee/datus/tree/master/sample-projects) directory
+that showcase most of *datus* features in two environments: [framework-less](https://github.com/roookeee/datus/tree/master/sample-projects/plainjava)
+ and [with Spring Boot](https://github.com/roookeee/datus/tree/master/sample-projects/samplespring).
+ 
+Hop right in and tinker around with *datus* in a compiling environment!
+
 ## User guide
 Please refer to the [USAGE.md](https://github.com/roookeee/datus/blob/master/USAGE.md) for a complete user guide as the readme only serves as a broad overview.
 The user guide is designed to take **at most 15 minutes** to get you covered on everything about *datus* and how to use it

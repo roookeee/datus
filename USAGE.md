@@ -8,6 +8,7 @@
 1. [Immutable API](#immutable-api)
 1. [Mutable API](#mutable-api)
 1. [Examples](#examples)
+1. [Sample projects](#sample-projects)
 1. [Advanced usage / FAQ](#advanced-usage--faq)
 1. [Closing words](#closing-words)
 
@@ -292,6 +293,13 @@ class MapperDefinitions {
         .build();
 }
 ```
+## Sample projects
+There are two sample projects located in the [sample-projects](https://github.com/roookeee/datus/tree/master/sample-projects) directory
+that showcase most of *datus* features in two environments: [framework-less](https://github.com/roookeee/datus/tree/master/sample-projects/plainjava)
+ and [with Spring Boot](https://github.com/roookeee/datus/tree/master/sample-projects/samplespring).
+ 
+Hop right in and tinker around with *datus* in a compiling environment! 
+
 ### Advanced usage / FAQ
 This section is focused on use cases of *datus* that are either not directly supported via *datus* classes or
 represent a problem that is frequently occurring in *datus* issue tracker.
