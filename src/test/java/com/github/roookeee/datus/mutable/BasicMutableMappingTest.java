@@ -215,7 +215,7 @@ public class BasicMutableMappingTest {
         assertThat(mappedAllValuesDontMatchPredicate.getLastName()).isEqualTo(testPerson.getLastName());
         assertThat(mappedAllValuesDontMatchPredicate.getBirthDate()).isEqualTo(testPerson.getBirthDate());
 
-        //then: values matching the predicates should use the fallback
+        //then: values matching the predicate should use the fallback
         assertThat(mappedAllValuesMatchPredicate).isNotNull();
         assertThat(mappedAllValuesMatchPredicate.getAddress()).isEqualTo("fallback");
         assertThat(mappedAllValuesMatchPredicate.getName()).isEqualTo("fallback");

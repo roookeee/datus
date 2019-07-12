@@ -324,4 +324,71 @@ public class BasicImmutableMappingTest {
         assertThat(result.getId()).isNull();
         assertThat(result.getExtendedId()).isEqualTo("");
     }
+
+
+    @Test
+    public void nullsafeModeShouldWorkAsExpectedWithMap() {
+        //given
+        Mapper<Item, ItemDTO> mapper = Datus.forTypes(Item.class, ItemDTO.class)
+                .immutable(ItemDTO::new)
+                .from(Item::getId).nullsafe().map(id -> id+"-normal").to(ConstructorParameter::bind)
+                .from(Item::getId).nullsafe().map(id -> id+"-extra").to(ConstructorParameter::bind)
+                .build();
+
+        Item allNullItem = new Item(null);
+        Item allValuesPresentItem = new Item("1");
+
+        //when
+        ItemDTO mappedAllNullItem = mapper.convert(allNullItem);
+        ItemDTO mappedAllValuesPresentItem = mapper.convert(allValuesPresentItem);
+
+        //then: null values should be propagated
+        assertThat(mappedAllNullItem).isNotNull();
+        assertThat(mappedAllNullItem.getId()).isNull();
+        assertThat(mappedAllNullItem.getExtendedId()).isNull();
+
+        //then: should have mapped upper-cased values
+        assertThat(mappedAllValuesPresentItem).isNotNull();
+        assertThat(mappedAllValuesPresentItem.getId()).isEqualTo(allValuesPresentItem.getId()+"-normal");
+        assertThat(mappedAllValuesPresentItem.getExtendedId()).isEqualTo(allValuesPresentItem.getId()+"-extra");
+    }
+
+    @Test
+    public void nullsafeModeShouldWorkAsExpectedWithGiven() {
+        //given
+        Mapper<Item, ItemDTO> mapper = Datus.forTypes(Item.class, ItemDTO.class)
+                .immutable(ItemDTO::new)
+                .from(Item::getId).nullsafe()
+                    .given(String::isEmpty, "fallback").orElse(id -> id+"-normal")
+                    .to(ConstructorParameter::bind)
+                .from(Item::getId).nullsafe()
+                    .given(String::isEmpty, "fallback").orElse(id -> id+"-extra")
+                    .to(ConstructorParameter::bind)
+                .build();
+
+
+        Item allNullItem = new Item(null);
+        Item allValuesDontMatchPredicate = new Item("1");
+        Item allValuesMatchPredicate = new Item("");
+
+        //when
+        ItemDTO mappedAllNullItem = mapper.convert(allNullItem);
+        ItemDTO mappedAllValuesDontMatchPredicate = mapper.convert(allValuesDontMatchPredicate);
+        ItemDTO mappedAllValuesMatchPredicate = mapper.convert(allValuesMatchPredicate);
+
+        //then: null values should be propagated
+        assertThat(mappedAllNullItem).isNotNull();
+        assertThat(mappedAllNullItem.getId()).isNull();
+        assertThat(mappedAllNullItem.getExtendedId()).isNull();
+
+        //then: should have mapped with custom logic
+        assertThat(mappedAllValuesDontMatchPredicate).isNotNull();
+        assertThat(mappedAllValuesDontMatchPredicate.getId()).isEqualTo(allValuesDontMatchPredicate.getId()+"-normal");
+        assertThat(mappedAllValuesDontMatchPredicate.getExtendedId()).isEqualTo(allValuesDontMatchPredicate.getId()+"-extra");
+
+        //then: values matching the predicate should use the fallback
+        assertThat(mappedAllValuesMatchPredicate).isNotNull();
+        assertThat(mappedAllValuesMatchPredicate.getId()).isEqualTo("fallback");
+        assertThat(mappedAllValuesMatchPredicate.getExtendedId()).isEqualTo("fallback");
+    }
 }
