@@ -35,6 +35,12 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
         this.nullsafe = nullsafe;
     }
 
+    /**
+     * Activates the null safe mode of this construction step: functions provided in subsequent {@link #map} or
+     * {@link #given} steps won't be called if their input is null. null values are directly propagated instead.
+     *
+     * @return a nullsafe variant of the current construction step
+     */
     public MutableConstructionStep<In, CurrentType, Out> nullsafe() {
         return new MutableConstructionStep<>(builder, getter, true);
     }
@@ -47,10 +53,9 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
      * @return a new construction step based on the new type
      */
     public <NextType> MutableConstructionStep<In, NextType, Out> map(Function<? super CurrentType, ? extends NextType> mapper) {
-        Function<? super CurrentType, ? extends NextType> mappingFn = considerNullsafety(mapper);
         return new MutableConstructionStep<>(
                 builder,
-                in -> mappingFn.apply(getter.apply(in)),
+                getter.andThen(handleNullability(mapper)),
                 nullsafe
         );
     }
@@ -144,16 +149,15 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
         return new ConditionalEnd<>(
                 getter,
                 predicate,
-                newGetter -> new MutableConstructionStep<>(builder, newGetter, nullsafe),
+                newGetter -> new MutableConstructionStep<>(builder, handleNullability(newGetter), nullsafe),
                 mapper
         );
     }
 
-    private <NextType> Function<? super CurrentType, ? extends NextType> considerNullsafety(Function<? super CurrentType, ? extends NextType> mapper) {
+    private <T,U> Function<T,U> handleNullability(Function<T,U> mapper) {
         if (!nullsafe) {
             return mapper;
         }
         return value -> value != null ? mapper.apply(value) : null;
     }
-
 }

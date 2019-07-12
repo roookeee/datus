@@ -33,6 +33,12 @@ public final class ConstructorParameterBinding<In, CurrentType, Ctor> {
         this.nullsafe = nullsafe;
     }
 
+    /**
+     * Activates the null safe mode of this parameter binding: functions provided in subsequent {@link #map} or
+     * {@link #given} steps won't be called if their input is null. null values are directly propagated instead.
+     *
+     * @return a nullsafe variant of the current parameter binding
+     */
     public ConstructorParameterBinding<In, CurrentType, Ctor> nullsafe() {
         return new ConstructorParameterBinding<>(ctor, getter, true);
     }
@@ -45,8 +51,11 @@ public final class ConstructorParameterBinding<In, CurrentType, Ctor> {
      * @return a new parameter binding based based on the given mapper
      */
     public <IntermediateType> ConstructorParameterBinding<In, IntermediateType, Ctor> map(Function<? super CurrentType, ? extends IntermediateType> mapper) {
-        Function<? super CurrentType, ? extends IntermediateType> mappingFn = considerNullsafety(mapper);
-        return new ConstructorParameterBinding<>(ctor, getter.andThen(mappingFn), nullsafe);
+        return new ConstructorParameterBinding<>(
+                ctor,
+                getter.andThen(handleNullability(mapper)),
+                nullsafe
+        );
     }
 
     /**
@@ -120,12 +129,12 @@ public final class ConstructorParameterBinding<In, CurrentType, Ctor> {
         return new ConditionalEnd<>(
                 getter,
                 predicate,
-                newGetter -> new ConstructorParameterBinding<>(ctor, newGetter, nullsafe),
+                newGetter -> new ConstructorParameterBinding<>(ctor, handleNullability(newGetter), nullsafe),
                 mapper
         );
     }
 
-    private <IntermediateType> Function<? super CurrentType, ? extends IntermediateType> considerNullsafety(Function<? super CurrentType, ? extends IntermediateType> mapper) {
+    private <T,U> Function<T,U> handleNullability(Function<T,U> mapper) {
         if (!nullsafe) {
             return mapper;
         }
