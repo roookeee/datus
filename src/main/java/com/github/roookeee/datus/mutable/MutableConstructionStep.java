@@ -50,7 +50,8 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
         Function<? super CurrentType, ? extends NextType> mappingFn = considerNullsafety(mapper);
         return new MutableConstructionStep<>(
                 builder,
-                in -> mappingFn.apply(getter.apply(in))
+                in -> mappingFn.apply(getter.apply(in)),
+                nullsafe
         );
     }
 
@@ -143,7 +144,7 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
         return new ConditionalEnd<>(
                 getter,
                 predicate,
-                newGetter -> new MutableConstructionStep<>(builder, newGetter),
+                newGetter -> new MutableConstructionStep<>(builder, newGetter, nullsafe),
                 mapper
         );
     }

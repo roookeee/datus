@@ -46,7 +46,7 @@ public final class ConstructorParameterBinding<In, CurrentType, Ctor> {
      */
     public <IntermediateType> ConstructorParameterBinding<In, IntermediateType, Ctor> map(Function<? super CurrentType, ? extends IntermediateType> mapper) {
         Function<? super CurrentType, ? extends IntermediateType> mappingFn = considerNullsafety(mapper);
-        return new ConstructorParameterBinding<>(ctor, getter.andThen(mappingFn));
+        return new ConstructorParameterBinding<>(ctor, getter.andThen(mappingFn), nullsafe);
     }
 
     /**
@@ -120,7 +120,7 @@ public final class ConstructorParameterBinding<In, CurrentType, Ctor> {
         return new ConditionalEnd<>(
                 getter,
                 predicate,
-                newGetter -> new ConstructorParameterBinding<>(ctor, newGetter),
+                newGetter -> new ConstructorParameterBinding<>(ctor, newGetter, nullsafe),
                 mapper
         );
     }
