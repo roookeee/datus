@@ -21,10 +21,20 @@ import java.util.function.Supplier;
 public final class ConstructorParameterBinding<In, CurrentType, Ctor> {
     private final Ctor ctor;
     private final Function<? super In, ? extends CurrentType> getter;
+    private final boolean nullsafe;
 
     ConstructorParameterBinding(Ctor ctor, Function<? super In, ? extends CurrentType> getter) {
+        this(ctor, getter, false);
+    }
+
+    private ConstructorParameterBinding(Ctor ctor, Function<? super In, ? extends CurrentType> getter, boolean nullsafe) {
         this.ctor = ctor;
         this.getter = getter;
+        this.nullsafe = nullsafe;
+    }
+
+    public ConstructorParameterBinding<In, CurrentType, Ctor> nullsafe() {
+        return new ConstructorParameterBinding<>(ctor, getter, true);
     }
 
     /**
@@ -35,7 +45,8 @@ public final class ConstructorParameterBinding<In, CurrentType, Ctor> {
      * @return a new parameter binding based based on the given mapper
      */
     public <IntermediateType> ConstructorParameterBinding<In, IntermediateType, Ctor> map(Function<? super CurrentType, ? extends IntermediateType> mapper) {
-        return new ConstructorParameterBinding<>(ctor, getter.andThen(mapper));
+        Function<? super CurrentType, ? extends IntermediateType> mappingFn = considerNullsafety(mapper);
+        return new ConstructorParameterBinding<>(ctor, getter.andThen(mappingFn));
     }
 
     /**
@@ -53,53 +64,53 @@ public final class ConstructorParameterBinding<In, CurrentType, Ctor> {
      * Starts a conditional mapping process in regards to the given predicate for the current type.
      *
      * @param <IntermediateType> the resulting type of the conditional mapping process
-     * @param predicate the predicate to use
-     * @param value the value to use when the provided predicate matches
+     * @param predicate          the predicate to use
+     * @param value              the value to use when the provided predicate matches
      * @return a builder to configure the handling mechanism when the given predicate does not match
      */
     public <IntermediateType> ConditionalEnd<In, CurrentType, IntermediateType, ConstructorParameterBinding<In, IntermediateType, Ctor>> given(
             Predicate<? super CurrentType> predicate,
             IntermediateType value
     ) {
-        return given(predicate, (in,v) -> value);
+        return given(predicate, (in, v) -> value);
     }
 
     /**
      * Starts a conditional mapping process in regards to the given predicate for the current type.
      *
      * @param <IntermediateType> the resulting type of the conditional mapping process
-     * @param predicate the predicate to use
-     * @param supplier the supplier to use when the provided predicate matches
+     * @param predicate          the predicate to use
+     * @param supplier           the supplier to use when the provided predicate matches
      * @return a builder to configure the handling mechanism when the given predicate does not match
      */
     public <IntermediateType> ConditionalEnd<In, CurrentType, IntermediateType, ConstructorParameterBinding<In, IntermediateType, Ctor>> given(
             Predicate<? super CurrentType> predicate,
             Supplier<? extends IntermediateType> supplier
     ) {
-        return given(predicate, (in,v) -> supplier.get());
+        return given(predicate, (in, v) -> supplier.get());
     }
 
     /**
      * Starts a conditional mapping process in regards to the given predicate for the current type.
      *
      * @param <IntermediateType> the resulting type of the conditional mapping process
-     * @param predicate the predicate to use
-     * @param mapper the function to map the current type with when the provided predicate matches
+     * @param predicate          the predicate to use
+     * @param mapper             the function to map the current type with when the provided predicate matches
      * @return a builder to configure the handling mechanism when the given predicate does not match
      */
     public <IntermediateType> ConditionalEnd<In, CurrentType, IntermediateType, ConstructorParameterBinding<In, IntermediateType, Ctor>> given(
             Predicate<? super CurrentType> predicate,
             Function<? super CurrentType, ? extends IntermediateType> mapper
     ) {
-        return given(predicate, (in,v) -> mapper.apply(v));
+        return given(predicate, (in, v) -> mapper.apply(v));
     }
 
     /**
      * Starts a conditional mapping process in regards to the given predicate.
      *
      * @param <IntermediateType> the resulting type of the conditional mapping process
-     * @param predicate the predicate to use
-     * @param mapper the function to map the current type with when the provided predicate matches
+     * @param predicate          the predicate to use
+     * @param mapper             the function to map the current type with when the provided predicate matches
      * @return a builder to configure the handling mechanism when the given predicate does not match
      */
     public <IntermediateType> ConditionalEnd<In, CurrentType, IntermediateType, ConstructorParameterBinding<In, IntermediateType, Ctor>> given(
@@ -112,5 +123,12 @@ public final class ConstructorParameterBinding<In, CurrentType, Ctor> {
                 newGetter -> new ConstructorParameterBinding<>(ctor, newGetter),
                 mapper
         );
+    }
+
+    private <IntermediateType> Function<? super CurrentType, ? extends IntermediateType> considerNullsafety(Function<? super CurrentType, ? extends IntermediateType> mapper) {
+        if (!nullsafe) {
+            return mapper;
+        }
+        return value -> value != null ? mapper.apply(value) : null;
     }
 }

@@ -23,10 +23,20 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
 
     private final MutableMappingBuilder<In, Out> builder;
     private final Function<? super In, ? extends CurrentType> getter;
+    private final boolean nullsafe;
 
     MutableConstructionStep(MutableMappingBuilder<In, Out> builder, Function<? super In, ? extends CurrentType> getter) {
+        this(builder, getter, false);
+    }
+
+    MutableConstructionStep(MutableMappingBuilder<In, Out> builder, Function<? super In, ? extends CurrentType> getter, boolean nullsafe) {
         this.builder = builder;
         this.getter = getter;
+        this.nullsafe = nullsafe;
+    }
+
+    public MutableConstructionStep<In, CurrentType, Out> nullsafe() {
+        return new MutableConstructionStep<>(builder, getter, true);
     }
 
     /**
@@ -37,9 +47,10 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
      * @return a new construction step based on the new type
      */
     public <NextType> MutableConstructionStep<In, NextType, Out> map(Function<? super CurrentType, ? extends NextType> mapper) {
+        Function<? super CurrentType, ? extends NextType> mappingFn = considerNullsafety(mapper);
         return new MutableConstructionStep<>(
                 builder,
-                in -> mapper.apply(getter.apply(in))
+                in -> mappingFn.apply(getter.apply(in))
         );
     }
 
@@ -76,8 +87,8 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
      * Starts a conditional mapping process in regards to the given predicate for the current type.
      *
      * @param <IntermediateType> the resulting type of the conditional mapping process
-     * @param predicate the predicate to use
-     * @param value     the value to use when the provided predicate matches
+     * @param predicate          the predicate to use
+     * @param value              the value to use when the provided predicate matches
      * @return a builder to configure the handling mechanism when the given predicate does not
      */
     public <IntermediateType> ConditionalEnd<In, CurrentType, IntermediateType, MutableConstructionStep<In, IntermediateType, Out>> given(
@@ -91,8 +102,8 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
      * Starts a conditional mapping process in regards to the given predicate for the current type.
      *
      * @param <IntermediateType> the resulting type of the conditional mapping process
-     * @param predicate the predicate to use
-     * @param supplier  the supplier to use when the provided predicate matches
+     * @param predicate          the predicate to use
+     * @param supplier           the supplier to use when the provided predicate matches
      * @return a builder to configure the handling mechanism when the given predicate does not
      */
     public <IntermediateType> ConditionalEnd<In, CurrentType, IntermediateType, MutableConstructionStep<In, IntermediateType, Out>> given(
@@ -106,8 +117,8 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
      * Starts a conditional mapping process in regards to the given predicate for the current type.
      *
      * @param <IntermediateType> the resulting type of the conditional mapping process
-     * @param predicate the predicate to use
-     * @param mapper    the function to map the current type with when the provided predicate matches
+     * @param predicate          the predicate to use
+     * @param mapper             the function to map the current type with when the provided predicate matches
      * @return a builder to configure the handling mechanism when the given predicate does not
      */
     public <IntermediateType> ConditionalEnd<In, CurrentType, IntermediateType, MutableConstructionStep<In, IntermediateType, Out>> given(
@@ -121,8 +132,8 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
      * Starts a conditional mapping process in regards to the given predicate for the current type.
      *
      * @param <IntermediateType> the resulting type of the conditional mapping process
-     * @param predicate the predicate to use
-     * @param mapper    the function to map the current type with when the provided predicate matches
+     * @param predicate          the predicate to use
+     * @param mapper             the function to map the current type with when the provided predicate matches
      * @return a builder to configure the handling mechanism when the given predicate does not
      */
     public <IntermediateType> ConditionalEnd<In, CurrentType, IntermediateType, MutableConstructionStep<In, IntermediateType, Out>> given(
@@ -136,4 +147,12 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
                 mapper
         );
     }
+
+    private <NextType> Function<? super CurrentType, ? extends NextType> considerNullsafety(Function<? super CurrentType, ? extends NextType> mapper) {
+        if (!nullsafe) {
+            return mapper;
+        }
+        return value -> value != null ? mapper.apply(value) : null;
+    }
+
 }
