@@ -154,7 +154,7 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
         of the ConditionalEnd and don't call it when we receive a null value via handleNullability().
 
         This means we lose the ability to handle nulls in a given() when nullsafe() was called but that seems like
-        a strange use-case which is not implemented for now.
+        a strange use-case which is not supported for now.
          */
         return new ConditionalEnd<>(
                 getter,
