@@ -146,6 +146,14 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
             Predicate<? super CurrentType> predicate,
             BiFunction<? super In, ? super CurrentType, ? extends IntermediateType> mapper
     ) {
+        /*
+        Some thoughts on handling the nullsafe flag here as it seems quite complicated but is actually easy to handle:
+        Instead of handling the nullsafety in the predicate and the true+false handlers we just take the result
+        of the ConditionalEnd and don't call it when we receive a null value via handleNullability().
+
+        This means we lose the ability to handle nulls in a given() when nullsafe() was called but that seems like
+        a strange use-case which is not implemented for now.
+         */
         return new ConditionalEnd<>(
                 getter,
                 predicate,
