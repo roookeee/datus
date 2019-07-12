@@ -36,8 +36,10 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
     }
 
     /**
-     * Activates the null safe mode of this construction step: functions provided in subsequent {@link #map} or
-     * {@link #given} steps won't be called if their input is null. null values are directly propagated instead.
+     * Activates the null safe mode of this construction step: subsequent {@link #map} or {@link #given} steps won't be
+     * considered if their input is null - null values are directly propagated instead.
+     * Subsequent {@link #given} steps lose the ability to null check as their entire predicate handling is skipped
+     * when a null value is provided.
      *
      * @return a nullsafe variant of the current construction step
      */
