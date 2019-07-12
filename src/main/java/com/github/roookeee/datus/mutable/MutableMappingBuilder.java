@@ -1,6 +1,7 @@
 package com.github.roookeee.datus.mutable;
 
 import com.github.roookeee.datus.api.Mapper;
+import com.github.roookeee.datus.shared.SafetyMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,7 @@ public final class MutableMappingBuilder<In, Out> {
      * @return the construction step to further configure
      */
     public <A> MutableConstructionStep<In, A, Out> from(Function<? super In, ? extends A> getter) {
-        return new MutableConstructionStep<>(this, getter);
+        return new MutableConstructionStep<>(this, getter, SafetyMode.NONE);
     }
 
     /**

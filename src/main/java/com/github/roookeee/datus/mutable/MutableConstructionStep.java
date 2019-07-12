@@ -1,6 +1,7 @@
 package com.github.roookeee.datus.mutable;
 
 import com.github.roookeee.datus.conditional.ConditionalEnd;
+import com.github.roookeee.datus.shared.SafetyMode;
 
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -23,16 +24,12 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
 
     private final MutableMappingBuilder<In, Out> builder;
     private final Function<? super In, ? extends CurrentType> getter;
-    private final boolean nullsafe;
+    private final SafetyMode safetyMode;
 
-    MutableConstructionStep(MutableMappingBuilder<In, Out> builder, Function<? super In, ? extends CurrentType> getter) {
-        this(builder, getter, false);
-    }
-
-    MutableConstructionStep(MutableMappingBuilder<In, Out> builder, Function<? super In, ? extends CurrentType> getter, boolean nullsafe) {
+    MutableConstructionStep(MutableMappingBuilder<In, Out> builder, Function<? super In, ? extends CurrentType> getter, SafetyMode safetyMode) {
         this.builder = builder;
         this.getter = getter;
-        this.nullsafe = nullsafe;
+        this.safetyMode = safetyMode;
     }
 
     /**
@@ -44,7 +41,7 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
      * @return a nullsafe variant of the current construction step
      */
     public MutableConstructionStep<In, CurrentType, Out> nullsafe() {
-        return new MutableConstructionStep<>(builder, getter, true);
+        return new MutableConstructionStep<>(builder, getter, SafetyMode.NULL_SAFE);
     }
 
     /**
@@ -57,8 +54,8 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
     public <NextType> MutableConstructionStep<In, NextType, Out> map(Function<? super CurrentType, ? extends NextType> mapper) {
         return new MutableConstructionStep<>(
                 builder,
-                getter.andThen(handleNullability(mapper)),
-                nullsafe
+                getter.andThen(handleSafetyMode(mapper)),
+                safetyMode
         );
     }
 
@@ -159,13 +156,14 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
         return new ConditionalEnd<>(
                 getter,
                 predicate,
-                newGetter -> new MutableConstructionStep<>(builder, handleNullability(newGetter), nullsafe),
-                mapper
+                newGetter -> new MutableConstructionStep<>(builder, newGetter, safetyMode),
+                mapper,
+                safetyMode
         );
     }
 
-    private <T,U> Function<T,U> handleNullability(Function<T,U> mapper) {
-        if (!nullsafe) {
+    private <T,U> Function<T,U> handleSafetyMode(Function<T,U> mapper) {
+        if (safetyMode == SafetyMode.NONE) {
             return mapper;
         }
         return value -> value != null ? mapper.apply(value) : null;

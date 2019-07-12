@@ -1,6 +1,7 @@
 package com.github.roookeee.datus.immutable;
 
 import com.github.roookeee.datus.conditional.ConditionalEnd;
+import com.github.roookeee.datus.shared.SafetyMode;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -21,16 +22,12 @@ import java.util.function.Supplier;
 public final class ConstructorParameterBinding<In, CurrentType, Ctor> {
     private final Ctor ctor;
     private final Function<? super In, ? extends CurrentType> getter;
-    private final boolean nullsafe;
+    private final SafetyMode safetyMode;
 
-    ConstructorParameterBinding(Ctor ctor, Function<? super In, ? extends CurrentType> getter) {
-        this(ctor, getter, false);
-    }
-
-    private ConstructorParameterBinding(Ctor ctor, Function<? super In, ? extends CurrentType> getter, boolean nullsafe) {
+    ConstructorParameterBinding(Ctor ctor, Function<? super In, ? extends CurrentType> getter, SafetyMode safetyMode) {
         this.ctor = ctor;
         this.getter = getter;
-        this.nullsafe = nullsafe;
+        this.safetyMode = safetyMode;
     }
 
     /**
@@ -42,7 +39,7 @@ public final class ConstructorParameterBinding<In, CurrentType, Ctor> {
      * @return a nullsafe variant of the current parameter binding
      */
     public ConstructorParameterBinding<In, CurrentType, Ctor> nullsafe() {
-        return new ConstructorParameterBinding<>(ctor, getter, true);
+        return new ConstructorParameterBinding<>(ctor, getter, SafetyMode.NULL_SAFE);
     }
 
     /**
@@ -55,8 +52,8 @@ public final class ConstructorParameterBinding<In, CurrentType, Ctor> {
     public <IntermediateType> ConstructorParameterBinding<In, IntermediateType, Ctor> map(Function<? super CurrentType, ? extends IntermediateType> mapper) {
         return new ConstructorParameterBinding<>(
                 ctor,
-                getter.andThen(handleNullability(mapper)),
-                nullsafe
+                getter.andThen(handleSafetyMode(mapper)),
+                safetyMode
         );
     }
 
@@ -128,24 +125,17 @@ public final class ConstructorParameterBinding<In, CurrentType, Ctor> {
             Predicate<? super CurrentType> predicate,
             BiFunction<? super In, ? super CurrentType, ? extends IntermediateType> mapper
     ) {
-        /*
-        Some thoughts on handling the nullsafe flag here as it seems quite complicated but is actually easy to handle:
-        Instead of handling the nullsafety in the predicate and the true+false handlers we just take the result
-        of the ConditionalEnd and don't call it when we receive a null value via handleNullability().
-
-        This means we lose the ability to handle nulls in a given() when nullsafe() was called but that seems like
-        a strange use-case which is not supported for now.
-         */
         return new ConditionalEnd<>(
                 getter,
                 predicate,
-                newGetter -> new ConstructorParameterBinding<>(ctor, handleNullability(newGetter), nullsafe),
-                mapper
+                newGetter -> new ConstructorParameterBinding<>(ctor, newGetter, safetyMode),
+                mapper,
+                safetyMode
         );
     }
 
-    private <T,U> Function<T,U> handleNullability(Function<T,U> mapper) {
-        if (!nullsafe) {
+    private <T,U> Function<T,U> handleSafetyMode(Function<T,U> mapper) {
+        if (safetyMode == SafetyMode.NONE) {
             return mapper;
         }
         return value -> value != null ? mapper.apply(value) : null;
