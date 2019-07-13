@@ -22,6 +22,10 @@ public class ConditionalEnd<In, AffectedType, IntermediateType, ConstructionStep
     private final BiFunction<? super In, ? super AffectedType, ? extends IntermediateType> matchingHandler;
     private final SafetyMode safetyMode;
 
+    /**
+     * ***NOTE***: Do not use this constructor directly as it is only intended for datus fluent API
+     */
+    @Deprecated
     public ConditionalEnd(
             Function<? super In, ? extends AffectedType> getter,
             Predicate<? super AffectedType> predicate,
@@ -31,6 +35,9 @@ public class ConditionalEnd<In, AffectedType, IntermediateType, ConstructionStep
         this(getter, predicate, nextStepProvider, matchingHandler, SafetyMode.NONE);
     }
 
+    /**
+     * ***NOTE***: Do not use this constructor directly as it is only intended for datus fluent API
+     */
     public ConditionalEnd(
             Function<? super In, ? extends AffectedType> getter,
             Predicate<? super AffectedType> predicate,
