@@ -9,6 +9,7 @@ import com.github.roookeee.sample.spring.person.entity.Person;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 @Configuration
@@ -17,12 +18,18 @@ public class Converters {
     @Bean
     public Mapper<PersonResource, Person> personStandardConverter(PersonNewsletterHelper personNewsletterHelper) {
         return Datus.forTypes(PersonResource.class, Person.class).immutable(Person::new)
-                .from(PersonResource::getId).to(ConstructorParameter::bind)
-                .from(PersonResource::getFirstName).to(ConstructorParameter::bind)
+                .from(PersonResource::getId)
+                    .given(Objects::nonNull, Function.identity()).orElse(-1L)
+                    .to(ConstructorParameter::bind)
+                .from(PersonResource::getFirstName).nullsafe()
+                    .given(String::isEmpty, "<missing>").orElse(Function.identity())
+                    .to(ConstructorParameter::bind)
                 .from(PersonResource::getLastName).to(ConstructorParameter::bind)
                 .from(PersonResource::isActive).to(ConstructorParameter::bind)
                 //consider the active flag for newsletter sending
-                .from(Function.identity()).map(personNewsletterHelper::shouldReceiveNewsletter).to(ConstructorParameter::bind)
+                .from(Function.identity())
+                    .map(resource -> resource.isActive() && resource.hasAcceptedNewsletter())
+                    .to(ConstructorParameter::bind)
                 .build();
     }
 }
