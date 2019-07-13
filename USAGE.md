@@ -57,6 +57,7 @@ Fundamentally both the immutable and mutable API define their mapping steps on a
 .map(Logic::someProcessing)
 .given(Object::nonNull, String::trim).orElse("fallback")
 .to(OutputType::someSetter OR ConstructorParameter::bind)
+.nullsafe()
 ```
 `from(Input::someGetter)`: The first step is to supply a data source from which the current mapping step receives its data. This data source is naturally 
 related to the input type and most likely a simple getter (`InputType::someGetter` here).
@@ -75,6 +76,9 @@ cases where one branch should not modify the value in any way).
 the preceding mapping step definition by binding its definition to the current constructor parameter (immutable API)
 or a given setter (mutable API). Any type conversion (e.g. an `Address` field in `Person` has to be transformed to an 
 `AddressDTO` for the `PersonDTO`) has to happen in preceding `map` steps. A type mismatch will always result in a compilation error.
+
+`nullsafe()`: `nullsafe()` enables null safety for the current mapping step (one `from()...to()` chain) - null inputs will be forwarded instead of
+being passed to the subsequent mapping parts (`map` and `given` declarations).
 
 Once all necessary mapping steps are completed, calling `build()` will finalize the mapping definition and
 generate a `Mapper<Input, Output>` object. Most features of the `Mapper` interface are about the conversion from input to output:
@@ -252,8 +256,8 @@ class MapperDefinitions {
         .immutable(PersonDTO::new)
         .from(Person::getFirstName).map(personNameCleaner::cleanupFirstName).to(ConstructorParameter::bind)
         .from(Person::getLastName).map(personNameCleaner::cleanupLastName).to(ConstructorParameter::bind)
-        .from(Person::isActive).map(personValidator::shouldBeActive).to(ConstructorParameter::bind)
-        .from((Function.identity())
+        .from(Function.identity()).map(personValidator::shouldBeActive).to(ConstructorParameter::bind)
+        .from(Function.identity())
             .map(person -> personValidator.shouldBeActive(person) && person.isCanLogin())
             .to(ConstructorParameter::bind)
         .build();
@@ -280,19 +284,52 @@ class MapperDefinitions {
     
     private Mapper<Person, PersonDTO> mapper = Datus.forTypes(Person.class, PersonDTO.class)
         .immutable(PersonDTO::new)
-        .from(Person::getFirstName)
-            .given(Object::nonNull, personNameCleaner::cleanupFirstName).orElseNull()
+        .from(Person::getFirstName).nullsafe().map(personNameCleaner::cleanupFirstName)
             .to(ConstructorParameter::bind)
-        .from(Person::getLastName)
-            .given(Object::nonNull, personNameCleaner::cleanupLastName).orElseNull()
+        .from(Person::getLastName).nullsafe().map(personNameCleaner::cleanupLastName)
             .to(ConstructorParameter::bind)
-        .from(Person::isActive).map(personValidator::shouldBeActive).to(ConstructorParameter::bind)
-        .from((Function.identity())
+        .from(Function.identity()).map(personValidator::shouldBeActive).to(ConstructorParameter::bind)
+        .from(Function.identity())
             .map(person -> personValidator.shouldBeActive(person) && person.isCanLogin())
             .to(ConstructorParameter::bind)
         .build();
 }
 ```
+`null` is handled now but someone called you to make every empty (empty string) `firstName` to be set to `"<missing>"`:
+```java
+class PersonNameCleaner {
+    public String cleanupFirstName(String firstName) { ... }
+    public String cleanupLastName(String firstName) { ... }
+}
+
+class PersonValidator {
+    public boolean shouldBeActive(Person person) { ... }
+}
+
+class MapperDefinitions {
+    //maybe get these instances via dependency injection
+    //or a parameter when using a function to generate the mapper
+    private PersonNameCleaner personNameCleaner = new PersonNameCleaner();
+    private PersonValidator personValidator = new PersonValidator();
+    
+    private Mapper<Person, PersonDTO> mapper = Datus.forTypes(Person.class, PersonDTO.class)
+        .immutable(PersonDTO::new)
+        .from(Person::getFirstName).nullsafe()
+            .given(String::isEmpty, "<missing>").orElse(personNameCleaner::cleanupFirstName)
+      //or: .given(StringUtils::isNotEmpty, personNameCleaner::cleanupFirstName).orElse("<missing>")
+            .to(ConstructorParameter::bind)
+        .from(Person::getLastName).nullsafe().map(personNameCleaner::cleanupLastName)
+            .to(ConstructorParameter::bind)
+        .from(Function.identity()).map(personValidator::shouldBeActive).to(ConstructorParameter::bind)
+        .from(Function.identity())
+            .map(person -> personValidator.shouldBeActive(person) && person.isCanLogin())
+            .to(ConstructorParameter::bind)
+        .build();
+}
+```
+
+That's it for this example.
+
 ## Sample projects
 There are two sample projects located in the [sample-projects](https://github.com/roookeee/datus/tree/master/sample-projects) directory
 that showcase most of *datus* features in two environments: [framework-less](https://github.com/roookeee/datus/tree/master/sample-projects/plainjava)
