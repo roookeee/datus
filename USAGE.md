@@ -390,8 +390,8 @@ public Mapper<Node, Node> generateMapper() {
     Mapper<Node, Node> mapper = Datus.forTypes(Node.class, Node.class)
         .mutable(Node::new)
         .from(Node::someData).to(Node::setSomeData)
-        .from(Node::getParent)
-            .given(Objects::nonNull, parent -> proxy.convert(parent)).orElseNull()
+        .from(Node::getParent).nullsafe() //break recursion on null values
+            .map(proxy::convert)
             .to(Node::setParent)
         .build();
     proxy.setMapper(mapper);
