@@ -77,8 +77,8 @@ the preceding mapping step definition by binding its definition to the current c
 or a given setter (mutable API). Any type conversion (e.g. an `Address` field in `Person` has to be transformed to an 
 `AddressDTO` for the `PersonDTO`) has to happen in preceding `map` steps. A type mismatch will always result in a compilation error.
 
-`nullsafe()`: `nullsafe()` enables null safety for the current mapping step (one `from()...to()` chain) - null inputs will be forwarded instead of
-being passed to the subsequent mapping parts (`map` and `given` declarations).
+`nullsafe()`: `nullsafe()` enables null safety for the current mapping step (one `from()...to()` chain) - null inputs will bypass
+ subsequent mapping parts (`map` and `given` declarations) and will be directly passed to the destination (`to()`).
 
 Once all necessary mapping steps are completed, calling `build()` will finalize the mapping definition and
 generate a `Mapper<Input, Output>` object. Most features of the `Mapper` interface are about the conversion from input to output:
