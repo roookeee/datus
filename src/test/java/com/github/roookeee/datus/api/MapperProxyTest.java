@@ -43,8 +43,7 @@ class MapperProxyTest {
         Mapper<Category, Category> idMapper = Datus.forTypes(Category.class, Category.class)
                 .mutable(Category::new)
                 .from(Category::getId).into(Category::setId)
-                .from(Category::getSubScategory)
-                    .given(Objects::nonNull, proxy::convert).orElseNull()
+                .from(Category::getSubScategory).nullsafe().map(proxy::convert)
                     .into(Category::setSubScategory)
                 .build();
         proxy.setMapper(idMapper);

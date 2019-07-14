@@ -1,5 +1,7 @@
 package com.github.roookeee.datus.conditional;
 
+import com.github.roookeee.datus.shared.SafetyMode;
+
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -18,19 +20,37 @@ public class ConditionalEnd<In, AffectedType, IntermediateType, ConstructionStep
     private final Predicate<? super AffectedType> predicate;
     private final Function<Function<? super In, ? extends IntermediateType>, ConstructionStep> nextStepProvider;
     private final BiFunction<? super In, ? super AffectedType, ? extends IntermediateType> matchingHandler;
+    private final SafetyMode safetyMode;
 
+    /**
+     * ***NOTE***: Do not use this constructor directly as it is only intended for datus fluent API
+     */
+    @Deprecated
     public ConditionalEnd(
             Function<? super In, ? extends AffectedType> getter,
             Predicate<? super AffectedType> predicate,
             Function<Function<? super In, ? extends IntermediateType>, ConstructionStep> nextStepProvider,
             BiFunction<? super In, ? super AffectedType, ? extends IntermediateType> matchingHandler
     ) {
+        this(getter, predicate, nextStepProvider, matchingHandler, SafetyMode.NONE);
+    }
+
+    /**
+     * ***NOTE***: Do not use this constructor directly as it is only intended for datus fluent API
+     */
+    public ConditionalEnd(
+            Function<? super In, ? extends AffectedType> getter,
+            Predicate<? super AffectedType> predicate,
+            Function<Function<? super In, ? extends IntermediateType>, ConstructionStep> nextStepProvider,
+            BiFunction<? super In, ? super AffectedType, ? extends IntermediateType> matchingHandler,
+            SafetyMode safetyMode
+    ) {
         this.getter = getter;
         this.predicate = predicate;
         this.nextStepProvider = nextStepProvider;
         this.matchingHandler = matchingHandler;
+        this.safetyMode = safetyMode;
     }
-
     /**
      * Finish the conditional handling process by using null as a value when the predicate the current handling is
      * based on did <strong>not</strong> match.
@@ -99,8 +119,29 @@ public class ConditionalEnd<In, AffectedType, IntermediateType, ConstructionStep
             BiFunction<? super In, ? super AffectedType, ? extends IntermediateType> matching,
             BiFunction<? super In, ? super AffectedType, ? extends IntermediateType> orElse
     ) {
+        if (safetyMode == SafetyMode.NULL_SAFE) {
+            return weaveNullsafe(getter, predicate, matching, orElse);
+        }
         return in -> {
             AffectedType value = getter.apply(in);
+            if (predicate.test(value)) {
+                return matching.apply(in, value);
+            }
+            return orElse.apply(in, value);
+        };
+    }
+
+    private Function<In, IntermediateType> weaveNullsafe(
+            Function<? super In, ? extends AffectedType> getter,
+            Predicate<? super AffectedType> predicate,
+            BiFunction<? super In, ? super AffectedType, ? extends IntermediateType> matching,
+            BiFunction<? super In, ? super AffectedType, ? extends IntermediateType> orElse
+    ) {
+        return in -> {
+            AffectedType value = getter.apply(in);
+            if (value == null) {
+                return null;
+            }
             if (predicate.test(value)) {
                 return matching.apply(in, value);
             }

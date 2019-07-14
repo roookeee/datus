@@ -1,5 +1,7 @@
 package com.github.roookeee.datus.immutable;
 
+import com.github.roookeee.datus.shared.SafetyMode;
+
 import java.util.function.Function;
 
 abstract class AbstractConstructorBuilder<In, T extends AbstractConstructorBuilder<In,T>> {
@@ -21,7 +23,7 @@ abstract class AbstractConstructorBuilder<In, T extends AbstractConstructorBuild
     public <IntermediateType> ConstructorParameterBinding<In, IntermediateType, T> from(
             Function<? super In, ? extends IntermediateType> getter
     ) {
-        return new ConstructorParameterBinding<>(getSelf(), getter);
+        return new ConstructorParameterBinding<>(getSelf(), getter, SafetyMode.NONE);
     }
 
 }

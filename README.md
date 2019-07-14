@@ -65,8 +65,8 @@ class PersonDTO {
 //the immutable API defines constructor parameters in their declaration order
 Mapper<Person, PersonDTO> mapper = Datus.forTypes(Person.class, PersonDTO.class).immutable(PersonDTO::new)
     .from(Person::getFirstName).to(ConstructorParameter::bind)
-    .from(Person::getLastName)
-        .given(Objects::nonNull, ln -> ln.toUpperCase()).orElse("fallback")
+    .from(Person::getLastName).nullsafe()
+        .given(String::isEmpty, "fallback").orElse(ln -> ln.toUpperCase())
         .to(ConstructorParameter::bind)
     .build();
     
@@ -74,6 +74,14 @@ Person person = new Person();
 person.setFirstName("firstName");
 person.setLastName(null);
 PersonDTO personDto = mapper.convert(person);
+/*
+    personDto = PersonDTO [
+        firstName = "firstName",
+        lastName = null
+    ]
+*/
+person.setLastName("");
+personDto = mapper.convert(person);
 /*
     personDto = PersonDTO [
         firstName = "firstName",
@@ -107,8 +115,8 @@ class PersonDTO {
 //the mutable API defines a mapping process by multiple getter-setter steps
 Mapper<Person, PersonDTO> mapper = Datus.forTypes(Person.class, PersonDTO.class).mutable(PersonDTO::new)
     .from(Person::getFirstName).into(PersonDTO.setFirstName)
-    .from(Person::getLastName)
-        .given(Objects::nonNull, ln -> ln.toUpperCase()).orElse("fallback")
+    .from(Person::getLastName).nullsafe()
+        .given(String::isEmpty, "fallback").orElse(ln -> ln.toUpperCase())
         .into(PersonDTO::setLastName)
     .from(/*...*/).into(/*...*/)
     .build();
@@ -117,6 +125,14 @@ Person person = new Person();
 person.setFirstName("firstName");
 person.setLastName(null);
 PersonDTO personDto = mapper.convert(person);
+/*
+    personDto = PersonDTO [
+        firstName = "firstName",
+        lastName = null
+    ]
+*/
+person.setLastName("");
+personDto = mapper.convert(person);
 /*
     personDto = PersonDTO [
         firstName = "firstName",

@@ -1,6 +1,7 @@
 package com.github.roookeee.datus.mutable;
 
 import com.github.roookeee.datus.conditional.ConditionalEnd;
+import com.github.roookeee.datus.shared.SafetyMode;
 
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -23,10 +24,24 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
 
     private final MutableMappingBuilder<In, Out> builder;
     private final Function<? super In, ? extends CurrentType> getter;
+    private final SafetyMode safetyMode;
 
-    MutableConstructionStep(MutableMappingBuilder<In, Out> builder, Function<? super In, ? extends CurrentType> getter) {
+    MutableConstructionStep(MutableMappingBuilder<In, Out> builder, Function<? super In, ? extends CurrentType> getter, SafetyMode safetyMode) {
         this.builder = builder;
         this.getter = getter;
+        this.safetyMode = safetyMode;
+    }
+
+    /**
+     * Activates the null safe mode of this construction step: subsequent {@link #map} or {@link #given} steps won't be
+     * considered if their input is null - null values are directly propagated instead.
+     * Subsequent {@link #given} steps lose the ability to null check as their entire predicate handling is skipped
+     * when a null value is provided.
+     *
+     * @return a nullsafe variant of the current construction step
+     */
+    public MutableConstructionStep<In, CurrentType, Out> nullsafe() {
+        return new MutableConstructionStep<>(builder, getter, SafetyMode.NULL_SAFE);
     }
 
     /**
@@ -39,7 +54,8 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
     public <NextType> MutableConstructionStep<In, NextType, Out> map(Function<? super CurrentType, ? extends NextType> mapper) {
         return new MutableConstructionStep<>(
                 builder,
-                in -> mapper.apply(getter.apply(in))
+                getter.andThen(handleSafetyMode(mapper)),
+                safetyMode
         );
     }
 
@@ -76,8 +92,8 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
      * Starts a conditional mapping process in regards to the given predicate for the current type.
      *
      * @param <IntermediateType> the resulting type of the conditional mapping process
-     * @param predicate the predicate to use
-     * @param value     the value to use when the provided predicate matches
+     * @param predicate          the predicate to use
+     * @param value              the value to use when the provided predicate matches
      * @return a builder to configure the handling mechanism when the given predicate does not
      */
     public <IntermediateType> ConditionalEnd<In, CurrentType, IntermediateType, MutableConstructionStep<In, IntermediateType, Out>> given(
@@ -91,8 +107,8 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
      * Starts a conditional mapping process in regards to the given predicate for the current type.
      *
      * @param <IntermediateType> the resulting type of the conditional mapping process
-     * @param predicate the predicate to use
-     * @param supplier  the supplier to use when the provided predicate matches
+     * @param predicate          the predicate to use
+     * @param supplier           the supplier to use when the provided predicate matches
      * @return a builder to configure the handling mechanism when the given predicate does not
      */
     public <IntermediateType> ConditionalEnd<In, CurrentType, IntermediateType, MutableConstructionStep<In, IntermediateType, Out>> given(
@@ -106,8 +122,8 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
      * Starts a conditional mapping process in regards to the given predicate for the current type.
      *
      * @param <IntermediateType> the resulting type of the conditional mapping process
-     * @param predicate the predicate to use
-     * @param mapper    the function to map the current type with when the provided predicate matches
+     * @param predicate          the predicate to use
+     * @param mapper             the function to map the current type with when the provided predicate matches
      * @return a builder to configure the handling mechanism when the given predicate does not
      */
     public <IntermediateType> ConditionalEnd<In, CurrentType, IntermediateType, MutableConstructionStep<In, IntermediateType, Out>> given(
@@ -121,19 +137,35 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
      * Starts a conditional mapping process in regards to the given predicate for the current type.
      *
      * @param <IntermediateType> the resulting type of the conditional mapping process
-     * @param predicate the predicate to use
-     * @param mapper    the function to map the current type with when the provided predicate matches
+     * @param predicate          the predicate to use
+     * @param mapper             the function to map the current type with when the provided predicate matches
      * @return a builder to configure the handling mechanism when the given predicate does not
      */
     public <IntermediateType> ConditionalEnd<In, CurrentType, IntermediateType, MutableConstructionStep<In, IntermediateType, Out>> given(
             Predicate<? super CurrentType> predicate,
             BiFunction<? super In, ? super CurrentType, ? extends IntermediateType> mapper
     ) {
+        /*
+        Some thoughts on handling the nullsafe flag here as it seems quite complicated but is actually easy to handle:
+        Instead of handling the nullsafety in the predicate and the true+false handlers we just take the result
+        of the ConditionalEnd and don't call it when we receive a null value via handleNullability().
+
+        This means we lose the ability to handle nulls in a given() when nullsafe() was called but that seems like
+        a strange use-case which is not supported for now.
+         */
         return new ConditionalEnd<>(
                 getter,
                 predicate,
-                newGetter -> new MutableConstructionStep<>(builder, newGetter),
-                mapper
+                newGetter -> new MutableConstructionStep<>(builder, newGetter, safetyMode),
+                mapper,
+                safetyMode
         );
+    }
+
+    private <T,U> Function<T,U> handleSafetyMode(Function<T,U> mapper) {
+        if (safetyMode == SafetyMode.NONE) {
+            return mapper;
+        }
+        return value -> value != null ? mapper.apply(value) : null;
     }
 }
