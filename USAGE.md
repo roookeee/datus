@@ -47,10 +47,11 @@ Datus.forTypes(Person.class, PersonDTO.class).mutable(PersonDTO::new)
 Datus.forTypes(Person.class, PersonDTO.class).immutable(PersonDTO::new)
 ```
 
-The mutable API expects exactly zero constructor parameters whereas the immutable API supports
+The mutable API expects the passed function (usually a constructor) to have exactly zero constructor parameters whereas the immutable API supports
 up to 12 constructor parameters (consider opening an issue if you need *datus* to support more constructor parameters).
+*datus* unifies the experience of both APIs as much as possible which makes understanding the core concepts
+of *datus* easier as well.
 
-Even though the two APIs internally differ significantly, *datus* strives to unify the experience of both workflows.
 Fundamentally both the immutable and mutable API define their mapping steps on a field-by-field/parameter-by-parameter basis:
 ```java
 .from(InputType::someGetter)
@@ -104,17 +105,16 @@ interface Mapper<Input, Output> {
 }
 ```
 
-Some last basic side notes on how to program with and what to expect from *datus* before moving on to more advanced topics:
-
 Both the immutable and mutable API are statically type checked and thus won't compile if an invalid mapping
 definition is given (e.g. type mismatches).
-Finally as *datus* is about mapping an input object to an output object, **it is strongly discouraged to change the input
-object in any way when defining a mapping process in one of *datus* APIs**.
+
+That's it for the basic introduction of *datus* and its workflow. One last thing: *datus* is about mapping an input object to an 
+output object, thus **it is strongly discouraged to change the input object in any way when defining a mapping process in one of *datus* APIs**.
 
 ### Immutable API
 
 The immutable API of *datus* works by defining the mapping process of each constructor parameter in the order
-they occur in their constructor definition. 
+they are declared in the given constructor. 
 Every `.from(...).(...).to(ConstructorParameter::bind)` definition automatically moves to the next constructor parameter
 until every constructor parameter is bound to a mapping process.
 
@@ -132,15 +132,14 @@ uses all preceding mapping definitions.
 
 ### Mutable API
 
-The mutable API of *datus* works by defining a set of getter-setter chains. Every `.from(...).(...).to(Output::someSetter)` adds
+The mutable API of *datus* works by defining a set of getter-setter chains. Every `.from(...).(...).into(Output::someSetter)` adds
 a mapping definition to the later generated `Mapper<Input, Output>`. There are no checks for exhaustiveness or
 duplicate mappings as there is no proper way to implement it (e.g. lambdas and/or function references have no reference
 equality guarantees in the Java specification).
 
 The mutable API offers two terminal operations to finalize a given mapping definition - `to` and `into`. `into` accepts a 
-simple setter on the output type whereas `to` accepts a function which takes the current mapping definition and applies it to the 
-later affected output object by returning a new instance of the output type. So why is `to` needed? Consider the following
-setter:
+simple setter on the output type whereas `to` accepts a function which creates a new instance of the output type when applying the setter.
+So why is `to` needed? Consider the following setter:
 ```java
 public Output setSomeStuff(String value) {
     return new Output(value);
@@ -195,9 +194,9 @@ class PersonDTO {
     }
 }
 ```
-The following examples focuses on the immutable API of *datus* but every `ConstructorParameter::bind` can be
+The following examples focus' on the immutable API of *datus* but every `ConstructorParameter::bind` can be
 directly replaced by a setter on `PersonDTO` to accomplish the same task in the mutable API without changing
-anything else besides the initial `.immutable(PersonDTO::new)`-call.
+anything else besides the initial `.immutable(PersonDTO::new)`-call and using `into` instead of `to` (see [here](#immutable-api) as to why this is).
 
 Let's start with a simple copying mapper and some predicated variations:
 ```java
@@ -295,7 +294,7 @@ class MapperDefinitions {
         .build();
 }
 ```
-`null` is handled now but someone called you to make every empty (empty string) `firstName` to be set to `"<missing>"`:
+`null` is handled now but someone called you to "fix" every empty (empty string) `firstName` by setting it to `"<missing>"`:
 ```java
 class PersonNameCleaner {
     public String cleanupFirstName(String firstName) { ... }
@@ -328,7 +327,7 @@ class MapperDefinitions {
 }
 ```
 
-That's it for this example.
+Great, we are done! That's it for this example.
 
 ## Sample projects
 There are two sample projects located in the [sample-projects](https://github.com/roookeee/datus/tree/master/sample-projects) directory
@@ -338,8 +337,8 @@ that showcase most of *datus* features in two environments: [framework-less](htt
 Hop right in and tinker around with *datus* in a compiling environment! 
 
 ### Advanced usage / FAQ
-This section is focused on use cases of *datus* that are either not directly supported via *datus* classes or
-represent a problem that is frequently occurring in *datus* issue tracker.
+This section is focused on use cases of *datus* that are either not directly supported via *datus* classes, unintuitive or
+represent a question that is frequently asked in *datus* issue tracker.
 
 #### Mapping multiple inputs into one output object
 *datus* by design only supports mapping one input object into one output object.
@@ -427,11 +426,11 @@ public class SomeClass {
 ```
 
 #### Drawbacks and when not to use *datus*
-*datus* is an abstraction layer which like all of its kind (e.g. guava, Spring etc.) comes at a certain performance cost that in some scenarios will not justify the outlined benefits of it.
+*datus* is an abstraction layer which like all of its kind (e.g. guava, Spring etc.) comes at a certain performance cost that in some scenarios will not justify the outlined benefits of using *datus*.
 *datus* is rigorously profiled while developing its features which results in the following advice:
 
 If you map a massive amount of objects (**> 40000 objects / ms (millisecond) per thread on an i7 6700k**) whilst not having any computationally significant `.map`-steps you 
-will suffer a performance loss of up to 70% compared to a traditional factory with imperative style mapping code. The performance cost
+will suffer a significant performance loss compared to a traditional factory with imperative style mapping code. The performance cost
 of using the immutable / mutable API of *datus* will probably decrease over time as the JVM is getting more optimized in regards to handling
 code which relies heavily on functional programming concepts. 
 
