@@ -14,6 +14,7 @@ of your application and focus on what really matters - your project.
 3. [Sample projects](#sample-projects)
 4. [User guide](#user-guide)
 5. [Dependency information (Maven etc.)](#dependency-information)
+6. [Supported JVM languages](#supported-jvm-languages)
 6. [Development principles](#development-principles)
 7. [Supporting datus development](#supporting-datus-development)
 
@@ -172,6 +173,26 @@ Maven
 or any other build system via Maven Central
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.roookeee/datus.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.github.roookeee%22%20AND%20a:%22datus%22)
+
+## Supported JVM languages
+*datus* currently only supports Java as every other popular statically typed language on the JVM has fundamental issues with *datus*
+core workflow. Non-statically typed languages like Clojure are not tested for compatability.
+
+##### Kotlin issues
+Kotlin has a myriad of issues when it comes to the type-inference chain of *datus* builder-like API which makes 1:1 translations
+of Java to Kotlin (e.g. immutable class to data class) uncompilable. The encoding
+of (non-) nullability in Kotlins type system makes using method references with *datus* nearly impossible when using a nullable type
+and referencing Java functions from Kotlin (e.g. something simple as `Long::parseLong` on a `Long?`).
+
+##### Scala issues
+Scala offers no way to obtain a method reference to a constructor of an object which forces *datus* users to provide
+a lambda which delegates to the corresponding constructor. This lambda has to be fully typed as Scalas overload resolution
+/ type-inference cannot handle it otherwise. This makes using the immutable API of datus cumbersome which is especially
+bad for a language like Scala that is focused around immutability.
+
+The aforementioned issues are not exhaustive and more issues are likely to arise when working around these issues.
+Therefor it is discouraged to use *datus* in any other language than Java right now.
+
 ## Development principles 
 This section is about the core principles *datus* is developed with.
 
