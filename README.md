@@ -175,7 +175,7 @@ or any other build system via Maven Central
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.roookeee/datus.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.github.roookeee%22%20AND%20a:%22datus%22)
 
 ## Supported JVM languages
-*datus* currently only supports Java as every other popular statically typed language on the JVM has fundamental issues with datus
+*datus* currently only supports Java as every other popular statically typed language on the JVM has fundamental issues with *datus*
 core workflow. Non-statically typed languages like Clojure are not tested for compatability.
 
 ##### Kotlin issues
