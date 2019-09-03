@@ -83,10 +83,7 @@ public final class MutableMappingBuilder<In, Out> {
      */
     public Mapper<In, Out> build() {
         BiFunction<? super In, ? super Out, ? extends Out> mappingProcess = MappingOptimizer.flattenAndOptimizeMappings(mappers);
-        return new MutableMapperImpl<>(
-                mappingProcess,
-                generator
-        );
+        return input -> mappingProcess.apply(input, generator.get());
     }
 
     void addMapper(BiFunction<? super In, ? super Out, ? extends Out> mapper) {

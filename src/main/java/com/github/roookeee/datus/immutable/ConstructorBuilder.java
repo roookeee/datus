@@ -54,6 +54,6 @@ public final class ConstructorBuilder<In, Out> {
      * @return said mapper
      */
     public Mapper<In, Out> build() {
-        return new ImmutableMapperImpl<>(constructor);
+        return constructor::apply;
     }
 }
