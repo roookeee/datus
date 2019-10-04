@@ -1,6 +1,7 @@
 package com.github.roookeee.datus.mutable;
 
 import com.github.roookeee.datus.api.Mapper;
+import com.github.roookeee.datus.shared.LambdaHelper;
 import com.github.roookeee.datus.shared.SafetyMode;
 
 import java.util.ArrayList;
@@ -82,8 +83,17 @@ public final class MutableMappingBuilder<In, Out> {
      * @return a mapper instance representing the defined construction process
      */
     public Mapper<In, Out> build() {
-        BiFunction<? super In, ? super Out, ? extends Out> mappingProcess = MappingOptimizer.flattenAndOptimizeMappings(mappers);
-        return input -> mappingProcess.apply(input, generator.get());
+        BiFunction<? super In, ? super Out, ? extends Out> mappingProcess = null;
+        for (BiFunction<? super In, ? super Out, ? extends Out> mapper : mappers) {
+            if(mappingProcess == null) {
+                mappingProcess = mapper;
+                continue;
+            }
+            mappingProcess = LambdaHelper.andThen(mappingProcess, mapper);
+        }
+        BiFunction<? super In, ? super Out, ? extends Out> result = mappingProcess;
+        Supplier<? extends Out> generator = this.generator;
+        return input -> result.apply(input, generator.get());
     }
 
     void addMapper(BiFunction<? super In, ? super Out, ? extends Out> mapper) {

@@ -9,6 +9,7 @@
 1. [Mutable API](#mutable-api)
 1. [Examples](#examples)
 1. [Sample projects](#sample-projects)
+1. [Configuration options](#configuration-options)
 1. [Advanced usage / FAQ](#advanced-usage--faq)
 1. [Closing words](#closing-words)
 
@@ -335,6 +336,21 @@ that showcase most of *datus* features in two environments: [framework-less](htt
  and [with Spring Boot](https://github.com/roookeee/datus/tree/master/sample-projects/samplespring).
  
 Hop right in and tinker around with *datus* in a compiling environment! 
+
+### Configuration options
+
+This section describes all configuration options of *datus* which are generally controlled by system properties.
+
+##### Optimizations
+*datus* employs several runtime-optimizations that can be partially disabled by setting the system property
+`com.github.roookeee.datus.optimization.disable` to any non-null value. There are currently no known issues regarding
+these optimizations but as always: any feature that cannot be disabled is a bug.
+
+Some basic optimizations are not affected by this system property as them not functioning correctly would imply a 
+broken JVM implementation on an unrecoverable level for not only *datus* but any other code running in it.
+
+Generally speaking: any error related to *datus* working with `com.github.roookeee.datus.optimization.disable` set
+but not working without it is a bug - please file an issue!
 
 ### Advanced usage / FAQ
 This section is focused on use cases of *datus* that are either not directly supported via *datus* classes, unintuitive or

@@ -1,6 +1,7 @@
 package com.github.roookeee.datus.immutable;
 
 import com.github.roookeee.datus.conditional.ConditionalEnd;
+import com.github.roookeee.datus.shared.LambdaHelper;
 import com.github.roookeee.datus.shared.SafetyMode;
 
 import java.util.function.BiFunction;
@@ -52,10 +53,11 @@ public final class ConstructorParameterBinding<In, CurrentType, Ctor> {
     public <IntermediateType> ConstructorParameterBinding<In, IntermediateType, Ctor> map(Function<? super CurrentType, ? extends IntermediateType> mapper) {
         return new ConstructorParameterBinding<>(
                 ctor,
-                getter.andThen(handleSafetyMode(mapper)),
+                LambdaHelper.andThen(getter, handleSafetyMode(mapper)),
                 safetyMode
         );
     }
+
 
     /**
      * Binds a parameter binding to its destination, should always be a {@link ConstructorParameter#bind} reference.
@@ -138,6 +140,6 @@ public final class ConstructorParameterBinding<In, CurrentType, Ctor> {
         if (safetyMode == SafetyMode.NONE) {
             return mapper;
         }
-        return value -> value != null ? mapper.apply(value) : null;
+        return LambdaHelper.nullsafe(mapper);
     }
 }

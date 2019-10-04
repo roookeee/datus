@@ -33,7 +33,7 @@ public interface Mapper<In, Out> {
      * @return a list containing the converted output instances
      */
     default List<Out> convert(Collection<? extends In> input) {
-        List<Out> result = new ArrayList<>(input.size());
+        ArrayList<Out> result = new ArrayList<>(input.size());
         for (In in : input) {
             result.add(convert(in));
         }

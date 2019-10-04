@@ -1,6 +1,7 @@
 package com.github.roookeee.datus.mutable;
 
 import com.github.roookeee.datus.conditional.ConditionalEnd;
+import com.github.roookeee.datus.shared.LambdaHelper;
 import com.github.roookeee.datus.shared.SafetyMode;
 
 import java.util.function.BiConsumer;
@@ -54,7 +55,7 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
     public <NextType> MutableConstructionStep<In, NextType, Out> map(Function<? super CurrentType, ? extends NextType> mapper) {
         return new MutableConstructionStep<>(
                 builder,
-                getter.andThen(handleSafetyMode(mapper)),
+                LambdaHelper.andThen(getter, handleSafetyMode(mapper)),
                 safetyMode
         );
     }
@@ -66,10 +67,7 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
      * @return the builder this step originated from
      */
     public MutableMappingBuilder<In, Out> into(BiConsumer<? super Out, ? super CurrentType> setter) {
-        builder.addMapper((in, out) -> {
-            setter.accept(out, getter.apply(in));
-            return out;
-        });
+        builder.addMapper(LambdaHelper.toBiFunction(getter, setter));
         return builder;
     }
 
@@ -158,6 +156,6 @@ public final class MutableConstructionStep<In, CurrentType, Out> {
         if (safetyMode == SafetyMode.NONE) {
             return mapper;
         }
-        return value -> value != null ? mapper.apply(value) : null;
+        return LambdaHelper.nullsafe(mapper);
     }
 }

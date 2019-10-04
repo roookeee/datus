@@ -203,8 +203,8 @@ See `com.github.roookeee.datus.performance.PerformanceBenchmarkTest` for further
 
 #### Mutation testing
 *datus* uses [pitest](http://pitest.org/) to secure the quality of all implemented tests and has no surviving mutations outside
-of `Datus` helper functions (which only aid type inference and are thus not tested) and some constructors of the immutable API that only
-delegate and are thus not explicitly tested.
+of `Datus` helper functions (which only aid type inference and are thus not tested), some constructors of the immutable API that only
+delegate and are thus not explicitly tested and pitest edge-cases which are not testable / programmatically producible.
 
 #### Branching
 The `master` branch always matches the latest release of *datus* while the `develop` branch houses the next version of datus
