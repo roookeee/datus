@@ -196,6 +196,11 @@ Therefor it is discouraged to use *datus* in any other language than Java right 
 ## Development principles 
 This section is about the core principles *datus* is developed with.
 
+#### Benchmarking
+Every release of *datus* is monitored for performance regressions by a simple JMH suite that checks the core 
+functionality of datus (simple mapping from `a->b`). 
+See `com.github.roookeee.datus.performance.PerformanceBenchmarkTest` for further insight.
+
 #### Mutation testing
 *datus* uses [pitest](http://pitest.org/) to secure the quality of all implemented tests and has no surviving mutations outside
 of `Datus` helper functions (which only aid type inference and are thus not tested) and some constructors of the immutable API that only
