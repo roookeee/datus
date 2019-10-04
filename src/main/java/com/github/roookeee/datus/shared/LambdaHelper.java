@@ -121,9 +121,10 @@ public final class LambdaHelper {
                 .findFirst();
 
         //should never happen (e.g. a test still call LambdaHelper from another class) but just to be sure
+        //-> this is an error case as LambdaHelper should not call its own public functions
         if (!firstExternalCaller.isPresent()) {
-            //TODO: is it correct to assume everything is fine here?
-            return;
+            throw new IllegalStateException("Using datus internal functionality is forbidden." +
+                    " These APIs are highly unstable / brittle and thus not included in datus public API / versioning scheme!");
         }
 
         String caller = firstExternalCaller.get();
