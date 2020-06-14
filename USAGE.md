@@ -356,6 +356,19 @@ but not working without it is a bug - please file an issue!
 This section is focused on use cases of *datus* that are either not directly supported via *datus* classes, unintuitive or
 represent a question that is frequently asked in *datus* issue tracker.
 
+#### Generic input and / or output types
+*datus* `Datus.forTypes(InputType.class, OutputType.class)` function does not support generic types like `List<String>` as
+obtaining a `List<String>.class` is not possible in Java. You can use the `Datus.<InputType, OutputType>forTypes()` overload 
+ which requires you to specify the types in angled brackets to circumvent this issue:
+ ```java
+Datus.<List<Integer>,List<String>>forTypes()
+    .mutable(...)
+```
+This overload is also usable in a non-generic context like `Datus.<Integer,String>forTypes()`. Which `forType()` 
+overload you choose mostly comes down to personal taste.
+
+See the `GenericsTest.java` for an example for both the mutable and immutable API.
+
 #### Mapping multiple inputs into one output object
 *datus* by design only supports mapping one input object into one output object.
 Converting input objects sometimes requires additional information on a per input object basis

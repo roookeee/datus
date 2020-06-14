@@ -53,6 +53,25 @@ public class Datus<In, Out> {
     }
 
     /**
+     * Constructs a typed context for a mapping process definition for the given input and output types which are
+     * provided by specifying them on the call-site:
+     *
+     * <code>
+     *     Datus.<A,B>forTypes()
+     * </code>
+     *
+     * This is especially useful for generic classes which cannot be passed to {@link #forTypes(Class, Class)} via
+     * their {@link Class} objects.
+     *
+     * @param <In>       the input type parameter
+     * @param <Out>      the output type parameter
+     * @return the typed context
+     */
+    public static <In, Out> Datus<In, Out> forTypes() {
+        return new Datus<>();
+    }
+
+    /**
      * Starts a mutable mapping process definition using the given supplier to instantiate the output type.
      *
      * @param supplier a supplier to instantiate the output type when converting an input type
