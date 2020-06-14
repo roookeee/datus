@@ -53,7 +53,6 @@ public class PerformanceBenchmarkTest {
                 .warmupTime(TimeValue.seconds(2))
                 .measurementIterations(5)
                 .measurementTime(TimeValue.seconds(2))
-                .jvmArgs("-server")
                 .forks(1)
                 .build();
 
