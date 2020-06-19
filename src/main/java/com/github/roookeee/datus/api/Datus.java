@@ -57,7 +57,7 @@ public class Datus<In, Out> {
      * provided by specifying them on the call-site:
      *
      * <code>
-     *     Datus.<A,B>forTypes()
+     *     Datus.&lt;A,B&gt;forTypes()
      * </code>
      *
      * This is especially useful for generic classes which cannot be passed to {@link #forTypes(Class, Class)} via
