@@ -190,7 +190,7 @@ a lambda which delegates to the corresponding constructor. This lambda has to be
 / type-inference cannot handle it otherwise. This makes using the immutable API of datus cumbersome which is especially
 bad for a language like Scala that is focused around immutability.
 
-The aforementioned issues are not exhaustive and more issues are likely to arise when working around these issues.
+The aforementioned issues are not exhaustive and more issues are likely to arise when working around them.
 Therefor it is discouraged to use *datus* in any other language than Java right now.
 
 ## Development principles 
@@ -216,7 +216,7 @@ that is still under development.
 #### Licensing
 *datus* is licensed under The MIT License (MIT)
 
-Copyright (c) 2019-2020 Nico Heller
+Copyright (c) 2019-2021 Nico Heller
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
