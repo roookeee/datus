@@ -1,3 +1,11 @@
+## Archival notice
+
+datus has been feature-complete for quite a while now, at least for at it aims to be: a thin helper for writing mapper code.
+But it's selling points have somewhat lost their shine to me, which is why I am sunsetting the "maintenance" of datus, however little it needed in last couple of years.
+I still believe that the final release will stand the test of time, as datus has no external dependencies and has excellt (mutation) test coverage.
+Thank you to all users of datus to this day.
+
+
 <img width="400px" src="https://raw.githubusercontent.com/roookeee/datus/assets/assets/datus-logo.png" >
 
 datus enables you to define a conversion process between two data structures in a fluent functional API.
